@@ -32,10 +32,21 @@ module.exports = {
       colors: {
         customBlue: '#0D1F2D',
         customSlateBlue: '#354656',
+        customDarkSlateBlue:'#1D2E3D',
+        CustomDeepTeal:'#1D374B',
         customฺBorder: '#5882C1',
         customฺButton: '#0D6E6E',
         customฺButtomHover: '#4A9D9C',
         customwhite: '#F1F2F3'
+      },
+      fontSize: {
+        'tiny': '0.625rem',    // เพิ่มขนาดฟอนต์ใหม่ (10px)
+        'xxs': '0.75rem',      // เพิ่มขนาดฟอนต์ใหม่ (12px)
+        'xxl': '1.75rem',      // เพิ่มขนาดฟอนต์ใหม่ (28px)
+        'huge': '3rem',        // เพิ่มขนาดฟอนต์ใหม่ (48px)
+      },
+      boxShadow: {
+        'custom-shadow': '0px 48px 100px 0px rgba(17, 12, 46, 0.15)', // Add custom box-shadow
       },
     },
   },

@@ -2,25 +2,28 @@
 
 import React from "react";
 import Navber from "../component/navber";
-import Sidebar from "../component/sidebar";
+import Sidebar from "./sidebar";
 import Videos from "../component/videos";
-
+import { useState } from "react";
 
 function Page() {
-    return (
-        <>
-        <div className="fixed w-full z-10 top-0">
-            <Navber />
-        </div>
-        
-        <div className="flex h-screen">
-            <Sidebar />
-            <div className="flex-1 mt-16 overflow-auto">
-                    <Videos/>
+  const [typeLayout, setTypeLayout] = useState("nineLayout");
+
+  return (
+    <>
+      <Navber />
+      <div className="bg-black">
+        <div className="flex  w-full h-full">
+          <Sidebar setTypeLayout={setTypeLayout} />
+          <div className="flex justify-center items-center w-full h-screen pt-16">
+            <div>
+              <Videos typeLayout={typeLayout} />
             </div>
+          </div>
         </div>
-        </>
-    );
-};
+      </div>
+    </>
+  );
+}
 
 export default Page;

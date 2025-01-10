@@ -31,7 +31,7 @@ function LoginBox() {
         <input
             type="text"
             id="username"
-            className="w-full p-1 rounded-sm text-sm h-8"
+            className="w-full p-1 rounded-sm text-sm h-8 text-black" 
         />
         </div>
         

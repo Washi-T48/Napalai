@@ -1,5 +1,7 @@
 import React from 'react'
 import { useState } from 'react';
+import Calendar from './calender';
+import Dropdown from './dropdown';
 
 function FilterButton() {
     const [FilterButton , SetFilterButton] = useState(true)
@@ -14,9 +16,14 @@ function FilterButton() {
             </button>
 
             {FilterButton && (
-                <div className=' fixed top-60 '>
-                    <div className='flex justify-center p-2 bg-customwhite w-auto h-auto'>
-                        asdcs
+                <div className='fixed top-52 '>
+                    <div className='flex justify-center bg-customwhite w-auto h-full'>
+                        <div className='p-0'>
+                            <Calendar/>
+                        </div>
+                        <div>
+                            <Dropdown/>
+                        </div>     
                     </div>
                 </div>
             )}
