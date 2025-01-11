@@ -30,30 +30,36 @@ function AddCamera() {
           <div className="flex justify-between items-center pb-2">
             <div className="flex justify-between items-center gap-2">
             <div>Auto Scane</div>
-            <Icon icon="lsicon:check-correct-outline" width="16" height="16" />
+              <Icon
+                className=" text-green-400"
+                icon="healthicons:yes-outline"
+                width="24"
+                height="24"
+              
+              />
             </div>
             
-            <input className="flex justify-center items-center bg-customwhite w-[230px] h-[30px] text-black text-sm rounded-sm p-2" />
+            <input className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
           </div>
           <div className="flex justify-between items-center pb-2">
             <div>Name</div>
-            <input className="flex justify-center items-center bg-customwhite w-[230px] h-[30px] text-black text-sm rounded-sm p-2" />
+            <input className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
           </div>
           <div className="flex justify-between items-center pb-2">
             <div>URL</div>
-            <input className="flex justify-center items-center bg-customwhite w-[230px] h-[30px] text-black text-sm rounded-sm p-2" />
+            <input className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
           </div>
           <div className="flex justify-between items-center pb-2">
             <div>ONVIF Username</div>
-            <input className="flex justify-center items-center bg-customwhite w-[230px] h-[30px] text-black text-sm rounded-sm p-2" />
+            <input className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
           </div>
           <div className="flex justify-between items-center pb-2">
             <div>ONVIF Password</div>
-            <input className="flex justify-center items-center bg-customwhite w-[230px] h-[30px] text-black text-sm rounded-sm p-2" />
+            <input className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
           </div>
           <div className="flex justify-between items-center">
             <div>Connections Test</div>
-            <input className="flex justify-center items-center bg-customwhite w-[230px] h-[30px] text-black text-sm rounded-sm p-2" />
+            <input className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
           </div>
         </div>
         <div className="flex justify-end mt-8">

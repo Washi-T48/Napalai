@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react'
-import CardForgotten from '../component/cardForgotten';
+import CardForgotten from './cardForgotten';
 import Navber from '../component/navber';
 import CalendarForgotten from './calenderForgotten';
 

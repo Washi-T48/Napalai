@@ -1,9 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
-import Navber from "./navber";
+import Navber from "../component/navber";
 import { useState } from 'react';
 import unnyFace from "../../public/imges/unnyFace.jpg"
-import EditUndefindItem from './editUndefindItem';
+import EditUndefindItem from '../videoForgottenPage/editUndefindItem';
 
 
 function CardForgotten() {

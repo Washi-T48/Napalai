@@ -20,8 +20,7 @@ const Sidebar: React.FC<sidebarprop> = ({ setTypeLayout }) => {
   return (
     <div className="flex h-screen bg-gray-900">
       {/* Camera Zone */}
-      <div className="w-64 h-screen bg-customBlue text-white flex flex-col">
-        <h2 className="text-xl font-bold mb-10">Sidebar</h2>
+      <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16">
 
         <div className="flex-1">
           {/* Toggle Camera Zone */}
