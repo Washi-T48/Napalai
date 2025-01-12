@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
-import EditPopup from "./editPopup";
-import AddCamera from "./addCamera";
+import EditPopup from "./PopupEdit";
+import AddCamera from "./PopupAddCamera";
 interface sidebarprop {
   setTypeLayout: (type: string) => void;
 }
@@ -10,20 +10,17 @@ const Sidebar: React.FC<sidebarprop> = ({ setTypeLayout }) => {
   const [layoutActive, setLayoutActive] = useState(false);
   const [addPopupActive, setAddPopupActive] = useState(false);
   const [editCamera, setEditCamera] = useState(false);
+  const [showCameraZone, setShowCameraZone] = useState(false);
 
   const toggleLayout = () => setLayoutActive(!layoutActive);
   const toggleAddPopup = () => setAddPopupActive(!addPopupActive);
   const toggleEditCamera = () => setEditCamera(!editCamera);
- 
-  const [ShowCameraZone, setShowCameraZone] = useState(false);
-  const toggleCameraZone = () => setShowCameraZone(!ShowCameraZone);
+  const toggleCameraZone = () => setShowCameraZone(!showCameraZone);
+  
   return (
     <div className="flex h-screen bg-gray-900">
-      {/* Camera Zone */}
       <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16">
-
         <div className="flex-1">
-          {/* Toggle Camera Zone */}
           <div className="flex justify-start items-center hover:bg-customSlateBlue px-8 h-16">
             <div
               onClick={toggleCameraZone}
@@ -40,7 +37,7 @@ const Sidebar: React.FC<sidebarprop> = ({ setTypeLayout }) => {
           </div>
 
           {/* Camera Zone List */}
-          {ShowCameraZone && (
+          {showCameraZone && (
             <div>
               <div className="hover:bg-customSlateBlue px-8 h-16 flex justify-center items-center cursor-pointer">
                 <div className="flex justify-center border-b border-customSlateBlue w-full h-16">
@@ -133,10 +130,8 @@ const Sidebar: React.FC<sidebarprop> = ({ setTypeLayout }) => {
                 >
                   <Icon icon="gg:add" width="24" height="24" />
                 </button>
-
-                {/* Add Camera Popup */}
                 {addPopupActive && (
-                 <AddCamera/>
+                  <AddCamera/>
                 )}
               </div>
 
@@ -156,7 +151,6 @@ const Sidebar: React.FC<sidebarprop> = ({ setTypeLayout }) => {
                 <Icon icon="cuida:edit-outline" width="24" height="24" />
               </button>
 
-              {/* Edit Camera Popup */}
               {editCamera && (
                 <EditPopup/>
               )}

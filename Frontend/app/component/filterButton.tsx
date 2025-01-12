@@ -16,7 +16,7 @@ function FilterButton() {
             </button>
 
             {FilterButton && (
-                <div className='fixed top-52 '>
+                <div className=' absolute top-72'>
                     <div className='flex justify-center bg-customwhite w-full h-full rounded-md overflow-hidden'>
                         <div className='p-0'>
                             <Calendar/>

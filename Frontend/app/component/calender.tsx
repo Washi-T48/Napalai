@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { enUS } from "date-fns/locale";
+
 
 function MyCalendar() {
   const [value, setValue] = useState<[Date, Date] | Date>(new Date());

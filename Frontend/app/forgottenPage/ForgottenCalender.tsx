@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const CalendarForgotten: React.FC = () => {
+const ForgottenCalendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -111,4 +111,4 @@ const CalendarForgotten: React.FC = () => {
   );
 };
 
-export default CalendarForgotten;
+export default ForgottenCalendar;

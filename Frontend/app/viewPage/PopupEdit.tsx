@@ -3,14 +3,10 @@ import { useState } from "react";
 import { Icon } from "@iconify/react";
 
 function EditPopup() {
-  const [isClose, setIsClose] = useState(true); // Control modal visibility
-
-  // Close the modal
+  const [isClose, setIsClose] = useState(true); 
   const closeModal = () => {
-    setIsClose(false); // Set isClose to false to hide the modal
+    setIsClose(false); 
   };
-
-  // Render the modal if isClose is true
   if (!isClose) return null;
 
   return (

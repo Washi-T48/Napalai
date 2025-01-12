@@ -2,29 +2,26 @@
 
 import React, { useState } from "react";
 import Navber from "../component/navber";
-import FilterButton from "../component/filterButton";
-import Card from "../component/card";
+import Card from "../component/CardVideo";
 import { Icon } from "@iconify/react";
+import FilterButton from "../component/Filterbutton";
+
 
 function Page() {
-  const totalCards = 1; // จำนวนการ์ดทั้งหมด
-  const cardsPerPage = 8; // จำนวนการ์ดที่จะแสดงในแต่ละหน้า (4 คอลัมน์ x 2 แถว)
+  const totalCards = 12;
+  const cardsPerPage = 10;
   const totalPages = Math.ceil(totalCards / cardsPerPage); // คำนวณจำนวนหน้าทั้งหมด
-
   const [currentPage, setCurrentPage] = useState(1); // สถานะของหน้าเริ่มต้น
-
   // ฟังก์ชันเพื่อแสดง Card ตามหน้าปัจจุบัน
   const displayCards = () => {
     const startIndex = (currentPage - 1) * cardsPerPage;
     const endIndex = startIndex + cardsPerPage;
     const cardsToDisplay = [];
-
     for (let i = startIndex; i < endIndex; i++) {
       if (i < totalCards) {
         cardsToDisplay.push(<Card key={i} />);
       }
     }
-
     return cardsToDisplay;
   };
 
@@ -39,17 +36,15 @@ function Page() {
       startPage = Math.max(1, endPage - 3);
     }
 
-    // สร้างปุ่มเลขหน้าตามหน้าที่กำหนด
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(
         <button
           key={i}
           onClick={() => setCurrentPage(i)}
-          className={`px-3 py-2 mx-1 w-10 rounded-sm text-white ${
-            i === currentPage
-              ? "bg-customฺButton text-white"
-              : "bg-customฺButton"
-          }`}
+          className={`px-3 py-2 mx-1 w-10 rounded-sm text-white ${i === currentPage
+            ? "bg-customฺButton text-white"
+            : "bg-customฺButton"
+            }`}
         >
           {i}
         </button>
@@ -61,46 +56,36 @@ function Page() {
   return (
     <>
       <Navber />
-      <div className="bg-customBlue h-screen pt-16">
-        {/* Section: Title */}
+      <div className="bg-customBlue h-screen pt-20">
         <div className="flex justify-center items-center text-2xl font-bold text-white p-6">
           Detection Violence
         </div>
-
-        {/* Section: Filter Button */}
-        <div className="w-full flex justify-end pr-10 p-5">
-          <FilterButton />
-        </div>
-
-        {/* Section: Cards Grid */}
-        <div className="pl-10 pr-10 grid grid-cols-4 grid-rows-2 gap-4">
-          {displayCards()}
-        </div>
-
-        {/* Pagination Section */}
-        <div className="flex justify-end items-center mt-4 px-10">
-          {/* ปุ่ม Previous */}
-          <button
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            className="flex justify-center items-center px-3 py-2 mx-1 w-10 rounded-sm bg-customฺButton text-white"
-            disabled={currentPage === 1}
-          >
-            <Icon icon="mingcute:left-fill" width="24" height="24" />
-          </button>
-
-          {/* แสดงเลขหน้า */}
-          {renderPageNumbers()}
-
-          {/* ปุ่ม Next */}
-          <button
-            onClick={() =>
-              setCurrentPage(Math.min(totalPages, currentPage + 1))
-            }
-            className="flex justify-center items-center px-3 py-2 mx-1 w-10 rounded-sm bg-customฺButton text-white"
-            disabled={currentPage === totalPages}
-          >
-            <Icon icon="mingcute:right-fill" width="24" height="24" />
-          </button>
+        <div className="pt-16">
+          <div className="w-full flex justify-end pr-10 p-5">
+            <FilterButton/>
+          </div>
+          <div className="pl-28 pr-28 grid grid-cols-5 grid-rows-2 gap-4">
+            {displayCards()}
+          </div>
+          <div className="flex justify-end items-center mt-4 px-10">
+            <button
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              className="flex justify-center items-center px-3 py-2 mx-1 w-10 rounded-sm bg-customฺButton text-white"
+              disabled={currentPage === 1}
+            >
+              <Icon icon="mingcute:left-fill" width="24" height="24" />
+            </button>
+            {renderPageNumbers()}
+            <button
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
+              className="flex justify-center items-center px-3 py-2 mx-1 w-10 rounded-sm bg-customฺButton text-white"
+              disabled={currentPage === totalPages}
+            >
+              <Icon icon="mingcute:right-fill" width="24" height="24" />
+            </button>
+          </div>
         </div>
       </div>
     </>

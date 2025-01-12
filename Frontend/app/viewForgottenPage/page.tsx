@@ -8,7 +8,7 @@ import { Icon } from '@iconify/react';
 import Image from "next/image"
 import unnyFace from "../../public/imges/unnyFace.jpg"
 import { useState } from "react";
-import EditNameViolenceCard from "./editNameViolenceCard";
+import PopupEditNameViolenceCard from "./PopupEditNameViolenceCard";
 import CalendarVideoPage from "../component/calenderVideoPage"
 
 
@@ -45,7 +45,7 @@ function page() {
                                     icon="material-symbols:edit-outline" width="24" height="24" />
                             </div>
                             {EditNameCard && (
-                                <EditNameViolenceCard />
+                                <PopupEditNameViolenceCard />
                             )}
                         </div>
                         <div className="flex justify-center items-center bg-customSlateBlue text-white p-2 h-[320px] w-full rounded-md">

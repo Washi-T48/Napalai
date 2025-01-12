@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { useState } from "react";
 import { Icon } from "@iconify/react";
 
-function EditNameViolenceCard() {
+function PopupEditNameViolenceCard() {
   const [isClose, SetisClose] = useState(true);
 
   const closeModal = () => {
@@ -37,14 +37,14 @@ function EditNameViolenceCard() {
           <div className="w-full">
             <div className="pb-1 text-tiny">Name</div>
             <input
-              className="p-1 w-full text-black bg-customwhite rounded-sm"
+              className="p-1 w-full text-black bg-customwhite rounded-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100 "
               type="text"
             />
           </div>
           <div className="w-full">
             <div className="pb-1 text-tiny">Time to return</div>
             <input
-              className="p-1 w-full text-black bg-customwhite rounded-sm"
+              className="p-1 w-full text-black bg-customwhite rounded-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
               type="text"
             />
           </div>
@@ -62,4 +62,4 @@ function EditNameViolenceCard() {
   );
 }
 
-export default EditNameViolenceCard;
+export default PopupEditNameViolenceCard;
