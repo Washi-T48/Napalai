@@ -1,37 +1,39 @@
-import React from 'react'
-import Image from 'next/image'
-import imgs1 from '../../public/imges/imges1.jpg'
+import React from 'react';
+import Image, { StaticImageData } from 'next/image';
 
-function Card() {
-    return (
-        <div className=' w-80 h-56 rounded-sm bg-customSlateBlue text-white shadow-[0_3px_10px_rgb(0,0,0,0.2)]'>
-            <Image
-            className='h-40 w-80 rounded-t-sm'
-            src = {imgs1}
-            alt = ''
-            />
-            <div className='flex justify-between p-2'>
-                <div className='flex justify-between flex-col'>
-                    <div className='text-lg'>
-                        item name
-                    </div>
-                    <div className='flex justify-start items-center text-tiny p-1 text-gray-400'>
-                        z.camera1
-                    </div>
-                </div>
-                <div className='flex justify-between flex-col'>
-                    <div className='text-tiny bg-red-500 p-1 text-white rounded-sm shadow-[inset_-12px_-8px_40px_#46464620]'>
-                        Unreturned
-                    </div>
-                    <div className='flex justify-end text-tiny p-1 text-gray-400'>
-                        2 day ago
-                    </div>
-                </div>
-                
-            </div>
-            
-        </div>
-    )
+// ใช้ StaticImageData สำหรับประเภทของ img
+interface CardProp { 
+    item: { 
+        img: StaticImageData;
+        name: string;
+        camera: string;
+        status: string;
+        timeAgo: string;
+    };
 }
 
-export default Card
+const CardVideo: React.FC<CardProp> = ({ item }) => {
+    return (
+        <div className="w-80 h-56 rounded-sm bg-customSlateBlue text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+            <Image
+                className="h-40 w-80 rounded-t-sm"
+                src={item.img}
+                alt={item.name}
+            />
+            <div className="flex justify-between p-2">
+                <div className="flex flex-col">
+                    <div className="text-lg">{item.name}</div>
+                    <div className="text-tiny p-1 text-gray-400">{item.camera}</div>
+                </div>
+                <div className="flex flex-col items-end">
+                    <div className={`text-tiny p-1 rounded-sm shadow-[inset_-12px_-8px_40px_#46464620] ${item.status === 'Unreturned' ? 'bg-red-500' : 'bg-green-500'} text-white`}>
+                        {item.status}
+                    </div>
+                    <div className="text-tiny pt-2 text-gray-400">{item.timeAgo}</div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default CardVideo;

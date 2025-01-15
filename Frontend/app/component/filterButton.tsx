@@ -4,7 +4,7 @@ import Calendar from './calender';
 import Dropdown from './dropdown';
 
 function FilterButton() {
-    const [FilterButton , SetFilterButton] = useState(true)
+    const [FilterButton , SetFilterButton] = useState(false);
     const toggleFilterButton = () => SetFilterButton(!FilterButton);
 
     return (
