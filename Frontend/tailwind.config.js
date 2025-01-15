@@ -36,7 +36,7 @@ module.exports = {
         CustomDeepTeal:'#1D374B',
         customฺBorder: '#5882C1',
         customฺButton: '#0D6E6E',
-        customฺButtomHover: '#4A9D9C',
+        customฺButtomHover: '#04504F ',
         customwhite: '#F1F2F3'
       },
       fontSize: {
