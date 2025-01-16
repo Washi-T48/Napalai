@@ -617,11 +617,8 @@ function Page() {
       status: 'Returned',
       timeAgo: '4 days ago'
     }
-
-
-
-
   ];
+  
   const [switchPage, setSwitchPage] = useState(0);
   const [showData, setShowData] = useState([]);
   const itemsPerPage = 10;

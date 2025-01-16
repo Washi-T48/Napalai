@@ -1,114 +1,148 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import {
+    format,
+    startOfMonth,
+    endOfMonth,
+    startOfWeek,
+    endOfWeek,
+    addDays,
+    isSameMonth,
+    isSameDay,
+    parseISO,
+    addMonths,
+    getDate,
+    isToday
+} from 'date-fns';
 
-const ForgottenCalendar: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+interface Assignment {
+    name: string;
+    dueDate: string; // format: 'yyyy-MM-dd'
+    itemCount: string; // format: 'HH:mm'
+}
 
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+interface CalendarProps {
+    assignments: Assignment[];
+}
 
-  // Helper function to get the current month and year in 'MMM YYYY' format
-  const getMonthYear = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    });
-  };
+const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
+    const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  // Helper function to get the number of days in a given month
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    return new Date(year, month + 1, 0).getDate();
-  };
+    const renderHeader = () => {
+        const dateFormat = 'MMMM yyyy';
 
-  // Helper function to get the starting day of the week of the month
-  const getStartDay = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    return new Date(year, month, 1).getDay();
-  };
-
-  // Navigate to the next month
-  const nextMonth = () => {
-    setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)));
-  };
-
-  // Navigate to the previous month
-  const prevMonth = () => {
-    setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)));
-  };
-
-  const renderDays = () => {
-    const startDay = getStartDay(currentDate);
-    const totalDays = getDaysInMonth(currentDate);
-
-    // Create an array of days for the calendar
-    let days = [];
-    for (let i = 0; i < startDay; i++) {
-      days.push(null); // Empty spots for the start of the month
-    }
-    for (let i = 1; i <= totalDays; i++) {
-      days.push(i);
-    }
-
-    return days;
-  };
-
-  return (
-    <div className="flex flex-col w-full h-full">
-      <div className="flex items-center justify-start p-3 px-6 bg-CustomDeepTeal rounded-t-lg">
-        <h2 className="text-xl font-semibold  text-white">
-          {getMonthYear(currentDate)}
-        </h2>
-        <div className="px-2">
-          <button
-            onClick={prevMonth}
-            className="text-xl font-semibold text-white px-1"
-          >
-            &lt;
-          </button>
-
-          <button
-            onClick={nextMonth}
-            className="text-xl font-semibold text-white  px-1"
-          >
-            &gt;
-          </button>
-        </div>
-      </div>
-      <div className="bg-CustomDeepTeal border">
-        <div className="grid grid-cols-7 text-center p-2 text-sm ">
-          {daysOfWeek.map((day, index) => (
-            <div key={index} className="text-white ">
-              {day}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="w-full h-full mx-auto rounded-sm  bg-customDarkSlateBlue border border-gray-600">
-        <div className="grid grid-cols-7 h-full w-full">
-          {renderDays().map((day, index) => (
-            <div
-              key={index}
-              className={`h-auto p-2 flex flex-col items-start justify-start cursor-pointer border ${
-                day ? "hover:bg-blue-200" : ""
-              } ${!day ? "text-transparent" : "text-white"}`}
-            >
-              {/* แสดงวันที่ */}
-              {day || ""}
-
-              <div className="flex justify-center items-center w-full h-full mb-4">
-                <div className="flex justify-center items-center flex-col p-2 w-full">
-                  {/* <div>1</div>
-            <div>ITEM</div> */}
+        return (
+          
+            <div className="flex justify-between items-center  p-2 rounded-t-md text-white bg-customSlateBlue">
+                <div className="text-2xl font-bold">{format(currentMonth, dateFormat)}</div>
+                <div className='flex'>
+                    <button
+                        onClick={() => setCurrentMonth(addMonths(currentMonth, -1))}
+                        className="text-white font-bold px-4 py-2 rounded-full transform transition-transform duration-300 hover:scale-105"
+                    >
+                        &lt;
+                    </button>
+                    <button
+                        onClick={() => setCurrentMonth(new Date())}
+                        className="text-white bg-primary-light font-bold px-4 py-2 rounded-full transform transition-transform duration-300 hover:scale-105"
+                    >
+                        Today
+                    </button>
+                    <button
+                        onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
+                        className="text-white  font-bold px-4 py-2 rounded-full transform transition-transform duration-300 hover:scale-105"
+                    >
+                        &gt;
+                    </button>
                 </div>
-              </div>
+
             </div>
-          ))}
+
+        );
+    };
+
+    const renderDays = () => {
+        const days = [];
+        const dateFormat = 'EEE';
+        const startDate = startOfWeek(new Date(), { weekStartsOn: 0 });
+
+        for (let i = 0; i < 7; i++) {
+            days.push(
+                <div className="p-2 text-xs font-bold text-center text-white bg-customDarkSlateBlue border" key={i}>
+                    {format(addDays(startDate, i), dateFormat)}
+                </div>
+            );
+        }
+
+        return <div className="grid grid-cols-7">{days}</div>;
+    };
+
+    const renderCells = () => {
+        const monthStart = startOfMonth(currentMonth);
+        const monthEnd = endOfMonth(monthStart);
+        const startDate = startOfWeek(monthStart, { weekStartsOn: 0 });
+        const endDate = endOfWeek(monthEnd, { weekStartsOn: 0 });
+
+        const rows = [];
+        let days = [];
+        let day = startDate;
+
+        while (day <= endDate) {
+            for (let i = 0; i < 7; i++) {
+                const formattedDate = format(day, 'd');
+
+                const assignmentsForDay = assignments.filter(assignment =>
+                    isSameDay(parseISO(assignment.dueDate), day)
+                );
+
+                const isCurrentMonth = isSameMonth(day, monthStart);
+                const isDayFromCurrentMonth = getDate(day) <= getDate(monthEnd) && getDate(day) >= 1;
+                const todayClass = isToday(day) ? 'text-primary font-bold' : '';
+
+                days.push(
+                  <Link href="/ForgottenLog">
+                    <div
+                    className={`p-2 h-32 text-white border bg-customDarkSlateBlue 
+                      ${!isCurrentMonth ? 'text-gray-400 bg-customSlateBlue' : ''} 
+                      ${assignmentsForDay.length > 0 ? 'bg-red-500' : ''} 
+                      ${todayClass}`}
+                      key={day.toISOString()}
+                    >
+                        <div className="text-start">{isCurrentMonth && isDayFromCurrentMonth ? formattedDate : ''}</div>
+                        <div className="overflow-y-auto h-20 mt-1">
+                            {isCurrentMonth && isDayFromCurrentMonth && assignmentsForDay.map((assignment, idx) => (
+                                <div key={idx} className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
+                                  {assignment.itemCount} ITEM <br />  {assignment.name} 
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                  </Link>
+                );
+
+                day = addDays(day, 1);
+            }
+
+            rows.push(
+                <div className="grid grid-cols-7 text-salate-600" key={day.toISOString()}>
+                    {days}
+                </div>
+            );
+
+            days = [];
+        }
+
+        return <div>{rows}</div>;
+    };
+
+    return (
+        <div className="w-full max-w-7xl mx-auto mt-4">
+            {renderHeader()}
+            {renderDays()}
+            {renderCells()}
+
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default ForgottenCalendar;

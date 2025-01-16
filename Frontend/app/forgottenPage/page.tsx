@@ -8,17 +8,21 @@ import CalendarForgotten from './ForgottenCalender';
 
 
 function page() {
+    const assignments = [
+        { name: 'Macbook', dueDate: '2025-01-18', itemCount: '2'  },
+        { name: 'BookMac', dueDate: '2025-01-19', itemCount: '1' },
+    ];
 
     return (
         <>
             <Navber />
-            <div className='bg-customBlue h-screen '>
+            <div className='bg-customBlue h-screen'>
                 <div className='flex justify-between pt-16 p-4 flex-1 h-full text-white'>
-                    <div className='flex justify-center items-center p-2 w-full h-full text-black'>
-                        <CalendarForgotten />
+                    <div className='flex justify-start items-start pl-8 w-full h-full text-black'>
+                        <CalendarForgotten assignments={assignments} />
                     </div>
-                    <div className='flex justify-between flex-col h-full p-2'>
-                        <div className='h-1/2 pt-4 p-2 border-b'>
+                    <div className='flex justify-between flex-col h-full p-2 pr-8'>
+                        <div className='h-1/2 p-2 border-b'>
                             {/* Search */}
                             <div className="flex px-4 py-2 ml-4 mr-4 rounded-md border-2 bg-customwhite overflow-hidden max-w-md mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px"
