@@ -1,5 +1,6 @@
 import React from 'react';
 import Image, { StaticImageData } from 'next/image';
+import Link from 'next/link';
 
 // ใช้ StaticImageData สำหรับประเภทของ img
 interface CardProp { 
@@ -15,11 +16,14 @@ interface CardProp {
 const CardVideo: React.FC<CardProp> = ({ item }) => {
     return (
         <div className="w-80 h-56 rounded-sm bg-customSlateBlue text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
-            <Image
-                className="h-40 w-80 rounded-t-sm"
-                src={item.img}
-                alt={item.name}
-            />
+            <Link href="/viewViolencePage" className="block">
+                <Image
+                    className="h-40 w-80 rounded-t-sm object-cover"
+                    src={item.img}
+                    alt={item.name}
+                />
+            </Link>
+
             <div className="flex justify-between p-2">
                 <div className="flex flex-col">
                     <div className="text-lg">{item.name}</div>
