@@ -32,7 +32,7 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
         const dateFormat = 'MMMM yyyy';
 
         return (
-          
+
             <div className="flex justify-between items-center  p-2 rounded-t-md text-white bg-customSlateBlue">
                 <div className="text-2xl font-bold">{format(currentMonth, dateFormat)}</div>
                 <div className='flex'>
@@ -100,24 +100,24 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                 const todayClass = isToday(day) ? 'text-primary font-bold' : '';
 
                 days.push(
-                  <Link href="/ForgottenLog">
-                    <div
-                    className={`p-2 h-32 text-white border bg-customDarkSlateBlue 
-                      ${!isCurrentMonth ? 'text-gray-400 bg-customSlateBlue' : ''} 
-                      ${assignmentsForDay.length > 0 ? 'bg-red-500' : ''} 
-                      ${todayClass}`}
-                      key={day.toISOString()}
-                    >
-                        <div className="text-start">{isCurrentMonth && isDayFromCurrentMonth ? formattedDate : ''}</div>
-                        <div className="overflow-y-auto h-20 mt-1">
-                            {isCurrentMonth && isDayFromCurrentMonth && assignmentsForDay.map((assignment, idx) => (
-                                <div key={idx} className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
-                                  {assignment.itemCount} ITEM <br />  {assignment.name} 
-                                </div>
-                            ))}
+                    <Link href="/forgottenLog" key={day.toISOString()}>
+                        <div
+                            className={`p-2 h-32 text-white border bg-customDarkSlateBlue 
+                        ${!isCurrentMonth ? 'text-gray-400 bg-customSlateBlue' : ''} 
+                        ${assignmentsForDay.length > 0 ? 'bg-red-500' : ''} 
+                        ${todayClass}`}
+                            key={day.toISOString()}
+                        >
+                            <div className="text-start">{isCurrentMonth && isDayFromCurrentMonth ? formattedDate : ''}</div>
+                            <div className="overflow-y-auto h-20 mt-1">
+                                {isCurrentMonth && isDayFromCurrentMonth && assignmentsForDay.map((assignment, idx) => (
+                                    <div key={idx} className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
+                                        {assignment.itemCount} ITEM <br />  {assignment.name}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                  </Link>
+                    </Link>
                 );
 
                 day = addDays(day, 1);

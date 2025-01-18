@@ -13,7 +13,7 @@ export default function Navber() {
           <Link href="/viewPage">
             <div className="cursor-pointer">View</div>
           </Link>
-          <Link href="/ViolenceLog">
+          <Link href="/violenceLog">
             <div className="cursor-pointer">Violence</div>
           </Link>
           <Link href="/forgottenPage">
