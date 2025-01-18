@@ -8,7 +8,7 @@ import { Icon } from '@iconify/react';
 import Image from "next/image"
 import unnyFace from "../../public/imges/unnyFace.jpg"
 import { useState } from "react";
-import PopupEditNameViolenceCard from "./PopupEditNameViolenceCard";
+import PopupEditNameViolenceCard from "./popupEditNameViolenceCard";
 import CalendarVideoPage from "../component/calenderVideoPage"
 
 

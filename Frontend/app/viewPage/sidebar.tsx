@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Icon } from "@iconify/react";
-import EditPopup from "./PopupEdit";
-import AddCamera from "./PopupAddCamera";
+import EditPopup from "./popupEdit";
+import AddCamera from "./popupAddCamera";
 
 interface sidebarprop {
   setTypeLayout: (type: string) => void;
