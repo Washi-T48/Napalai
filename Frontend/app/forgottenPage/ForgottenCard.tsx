@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Macbook from '../../public/imges/Macbook.jpg'
 import phone1 from '../../public/imges/phone1.jpg'
 import phone2 from '../../public/imges/phone2.jpg'
-import PopupUndefineItem from './PopupUndefineItem';
+import PopupUndefineItem from './popupUndefineItem';
 
 
 const ForgottenCard: React.FC = () => {
@@ -14,7 +14,8 @@ const ForgottenCard: React.FC = () => {
     };
 
     const items = [
-        {
+        {   
+            id:1,
             image: Macbook,
             title: "Macbook",
             time: "15 minutes ago",
@@ -22,6 +23,7 @@ const ForgottenCard: React.FC = () => {
             Camera: "Camera1"
         },
         {
+            id:2,
             image: phone1,
             title: "Undefine Item ",
             time: "30 minutes ago",
@@ -29,6 +31,7 @@ const ForgottenCard: React.FC = () => {
             Camera: "Camera2"
         },
         {
+            id:3,
             image: phone1,
             title: "Undefine Item ",
             time: "30 minutes ago",
@@ -36,13 +39,7 @@ const ForgottenCard: React.FC = () => {
             Camera: "Camera2"
         },
         {
-            image: phone1,
-            title: "Undefine Item ",
-            time: "30 minutes ago",
-            Zone: "Zone3",
-            Camera: "Camera2"
-        },
-        {
+            id:4,
             image: phone2,
             title: "Undefine Item ",
             time: "45 minutes ago",
@@ -78,7 +75,8 @@ const ForgottenCard: React.FC = () => {
                     </div>
 
                     {activeItemIndex === index && (
-                        <PopupUndefineItem item={item} />
+
+                        <PopupUndefineItem item={item}/>
                     )}
                 </div>
             ))}
