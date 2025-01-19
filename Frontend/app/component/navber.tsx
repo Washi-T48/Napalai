@@ -19,6 +19,7 @@ export default function Navber() {
           <Link href="/forgottenPage">
             <div className="cursor-pointer">Forgotten</div>
           </Link>
+          <Link href="/resetPasswordPage">
           <div className="w-8 h-8">
             <Image
               className="rounded-full object-cover w-full h-full"
@@ -26,6 +27,7 @@ export default function Navber() {
               alt="Profile"
             />
           </div>
+          </Link>
         </div>
       </div>
     </>

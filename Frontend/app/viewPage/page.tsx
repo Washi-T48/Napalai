@@ -6,7 +6,7 @@ import Sidebar from "./sidebar";
 import Videos from "../viewPage/videos";
 import { useState } from "react";
 
-function Page() {
+function page() {
   const [typeLayout, setTypeLayout] = useState("nineLayout");
 
   return (
@@ -26,4 +26,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default page;
