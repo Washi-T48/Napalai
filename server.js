@@ -9,6 +9,10 @@ const authRoutes = require('./routes/AuthRoutes');
 const initializePassport = require('./config/passport-config');
 const cameraRoutes = require('./routes/CameraRoutes'); 
 const forgottenRoutes = require('./routes/ForgottenItemRoute');
+<<<<<<< Updated upstream
+=======
+const violenceRoutes = require('./routes/ViolenceDetectionRoute')
+>>>>>>> Stashed changes
 const zoneRoutes = require('./routes/ZoneRoutes')
 
 const app = express();
@@ -44,7 +48,13 @@ app.use(passport.session());
 app.use('/api', authRoutes);
 app.use('/api', cameraRoutes);
 app.use('/api', forgottenRoutes);
+<<<<<<< Updated upstream
 app.use('/api',zoneRoutes)
+=======
+app.use('/api',violenceRoutes)
+app.use('/api',zoneRoutes)
+
+>>>>>>> Stashed changes
 // Sync database and start server
 sequelize.sync({ force: true }).then(() => {
   // sequelize.sync().then(() => {
