@@ -1,84 +1,114 @@
 import React, { useEffect, useState } from "react";
-import Image, { StaticImageData } from "next/image";
-import Imges1 from "../../public/imges/imges1.jpg";
-import Imges2 from "../../public/imges/imges2.jpeg";
-import Imges3 from "../../public/imges/imges3.jpg";
-import Imges4 from "../../public/imges/imges4.png";
-import Imges5 from "../../public/imges/imges5.jpg";
-import Imges6 from "../../public/imges/imges6.jpg";
-import Imges7 from "../../public/imges/imges7.png";
-import Imges8 from "../../public/imges/imges8.jpg";
-import Imges9 from "../../public/imges/imges9.jpg";
-import CardLiveCamera from "../component/cardLiveCamera"; 
+import CardLiveCamera from "./cardLiveCamera";
+import { StaticImageData } from "next/image";
 
 interface videoProp {
   typeLayout: string;
+  zones: {
+    id: number;
+    name: string;
+    cameras: { cameraName: string; imges: StaticImageData }[];
+  }[];
+  selectedZoneId: number; // รับค่าของ zone ที่เลือก
 }
 
-
-const Videos: React.FC<videoProp> = ({ typeLayout }) => {
-  const allImages: StaticImageData[] = [
-    Imges1,
-    Imges2,
-    Imges3,
-    Imges4,
-    Imges5,
-    Imges6,
-    Imges7,
-    Imges8,
-    Imges9,
-  ];
-
-  const [displayImages, setDisplayImages] = useState<StaticImageData[]>([]);
+const Videos: React.FC<videoProp> = ({ typeLayout, zones, selectedZoneId }) => {
+  const [displayCameras, setDisplayCameras] = useState<
+    { cameraName: string; imges: StaticImageData }[]
+  >([]);
 
   useEffect(() => {
-    let imagesToDisplay: StaticImageData[] = [];
-    if (typeLayout === "nineLayout") {
-      imagesToDisplay = allImages.slice(0, 9);
-    } else if (typeLayout === "sixLayout") {
-      imagesToDisplay = allImages.slice(0, 6);
-    } else if (typeLayout === "fourLayout") {
-      imagesToDisplay = allImages.slice(0, 4);
-    }
+    const selectedZone = zones.find((zone) => zone.id === selectedZoneId); // Using selectZone as the chosen zone
+    if (selectedZone) {
+      let camerasToDisplay: { cameraName: string; imges: StaticImageData }[] = []; // Define type clearly
 
-    setDisplayImages(imagesToDisplay); 
-  }, [typeLayout]);
+      if (typeLayout === "nineLayout") {
+        camerasToDisplay = selectedZone.cameras.slice(0, 9);
+      } else if (typeLayout === "sixLayout") {
+        camerasToDisplay = selectedZone.cameras.slice(0, 6);
+      } else if (typeLayout === "fourLayout") {
+        camerasToDisplay = selectedZone.cameras.slice(0, 4);
+      }
+
+      setDisplayCameras(camerasToDisplay);
+    }
+  }, [typeLayout, selectedZoneId, zones]); // Only depend on the necessary values: typeLayout, selectZone, zones
+
+
+  if (displayCameras.length === 0) {
+    return <div>No cameras available for the selected zone or layout.</div>;
+  }
 
   return (
     <>
       {typeLayout === "nineLayout" && (
         <div className="w-full h-full grid grid-cols-3 grid-rows-3">
-          {displayImages.map((src, index) => (
+          {displayCameras.map((camera, index) => (
             <CardLiveCamera
               key={index}
-              src={src}
-              camName={`Cam${index + 1}`}
+              src={camera.imges ? camera.imges : null} // ใช้ null หากไม่มีข้อมูล
+              camName={camera.cameraName}
             />
           ))}
+
+          {/* เติม card สีดำเมื่อข้อมูลไม่ครบ 9 */}
+          {displayCameras.length < 9 &&
+            Array.from({ length: 9 - displayCameras.length }).map((_, index) => (
+              <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
+                <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
+                  No Signal
+                </div>
+              </div>
+            ))}
         </div>
       )}
 
       {typeLayout === "sixLayout" && (
         <div className="w-full h-full grid grid-cols-3 grid-rows-3">
           <div className="relative w-full h-full col-span-2 row-span-2">
-            <CardLiveCamera src={displayImages[0]} camName="Cam1" />
+            <CardLiveCamera
+              src={displayCameras[0]?.imges}
+              camName={displayCameras[0]?.cameraName}
+            />
           </div>
 
-          {displayImages.slice(1, 6).map((src, index) => (
+          {displayCameras.slice(1, 6).map((camera, index) => (
             <CardLiveCamera
               key={index + 1}
-              src={src}
-              camName={`Cam${index + 2}`}
+              src={camera.imges}
+              camName={camera.cameraName}
             />
           ))}
+          {displayCameras.length < 6 &&
+            Array.from({ length: 6 - displayCameras.length }).map((_, index) => (
+              <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
+                <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
+                  No Signal
+                </div>
+              </div>
+            ))}
+
         </div>
+        
       )}
 
       {typeLayout === "fourLayout" && (
         <div className="w-full h-full grid grid-cols-2 grid-rows-2">
-          {displayImages.slice(0, 4).map((src, index) => (
-            <CardLiveCamera key={index} src={src} camName={`Cam${index + 1}`} />
+          {displayCameras.map((camera, index) => (
+            <CardLiveCamera
+              key={index}
+              src={camera.imges}
+              camName={camera.cameraName}
+            />
           ))}
+          {displayCameras.length < 4 &&
+            Array.from({ length: 4 - displayCameras.length }).map((_, index) => (
+              <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
+                <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
+                  No Signal
+                </div>
+              </div>
+            ))}
         </div>
       )}
     </>

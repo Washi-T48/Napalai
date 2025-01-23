@@ -8,13 +8,14 @@ import imgs1 from '../../public/imges/imges1.jpg';
 import Dropdown from "../component/dropdown";
 import Link from "next/link";
 import { StaticImageData } from "next/image";
+import MyCalendar from "../component/calender";
 
 
 
 function Page() {
-    const [FilterButton , SetFilterButton] = useState(false);
+    const [FilterButton, SetFilterButton] = useState(false);
     const toggleFilterButton = () => SetFilterButton(!FilterButton);
-    
+
 
     type Item = {
         id: any;
@@ -24,7 +25,7 @@ function Page() {
         status: string;
         timeAgo: string;
     };
-    const items : Item[] = [
+    const items: Item[] = [
         {
             id: 1,
             img: imgs1,
@@ -89,34 +90,37 @@ function Page() {
                 </div>
                 <div className="pt-16">
                     <div className="w-full flex justify-end pr-10 p-5">
-                    <button 
-            onClick={toggleFilterButton}
-            className='flex justify-center items-center p-2 w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto'>
-                    Filter
-            </button>
+                        <button
+                            onClick={toggleFilterButton}
+                            className='flex justify-center items-center p-2 w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto'>
+                            Filter
+                        </button>
 
-            {FilterButton && (
-                <div className=' absolute top-72'>
-                    <div className='flex justify-center bg-customwhite w-full h-full rounded-md overflow-hidden'>
-                        <div className="h-64 bg-customwhite">
-                            <Dropdown/>
-                        </div>     
-                    </div>
-                </div>
-            )}
+                        {FilterButton && (
+                            <div className=' absolute top-72'>
+                                <div className='flex justify-center bg-white w-full h-full rounded-md overflow-hidden'>
+                                    <div className=''>
+                                        <MyCalendar/>
+                                    </div>
+                                    <div className=''>
+                                        <Dropdown />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                     </div>
                     <div className="pl-28 pr-28 grid grid-cols-5 grid-rows-2 gap-4">
-                        {items?.length ? (  
-                        showData.map((item) => (
-                            <Link href="/viewViolencePage" key={item.id} >
-                                <div>
-                                    <CardVideo item={item} />
-                                </div>
-                            </Link>
-                        ))
+                        {items?.length ? (
+                            showData.map((item) => (
+                                <Link href="/viewViolencePage" key={item.id} >
+                                    <div>
+                                        <CardVideo item={item} />
+                                    </div>
+                                </Link>
+                            ))
                         ) : (
-                            <div>No items available</div> 
+                            <div>No items available</div>
                         )}
                     </div>
                     <div className="flex justify-end items-center mt-4 px-10">

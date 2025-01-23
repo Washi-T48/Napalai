@@ -14,7 +14,9 @@ function AddCamera() {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="w-[550px] h-auto bg-customBlue p-8 shadow-lg rounded-2xl">
-        <div className="flex justify-end w-full cursor-pointer">
+        <div className="flex justify-between pb-2">
+          <div className="pb-2 text-2xl font-bold">Add ONVIF Camera</div>
+          <div>
           <Icon
             onClick={closeModal}
             icon="icon-park-solid:close-one"
@@ -22,7 +24,9 @@ function AddCamera() {
             height="30"
           />
         </div>
-        <h1 className="pb-2 text-2xl font-bold">Add ONVIF Camera</h1>
+        </div>
+        
+        
         <div className="bg-customwhite w-auto h-32 text-black p-2 rounded-sm">
           Something...
         </div>
