@@ -2,14 +2,10 @@ const express = require('express');
 const AuthController = require('../controllers/AuthController');
 const router = express.Router();
 
-// Register
-router.post('/register', AuthController.register);
 
-// Login
-router.post('/login', AuthController.login);
-
-// Logout
-router.post('/logout', AuthController.logout);
+router.post('/register', AuthController.register);// Register
+router.post('/login', AuthController.login);// Login
+router.post('/logout', AuthController.logout);// Logout
 
 // Protected Route (Dashboard)
 router.get('/dashboard', AuthController.dashboard);

@@ -5,6 +5,6 @@ const returnItem = require('../controllers/ReturnItemController')
 const addForgottenItemEvent = require('../controllers/ReturnItemController')
 
 router.post('/add-forgotten-item', addForgottenItemEvent);
-router.put('/forgotten-item/:id/return', returnItem); 
+router.put('/forgotten-item/:id/return', returnItem); //update ข้อมูล forgotten item
 
 module.exports = router;

@@ -2,7 +2,7 @@ const ForgottenItemEvent = require('../models/ForgottenItemEvent');
 
 const returnItem = async (req, res) => {
   try {
-    const { id } = req.params; // รับ id ของ ForgottenItemEvent จาก URL
+    const { id } = req.params; 
     const { ownerName, timeReturn } = req.body; // รับ ownerName และ timeReturn จาก body
 
     // ตรวจสอบว่า ownerName หรือ timeReturn ถูกส่งมาหรือไม่

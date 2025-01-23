@@ -4,7 +4,6 @@ const addForgottenItemEvent = async (req, res) => {
   try {
     const { itemName, item_description } = req.body;
 
-    // ตรวจสอบว่ามีการส่ง `itemName` มาหรือไม่ (เพราะ `allowNull: false`)
     if (!itemName) {
       return res.status(400).json({ message: 'itemName is required.' });
     }
