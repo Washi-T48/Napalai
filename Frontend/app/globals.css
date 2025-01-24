@@ -1,0 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        font-family: 'Roboto', sans-serif;
+    }
+}
+
+@layer utilities {
+
+    /* ปรับแต่ง scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        /* ความกว้างของ scrollbar */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #354656;
+        /* สีของ thumb */
+        border-radius: 20px;
+        /* ขอบมน */
+        border: 1px solid #e1e1e1;
+        /* ขอบของ thumb */
+    }
+
+    ::-webkit-scrollbar-track {
+        background-color: #F1F2F3;
+        /* สีของพื้นหลัง track */
+        border-radius: 10px;
+        /* ขอบมน */
+    }
+}
