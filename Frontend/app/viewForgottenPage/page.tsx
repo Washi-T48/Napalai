@@ -57,7 +57,7 @@ function page() {
                         </div>
                         <div>
                             <Image
-                                className="rounded-sm object-cover w-full h-auto"
+                                className="rounded-sm object-cover w-full h-40"
                                 src={unnyFace}
                                 alt="LogoWeb"
                             />
