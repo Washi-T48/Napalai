@@ -9,7 +9,7 @@ import CalendarVideoPage from "../component/calenderVideoPage";
 
 function page() {
   return (
-    <div className=" bg-customBlue h-screen ">
+    <div className=" bg-customBlue min-h-screen ">
       <Navber />
       <div>
         <div className="flex justify-between p-10 h-screen w-full pt-16">

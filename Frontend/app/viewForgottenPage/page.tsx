@@ -19,19 +19,20 @@ function page() {
     const toggleEditNameCard = () => SetEditNameCard(!EditNameCard);
 
     return (
-        <div className=" bg-customBlue h-screen ">
-            <Navber />
-            <div >
-                <div className="flex justify-between p-10 h-screen w-full pt-16">
-                    <div className="flex justify-center items-center w-full h-full p-2 rounded-md">
-                        <div className="flex justify-center items-center bg-white w-full h-full rounded-md">
-                            <div className="w-full h-full">
+        <>
+        <Navber />
+        <div className=" bg-customBlue min-h-screen">
+            
+            <div className="flex flex-col pt-16 lg:flex-row justify-between p-10 lg:p-16">
+                    <div className="flex justify-center items-center w-full h-full p-2  rounded-md">
+                        <div className="flex justify-center items-center  bg-white w-full h-full rounded-md">
+                            <div className="w-full h-full ">
                                 <VideoPlayer />
                             </div>
                         </div>
                     </div>
-                    {/* <Calendar/> */}
-                    <div className="flex gap-2 flex-col h-full w-96 p-2">
+                    
+                    <div className="flex gap-2 flex-col h-full w-auto p-2 ">
                         <div className="flex justify-between p-2 bg-customSlateBlue rounded-md text-white ">
                             <div className="flex justify-between">
                                 <div className="px-2">Macbook</div>
@@ -48,19 +49,22 @@ function page() {
                                 <PopupEditNameViolenceCard />
                             )}
                         </div>
-                        <div className="flex justify-center items-center bg-customSlateBlue text-white p-2 h-[320px] w-full rounded-md">
+                        <div>
+                            
+                        </div>
+                        <div className="flex justify-center items-center bg-customSlateBlue text-white p-2 h-auto w-full rounded-md ">
                             <CalendarVideoPage />
                         </div>
                         <div>
                             <Image
-                                className="rounded-sm object-cover w-full h-32"
+                                className="rounded-sm object-cover w-full h-auto"
                                 src={unnyFace}
                                 alt="LogoWeb"
                             />
                         </div>
                         <div className="flex h-36 w-full gap-x-2">
                             <div className="flex-1 bg-customSlateBlue text-white rounded-md p-2">
-                                <div className="flex flex-col h-full w-40">
+                                <div className="flex flex-col h-full w-full">
                                     <div className="flex justify-between items-start p-1 text-tiny">
                                         <div>Zone</div>
                                         <div>
@@ -106,12 +110,10 @@ function page() {
                             <Icon icon="material-symbols:download" width="24" height="24" />
                         </div>
                     </div>
-
                 </div>
-
             </div>
-
-        </div>
+        </>
+        
     );
 };
 

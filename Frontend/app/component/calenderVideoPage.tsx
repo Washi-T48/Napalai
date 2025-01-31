@@ -21,7 +21,7 @@ function CalendarVideoPage() {
 
   return (
     <div className="flex items-center justify-center  ">
-      <div className="p-2">
+      <div className="p-2 w-full">
         <div className=" pt-2 pb-4 border-b border-gray-400 flex items-center justify-between ">
           <span className="focus:outline-none text-base text-white font-bold dark:text-white ">
             {`${monthName} ${year}`}

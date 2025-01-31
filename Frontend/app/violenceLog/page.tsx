@@ -7,7 +7,8 @@ import CardVideo from "../component/cardVideo";
 import imgs1 from '../../public/imges/imges1.jpg';
 import Dropdown from "../component/dropdown";
 import Link from "next/link";
-import { StaticImageData } from "next/image";
+
+
 import MyCalendar from "../component/calender";
 
 
@@ -18,8 +19,8 @@ function Page() {
 
 
     type Item = {
-        id: any;
-        img: StaticImageData;
+        id: number;
+        video: any;
         name: string;
         camera: string;
         status: string;
@@ -28,7 +29,7 @@ function Page() {
     const items: Item[] = [
         {
             id: 1,
-            img: imgs1,
+            video: "/video/test.mp4",
             name: 'Macbook',
             camera: 'z.camera1',
             status: 'Unreturned',
@@ -36,31 +37,94 @@ function Page() {
         },
         {
             id: 2,
-            img: imgs1,
-            name: 'Phone',
-            camera: 'z.camera1',
+            video: "/video/test2.mp4",
+            name: 'iPhone 13',
+            camera: 'z.camera2',
             status: 'Returned',
-            timeAgo: '3 days ago'
+            timeAgo: '5 hours ago'
         },
         {
             id: 3,
-            img: imgs1,
-            name: 'Tablet',
-            camera: 'z.camera2',
-            status: 'Returned',
-            timeAgo: '5 days ago'
+            video: "/video/test.mp4",
+            name: 'iPad Pro',
+            camera: 'z.camera3',
+            status: 'Unreturned',
+            timeAgo: '1 day ago'
         },
         {
             id: 4,
-            img: imgs1,
-            name: 'Laptop',
-            camera: 'z.camera3',
+            video: "/video/test.mp4",
+            name: 'Apple Watch',
+            camera: 'z.camera4',
+            status: 'Unreturned',
+            timeAgo: '2 days ago'
+        },
+        {
+            id: 5,
+            video: "/video/test.mp4",
+            name: 'MacBook Pro',
+            camera: 'z.camera5',
             status: 'Returned',
-            timeAgo: '1 week ago'
+            timeAgo: '6 hours ago'
+        },
+        {
+            id: 6,
+            video: "/video/test.mp4",
+            name: 'AirPods',
+            camera: 'z.camera6',
+            status: 'Unreturned',
+            timeAgo: '7 days ago'
+        },
+        {
+            id: 7,
+            video: "/video/test.mp4",
+            name: 'iPhone 12',
+            camera: 'z.camera7',
+            status: 'Returned',
+            timeAgo: '10 hours ago'
+        },
+        {
+            id: 8,
+            video: "/video/test.mp4",
+            name: 'iPad Air',
+            camera: 'z.camera8',
+            status: 'Unreturned',
+            timeAgo: '4 days ago'
+        },
+        {
+            id: 9,
+            video: "/video/test.mp4",
+            name: 'Apple TV',
+            camera: 'z.camera9',
+            status: 'Unreturned',
+            timeAgo: '2 weeks ago'
+        },
+        {
+            id: 10,
+            video: "/video/test.mp4",
+            name: 'iMac',
+            camera: 'z.camera10',
+            status: 'Returned',
+            timeAgo: '1 hour ago'
+        },
+        {
+            id: 11,
+            video: "/video/test.mp4",
+            name: 'Mac Mini',
+            camera: 'z.camera11',
+            status: 'Unreturned',
+            timeAgo: '5 days ago'
+        },
+        {
+            id: 12,
+            video: "/video/test.mp4",
+            name: 'Beats Headphones',
+            camera: 'z.camera12',
+            status: 'Returned',
+            timeAgo: '30 minutes ago'
         }
-
-
     ];
+    
     const [switchPage, setSwitchPage] = useState(0);
     const [showData, setShowData] = useState<Item[]>([]);
     const itemsPerPage = 10;
@@ -84,12 +148,12 @@ function Page() {
 
         <>
             <Navber />
-            <div className="bg-customBlue h-screen pt-20">
+            <div className="bg-customBlue min-h-screen pt-20">
                 <div className="flex justify-center items-center text-2xl font-bold text-white p-6">
                     Detection Violence
                 </div>
-                <div className="pt-16">
-                    <div className="w-full flex justify-end pr-10 p-5">
+                <div className="pt-5">
+                    <div className=" relative w-full flex justify-end pr-10 p-5">
                         <button
                             onClick={toggleFilterButton}
                             className='flex justify-center items-center p-2 w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto'>
@@ -97,7 +161,7 @@ function Page() {
                         </button>
 
                         {FilterButton && (
-                            <div className=' absolute top-72'>
+                            <div className="absolute top-16 z-10">
                                 <div className='flex justify-center bg-white w-full h-full rounded-md overflow-hidden'>
                                     <div className=''>
                                         <MyCalendar/>
@@ -110,7 +174,7 @@ function Page() {
                         )}
 
                     </div>
-                    <div className="pl-28 pr-28 grid grid-cols-5 grid-rows-2 gap-4">
+                    <div className=" grid-rows-2 px-10 base:px-12 grid grid-cols-1  md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                         {items?.length ? (
                             showData.map((item) => (
                                 <Link href="/viewViolencePage" key={item.id} >
@@ -165,3 +229,4 @@ function Page() {
 }
 
 export default Page;
+
