@@ -26,18 +26,17 @@ const CardVideo: React.FC<CardProp> = ({ item }) => {
     const handleMouseLeave = () => {
         if (videoRef.current) {
             videoRef.current.pause();
-            videoRef.current.currentTime = 0; 
+            videoRef.current.currentTime = 0;
         }
     };
     return (
-        <div className="max-w-full h-auto rounded-sm bg-customSlateBlue text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+        <div className="max-w-full h-auto rounded-md bg-customSlateBlue text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
 
             <video
-                // poster={item.thumbnail} 
                 ref={videoRef}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                className=" max-h-56 min-h-56 w-full rounded-t-sm object-cover"
+                className="bg-black w-full aspect-video rounded-t-md object-cover"
                 src={item.video}
                 title={item.name}
                 muted
