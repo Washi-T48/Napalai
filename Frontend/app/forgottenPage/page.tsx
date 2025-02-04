@@ -32,9 +32,9 @@ function Page() {
                         <ForgottenCalendar assignments={assignments} />
                     </div>
                     <div className='flex justify-between flex-col h-full w-full lg:max-w-md pt-2 '>
-                        <div className='flex justify-center flex-col pt-2 border-b'>
+                        <div className='flex justify-center flex-col pt-2 p-2 border-b'>
                             {/* Search */}
-                            <div className="flex px-4 py-2 ml-2 rounded-md border-2 bg-customwhite overflow-hidden w-full">
+                            <div className="flex px-4 py-2 rounded-md border-2 bg-customwhite overflow-hidden w-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px"
                                     className="fill-black-600 mr-3 rotate-90">
                                     <path
@@ -43,7 +43,7 @@ function Page() {
                                 </svg>
                                 <input type="email" placeholder="Search..." className="w-full outline-none bg-transparent text-gray-600 text-sm" />
                             </div>
-                            <div className='pt-2 h-80 overflow-auto'>
+                            <div className='pt-4 mt-3 h-80 overflow-auto'>
                                 <ForgottenCard/>
                             </div>
                         </div>
