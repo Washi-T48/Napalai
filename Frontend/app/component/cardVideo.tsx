@@ -10,7 +10,7 @@ interface CardProp {
         name: string;
         camera: string;
         status: string;
-        timeAgo: string;
+        dueDate: string;
     };
 }
 
@@ -52,7 +52,7 @@ const CardVideo: React.FC<CardProp> = ({ item }) => {
                     <div className={`text-tiny px-2 py-1 rounded-sm shadow-[inset_-12px_-8px_40px_#46464620] ${item.status === 'Unreturned' ? 'bg-red-500' : 'bg-green-500'} text-white`}>
                         {item.status}
                     </div>
-                    <div className="text-tiny pt-2 text-gray-400">{item.timeAgo}</div>
+                    <div className="text-tiny pt-2 text-gray-400">{item.dueDate}</div>
                 </div>
             </div>
         </div>

@@ -21,31 +21,44 @@ const ForgottenCard: React.FC = () => {
             time: "15 minutes ago",
             Zone: "Zone4",
             Camera: "Camera1"
+            
         },
-        {
+        {   
             id:2,
-            image: phone1,
-            title: "Undefine Item ",
-            time: "30 minutes ago",
-            Zone: "Zone3",
-            Camera: "Camera2"
+            image: Macbook,
+            title: "Macbook",
+            time: "15 minutes ago",
+            Zone: "Zone4",
+            Camera: "Camera1"
+            
         },
-        {
+        {   
             id:3,
-            image: phone1,
-            title: "Undefine Item ",
-            time: "30 minutes ago",
-            Zone: "Zone3",
-            Camera: "Camera2"
+            image: Macbook,
+            title: "Macbook",
+            time: "15 minutes ago",
+            Zone: "Zone4",
+            Camera: "Camera1"
+            
         },
-        {
-            id:4,
-            image: phone2,
-            title: "Undefine Item ",
-            time: "45 minutes ago",
-            Zone: "Zone5",
-            Camera: "Camera2"
-        }
+        {   
+            id:3,
+            image: Macbook,
+            title: "Macbook",
+            time: "15 minutes ago",
+            Zone: "Zone4",
+            Camera: "Camera1"
+            
+        },
+        {   
+            id:3,
+            image: Macbook,
+            title: "Macbook",
+            time: "15 minutes ago",
+            Zone: "Zone4",
+            Camera: "Camera1"
+            
+        },
     ];
 
     return (
@@ -53,7 +66,7 @@ const ForgottenCard: React.FC = () => {
             {items.map((item, index) => (
                 <div key={index}>
                     <div
-                        className='flex justify-between items-center p-1 m-2 w-96 h-18 bg-customBlue shadow-[21px_15px_94px_-2px_rgba(0,_0,_0,_0.1)] rounded-md hover:bg-customSlateBlue cursor-pointer'
+                        className='flex justify-between items-center p-1  h-18 w-full bg-customBlue shadow-[21px_15px_94px_-2px_rgba(0,_0,_0,_0.1)] rounded-md hover:bg-customSlateBlue cursor-pointer'
                         onClick={() => togglePopopUndefine(index)}
                     >
                         <div className='flex flex-row w-full'>
@@ -73,9 +86,7 @@ const ForgottenCard: React.FC = () => {
                             </div>
                         </div>
                     </div>
-
                     {activeItemIndex === index && (
-
                         <PopupUndefineItem item={item}/>
                     )}
                 </div>

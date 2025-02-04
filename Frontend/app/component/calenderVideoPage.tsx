@@ -20,7 +20,7 @@ function CalendarVideoPage() {
   const fullMonthDays = [...daysBefore, ...daysInMonth];
 
   return (
-    <div className="flex items-center justify-center  ">
+    <div className="flex items-center justify-center bg-customSlateBlue p-2 rounded-md text-white ">
       <div className="p-2 w-full">
         <div className=" pt-2 pb-4 border-b border-gray-400 flex items-center justify-between ">
           <span className="focus:outline-none text-base text-white font-bold dark:text-white ">

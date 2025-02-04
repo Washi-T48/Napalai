@@ -10,10 +10,13 @@ interface DropdownProps {
 
 const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses }) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-
+  const [selectedZone, setSelectedZone] = useState<string | null>(null);
+  const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const toggleDropdown = (dropdown: string) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
+
 
   return (
     <div className="flex flex-col ">
@@ -23,7 +26,7 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses 
           onClick={() => toggleDropdown("zone")}
           className="flex justify-between w-56 text-black bg-white shadow rounded-lg hover:bg-gray-100 px-8 py-3 items-center"
         >
-          Select Zone
+          {selectedZone || "Select Zone"}
           <Icon icon={openDropdown === "zone" ? "mingcute:up-fill" : "mingcute:down-fill"} width="24" height="24" />
         </button>
 
@@ -33,6 +36,7 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses 
               <div
                 key={zone}
                 onClick={() => {
+                  setSelectedZone(zone); // อัปเดตค่าโซนที่เลือก
                   onSelect("zone", zone);
                   setOpenDropdown(null);
                 }}
@@ -51,7 +55,7 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses 
           onClick={() => toggleDropdown("camera")}
           className="flex justify-between w-56 text-black bg-white shadow rounded-lg hover:bg-gray-100 px-8 py-3 items-center"
         >
-          Select Camera
+          {selectedCamera || "Select Camera"}
           <Icon icon={openDropdown === "camera" ? "mingcute:up-fill" : "mingcute:down-fill"} width="24" height="24" />
         </button>
 
@@ -61,6 +65,7 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses 
               <div
                 key={camera}
                 onClick={() => {
+                  setSelectedCamera(camera);
                   onSelect("camera", camera);
                   setOpenDropdown(null);
                 }}
@@ -79,7 +84,7 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses 
           onClick={() => toggleDropdown("status")}
           className="flex justify-between w-56 text-black bg-white shadow rounded-lg hover:bg-gray-100 px-8 py-3 items-center"
         >
-          Select Status
+          {selectedStatus || "Select Status"}
           <Icon icon={openDropdown === "status" ? "mingcute:up-fill" : "mingcute:down-fill"} width="24" height="24" />
         </button>
 
@@ -89,6 +94,7 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses 
               <div
                 key={status}
                 onClick={() => {
+                  setSelectedStatus(status);
                   onSelect("status", status);
                   setOpenDropdown(null);
                 }}
