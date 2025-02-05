@@ -17,8 +17,9 @@ interface Zone {
 }
 
 interface Camera {
+  id: number;
   cameraName: string;
-  imges: StaticImageData;
+  video: any;
 }
 
 const Sidebar: React.FC<SidebarProp> = ({
@@ -41,7 +42,6 @@ const Sidebar: React.FC<SidebarProp> = ({
       [dropdownType]: prevState[dropdownType] === cameraId ? null : cameraId,
     }));
   };
-
   const showPopup = (popupType: "reName" | "deLete", cameraId: number) => {
     setOpenPopupId((prevState) => ({
       ...prevState,
@@ -63,6 +63,10 @@ const Sidebar: React.FC<SidebarProp> = ({
 
   const changeZone = (zoneId: number) => {
     setSelectZone(zoneId);
+    
+    // รีเซ็ตค่า dropdown และ popup เมื่อเปลี่ยนโซน
+    setOpenDropdownId({ dropdownA: null });
+    setOpenPopupId({ reName: null, deLete: null });
   };
 
   const toggleLayout = () => setLayoutActive(!layoutActive);
@@ -73,9 +77,10 @@ const Sidebar: React.FC<SidebarProp> = ({
     setShowCameraZone((prevZone) => (prevZone === zoneId ? null : zoneId));
   };
 
+
   return (
     <div className="flex h-screen bg-gray-900">
-      <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16">
+      <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16 overflow-auto ">
         {/* List of Zones */}
         <div className="flex-1">
           {zones.map((zone) => (
@@ -96,13 +101,12 @@ const Sidebar: React.FC<SidebarProp> = ({
                 {zone.name}
               </div>
               <div
-                className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                  showCameraZone === zone.id ? "max-h-screen" : "max-h-0"
-                }`}
+                className={`transition-all duration-100 ease-in-out overflow-hidden ${showCameraZone === zone.id ? "max-h-screen" : "max-h-0"
+                  }`}
               >
-                {zone.cameras.map((camera, index) => (
+                {zone.cameras.map((camera) => (
                   <div
-                    key={index}
+                    key={camera.id}
                     className="hover:bg-customSlateBlue px-8 h-16 flex justify-center items-center cursor-pointer"
                   >
                     <div className="flex text-sm w-full border-customSlateBlue">
@@ -111,10 +115,9 @@ const Sidebar: React.FC<SidebarProp> = ({
                           {camera.cameraName}
                         </div>
                         <div className="relative">
-                          
                           <div
                             className="flex justify-center items-center cursor-pointer"
-                            onClick={() => toggleDropdown("dropdownA", index)}
+                            onClick={() => toggleDropdown("dropdownA", camera.id)}
                           >
                             <Icon
                               icon="flowbite:dots-horizontal-outline"
@@ -122,67 +125,73 @@ const Sidebar: React.FC<SidebarProp> = ({
                               height="24"
                             />
                           </div>
-                          {openDropdownId.dropdownA === index && (
-                            <div className="absolute right-0 w-36 bg-white text-black rounded-md border-gray-300 shadow-lg z-10">
+                          {openDropdownId.dropdownA === camera.id && openDropdownId.dropdownA !== null && (
+                            <div className="fixed left-56 w-36 bg-white text-black rounded-md border-gray-300 shadow-lg z-10 transition-all transform duration-300 ease-in-out ">
                               <div
                                 className="flex justify-center items-center px-4 py-2 hover:bg-gray-100 rounded-t-md w-full cursor-pointer"
-                                onClick={() => showPopup("reName", index)}
+                                onClick={() => showPopup("reName", camera.id)}
                               >
                                 Rename
                               </div>
                               <div
                                 className="flex justify-center items-center px-4 py-2 hover:bg-gray-100 rounded-b-md w-full cursor-pointer"
-                                onClick={() => showPopup("deLete", index)}
+                                onClick={() => showPopup("deLete", camera.id)}
                               >
                                 Delete
                               </div>
                             </div>
                           )}
+
                         </div>
                       </div>
                     </div>
 
-                    {/* Popup A */}
-                    {openPopupId.reName === index && (
+                    {openPopupId.reName === camera.id && (
                       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-customBlue p-6 rounded shadow-lg">
-                          <h3 className="text-lg w-48 text-white font-bold">
-                            Rename
-                          </h3>
-                          <input className="mt-2 text-black p-1"></input>
-                          <div className="flex gap-2">
-                          <button
-                            onClick={() => closePopup("reName")}
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                          >
-                            Close
-                          </button>
-                          <button className="mt-4 px-4 py-2 bg-green-700 text-white ">
-                            Submit
-                          </button>
+                        <div className="bg-customBlue w-80 p-10 rounded-xl shadow-lg">
+                          <div className="flex justify-between">
+                            <div className="text-2xl w-48 text-white pb-4">
+                              Rename
+                            </div>
+
+                          </div>
+
+                          <input
+                            placeholder="Enter new camera name"
+                            className="w-full mt-2 text-black p-2 text-xs focus:outline-none focus:ring-2 focus:ring-gray-500"
+                          />
+                          <div className="flex justify-end gap-2">
+                            <div
+                              onClick={() => closePopup("reName")}
+                              className="mt-4 px-4 py-2 bg-gray-400 text-white rounded-sm"
+                            >
+                              close
+                            </div>
+                            <button className="mt-4 px-4 py-2 bg-customฺButton text-white rounded-sm hover:bg-customฺButtomHover">
+                              Confirm
+                            </button>
                           </div>
                         </div>
                       </div>
                     )}
 
-                    {/* Popup B */}
-                    {openPopupId.deLete === index && (
+                    {openPopupId.deLete === camera.id && (
                       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-customBlue p-6 rounded shadow-lg">
-                          <h3 className="text-lg w-48 text-white font-bold">
-                            Delete?
+                        <div className="bg-customBlue p-10 rounded-2xl shadow-lg">
+                          <h3 className="text-lg text-white ">
+                            Are you sure you want to delete this item?
                           </h3>
-                          
-                          <div className="flex gap-2">
-                          <button
-                            onClick={() => closePopup("deLete")}
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                          >
-                            No
-                          </button>
-                          <button className="mt-4 px-4 py-2 bg-green-700 text-white ">
-                            Yes
-                          </button>
+
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => closePopup("deLete")}
+                              className="mt-4 px-4 py-2 bg-gray-400 text-white rounded-sm"
+                            >
+                              No
+                            </button>
+                            <button className="mt-4 px-4 py-2 bg-customฺButton text-white rounded-sm">
+                              Yes
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -205,11 +214,7 @@ const Sidebar: React.FC<SidebarProp> = ({
                     onClick={() => setTypeLayout("nineLayout")}
                     className="flex justify-center items-center p-2 hover:bg-customSlateBlue hover:rounded-md"
                   >
-                    <Icon
-                      icon="material-symbols-light:grid-on"
-                      width="24"
-                      height="24"
-                    />
+                    <Icon icon="material-symbols-light:grid-on" width="24" height="24" />
                   </div>
                   <div
                     onClick={() => setTypeLayout("sixLayout")}
@@ -255,7 +260,7 @@ const Sidebar: React.FC<SidebarProp> = ({
                 <Icon icon="cuida:edit-outline" width="24" height="24" />
               </button>
 
-              {editCamera && <EditPopup/>}
+              {editCamera && <EditPopup />}
             </div>
           </div>
         </div>

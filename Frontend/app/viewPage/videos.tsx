@@ -7,20 +7,20 @@ interface videoProp {
   zones: {
     id: number;
     name: string;
-    cameras: { cameraName: string; imges: StaticImageData }[];
+    cameras: { cameraName: string; video: any }[];
   }[];
   selectedZoneId: number; // รับค่าของ zone ที่เลือก
 }
 
 const Videos: React.FC<videoProp> = ({ typeLayout, zones, selectedZoneId }) => {
   const [displayCameras, setDisplayCameras] = useState<
-    { cameraName: string; imges: StaticImageData }[]
+    { cameraName: string; video: any }[]
   >([]);
 
   useEffect(() => {
     const selectedZone = zones.find((zone) => zone.id === selectedZoneId); // Using selectZone as the chosen zone
     if (selectedZone) {
-      let camerasToDisplay: { cameraName: string; imges: StaticImageData }[] = []; // Define type clearly
+      let camerasToDisplay: { cameraName: string; video: any }[] = []; // Define type clearly
 
       if (typeLayout === "nineLayout") {
         camerasToDisplay = selectedZone.cameras.slice(0, 9);
@@ -46,7 +46,7 @@ const Videos: React.FC<videoProp> = ({ typeLayout, zones, selectedZoneId }) => {
           {displayCameras.map((camera, index) => (
             <CardLiveCamera
               key={index}
-              src={camera.imges ? camera.imges : null} // ใช้ null หากไม่มีข้อมูล
+              src={camera.video ? camera.video : null} // ใช้ null หากไม่มีข้อมูล
               camName={camera.cameraName}
             />
           ))}
@@ -67,7 +67,7 @@ const Videos: React.FC<videoProp> = ({ typeLayout, zones, selectedZoneId }) => {
         <div className="w-full h-full grid grid-cols-3 grid-rows-3">
           <div className="relative w-full h-full col-span-2 row-span-2">
             <CardLiveCamera
-              src={displayCameras[0]?.imges}
+              src={displayCameras[0]?.video}
               camName={displayCameras[0]?.cameraName}
             />
           </div>
@@ -75,7 +75,7 @@ const Videos: React.FC<videoProp> = ({ typeLayout, zones, selectedZoneId }) => {
           {displayCameras.slice(1, 6).map((camera, index) => (
             <CardLiveCamera
               key={index + 1}
-              src={camera.imges}
+              src={camera.video}
               camName={camera.cameraName}
             />
           ))}
@@ -97,7 +97,7 @@ const Videos: React.FC<videoProp> = ({ typeLayout, zones, selectedZoneId }) => {
           {displayCameras.map((camera, index) => (
             <CardLiveCamera
               key={index}
-              src={camera.imges}
+              src={camera.video}
               camName={camera.cameraName}
             />
           ))}
