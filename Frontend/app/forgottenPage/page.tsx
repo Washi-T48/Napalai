@@ -6,25 +6,35 @@ import Navber from '../component/navber';
 import ForgottenCalendar from './forgottenCalender';
 
 
-
 function Page() {
+    
     const assignments = [
-        { name: 'Macbook', dueDate: '2025-01-18', itemCount: '2'  },
-        { name: 'BookMac', dueDate: '2025-01-19', itemCount: '1' },
+        {
+            id: 1,
+            video: "/video/test.mp4",
+            name: 'Macbook',
+            camera: 'camera1',
+            status: 'Unreturned',
+            timeAgo: '3 days ago',
+            dueDate: '2025-02-18',
+            zone: 'Zone1',
+            itemCount: '1'
+        }
     ];
 
     return (
         <>
             <Navber />
-            <div className='bg-customBlue h-screen'>
-                <div className='flex justify-between pt-16 p-4 flex-1 h-full text-white'>
-                    <div className='flex justify-start items-start pl-8 w-full h-full text-black'>
+            <div className='bg-customBlue min-h-screen'>
+                <div className='flex justify-center items-center flex-col pt-16 h-full text-white lg:flex-row'>
+                    <div className='flex justify-center items-start flex-col p-4 gap-4 flex-1 w-full h-full text-white lg:flex-row lg:gap-10'>
+                    <div className='w-full lg:max-w-7xl h-full text-black'>
                         <ForgottenCalendar assignments={assignments} />
                     </div>
-                    <div className='flex justify-between flex-col h-full p-2 pr-8'>
-                        <div className='h-1/2 p-2 border-b'>
+                    <div className='flex justify-between flex-col h-full w-full lg:max-w-md pt-2 '>
+                        <div className='flex justify-center flex-col pt-2 p-2 border-b'>
                             {/* Search */}
-                            <div className="flex px-4 py-2 ml-4 mr-4 rounded-md border-2 bg-customwhite overflow-hidden max-w-md mx-auto">
+                            <div className="flex px-4 py-2 rounded-md border-2 bg-customwhite overflow-hidden w-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px"
                                     className="fill-black-600 mr-3 rotate-90">
                                     <path
@@ -33,18 +43,20 @@ function Page() {
                                 </svg>
                                 <input type="email" placeholder="Search..." className="w-full outline-none bg-transparent text-gray-600 text-sm" />
                             </div>
-                            <div className='pt-2'>
-                                {/* <ForgottenCard/> */}
-                            </div>
-                        </div>
-                        <div className='flex justify-start flex-col pt-4 p-2 h-1/2'>
-                            <div className='p-2 '>Today ITEM</div>
-                            <div className='overflow-auto overflow-x-hidden'>
+                            <div className='pt-4 mt-3 h-80 overflow-auto'>
                                 <ForgottenCard/>
                             </div>
-                                
+                        </div>
+                        <div className='flex justify-start flex-col pt-4 p-2'>
+                            <div className='p-2'>Today ITEM</div>
+                                <div className='h-80 overflow-auto'>
+                                    <ForgottenCard/>
+                                </div>
                             </div>
                     </div>
+
+                    </div>
+                    
                 </div>
             </div>
         </>

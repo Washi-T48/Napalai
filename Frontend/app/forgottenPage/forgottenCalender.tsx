@@ -17,8 +17,8 @@ import {
 
 interface Assignment {
     name: string;
-    dueDate: string; // format: 'yyyy-MM-dd'
-    itemCount: string; // format: 'HH:mm'
+    dueDate: string; 
+    itemCount: string; 
 }
 
 interface CalendarProps {
@@ -32,8 +32,7 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
         const dateFormat = 'MMMM yyyy';
 
         return (
-
-            <div className="flex justify-between items-center  p-2 rounded-t-md text-white bg-customSlateBlue">
+            <div className="flex justify-between items-center p-2 rounded-t-md text-white bg-customSlateBlue">
                 <div className="text-2xl font-bold">{format(currentMonth, dateFormat)}</div>
                 <div className='flex'>
                     <button
@@ -50,14 +49,12 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                     </button>
                     <button
                         onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-                        className="text-white  font-bold px-4 py-2 rounded-full transform transition-transform duration-300 hover:scale-105"
+                        className="text-white font-bold px-4 py-2 rounded-full transform transition-transform duration-300 hover:scale-105"
                     >
                         &gt;
                     </button>
                 </div>
-
             </div>
-
         );
     };
 
@@ -89,7 +86,8 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
 
         while (day <= endDate) {
             for (let i = 0; i < 7; i++) {
-                const formattedDate = format(day, 'd');
+                const formattedDate = format(day, 'yyyy-MM-dd');
+                const displayDate = format(day, 'd');
 
                 const assignmentsForDay = assignments.filter(assignment =>
                     isSameDay(parseISO(assignment.dueDate), day)
@@ -100,25 +98,25 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                 const todayClass = isToday(day) ? 'text-primary font-bold' : '';
 
                 days.push(
-                    <Link href="/forgottenLog" key={day.toISOString()}>
+                    <Link href={`/forgottenLog/${formattedDate}`} key={day.toISOString()}>
                         <div
                             className={`p-2 h-32 text-white border bg-customDarkSlateBlue 
-                        ${!isCurrentMonth ? 'text-gray-400 bg-customSlateBlue' : ''} 
-                        ${assignmentsForDay.length > 0 ? 'bg-red-500' : ''} 
-                        ${todayClass}`}
-                            key={day.toISOString()}
+                                ${!isCurrentMonth ? 'text-gray-400 bg-customSlateBlue' : ''} 
+                                ${assignmentsForDay.length > 0 ? 'bg-red-500' : ''} 
+                                ${todayClass}`}
                         >
-                            <div className="text-start">{isCurrentMonth && isDayFromCurrentMonth ? formattedDate : ''}</div>
+                            <div className="text-start">{isCurrentMonth && isDayFromCurrentMonth ? displayDate : ''}</div>
                             <div className="overflow-y-auto h-20 mt-1">
                                 {isCurrentMonth && isDayFromCurrentMonth && assignmentsForDay.map((assignment, idx) => (
                                     <div key={idx} className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
-                                        {assignment.itemCount} ITEM <br />  {assignment.name}
+                                        {assignment.itemCount} ITEM <br /> {assignment.name}
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </Link>
                 );
+                
 
                 day = addDays(day, 1);
             }
@@ -140,7 +138,6 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
             {renderHeader()}
             {renderDays()}
             {renderCells()}
-
         </div>
     );
 };

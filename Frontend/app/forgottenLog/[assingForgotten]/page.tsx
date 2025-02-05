@@ -2,13 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import Navber from "../component/navber";
-import CardVideo from "../component/cardVideo";
-import MyCalendar from "../component/calender";
-import Dropdown from "../component/dropdown";
+import Navber from "../../component/navber";
+import CardVideo from "../../component/cardVideo";
+import Dropdown from "../../component/dropdown";
 import Link from "next/link";
+import { useParams } from 'next/navigation'
 
 function Page() {
+    const params = useParams<{ assingForgotten : string }>()
+    console.log(params.assingForgotten)
+
     const [FilterButton, SetFilterButton] = useState(false);
     const toggleFilterButton = () => SetFilterButton(!FilterButton);
 
@@ -22,7 +25,7 @@ function Page() {
         name: string;
         camera: string;
         status: string;
-        timeAgo: string;
+        dueDate: string;
         zone: string;
     };
     const items: Item[] = [
@@ -32,67 +35,14 @@ function Page() {
             name: 'Macbook',
             camera: 'camera1',
             status: 'Unreturned',
-            timeAgo: '3 days ago',
+            dueDate: '2025-01-18',
             zone: 'Zone1',
-        },
-        {
-            id: 2,
-            video: "/video/test2.mp4",
-            name: 'iPhone 13',
-            camera: 'camera2',
-            status: 'Returned',
-            timeAgo: '5 hours ago',
-            zone: 'Zone1',
-        },
-        {
-            id: 3,
-            video: "/video/test.mp4",
-            name: 'iPad Pro',
-            camera: 'camera3',
-            status: 'Unreturned',
-            timeAgo: '1 day ago',
-            zone: 'Zone2',
-        },
-        {
-            id: 4,
-            video: "/video/test.mp4",
-            name: 'Apple Watch',
-            camera: 'camera4',
-            status: 'Unreturned',
-            timeAgo: '2 days ago',
-            zone: 'Zone3',
-        },
-        {
-            id: 5,
-            video: "/video/test.mp4",
-            name: 'MacBook Pro',
-            camera: 'camera5',
-            status: 'Returned',
-            timeAgo: '6 hours ago',
-            zone: 'Zone9',
-        },
-        {
-            id: 6,
-            video: "/video/test3.mp4",
-            name: 'Samsung Galaxy',
-            camera: 'camera6',
-            status: 'Returned',
-            timeAgo: '1 hour ago',
-            zone: 'Zone3',
-        },
-        {
-            id: 7,
-            video: "/video/test.mp4",
-            name: 'Surface Pro',
-            camera: 'camera7',
-            status: 'Unreturned',
-            timeAgo: '4 hours ago',
-            zone: 'Zone4',
-        },
+        }
     ];
 
     const [switchPage, setSwitchPage] = useState(0);
     const [showData, setShowData] = useState<Item[]>([]);
+
     const itemsPerPage = 10;
     const totalPages: number = Math.ceil(items.length / 10);
     useEffect(() => {
@@ -105,7 +55,6 @@ function Page() {
         setShowData(dataToShow);
     }, [switchPage]);
 
-    // กรองข้อมูลตามการเลือกใน Dropdown
     const filteredData = items.filter((item) => {
         return (
             (!selectedZone || item.zone === selectedZone) &&
@@ -137,10 +86,8 @@ function Page() {
 
                         {FilterButton && (
                             <div className="absolute top-16 z-10">
-                                <div className="flex justify-center bg-customwhite w-full h-full rounded-md overflow-hidden">
-                                    <div className="">
-                                        <MyCalendar />
-                                    </div>
+                                <div className="flex justify-center bg-customwhite w-full h-80 rounded-md overflow-hidden">
+                                    
                                     <div className="">
                                         <Dropdown
                                             onSelect={(type, value) => {
@@ -160,9 +107,9 @@ function Page() {
 
                     <div className="grid-rows-2 px-10 base:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                         {filteredData.length > 0 ? (
-                            filteredData.map((item) => (
-                                <Link href="/viewViolencePage" key={item.id}>
-                                    <CardVideo item={item} />
+                            filteredData.map((dueDate) => (
+                                <Link href="/viewForgottenPage" key={dueDate.id}>
+                                    <CardVideo item={dueDate} />
                                 </Link>
                             ))
                         ) : (
