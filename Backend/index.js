@@ -8,6 +8,10 @@ testConnection();
 
 import cameraRouter from './routes/camera.routes.js';
 import zoneRouter from './routes/zone.routes.js';
+import eventRouter from './routes/event.routes.js';
+import forgottenRouter from './routes/forgotten.routes.js';
+import violenceRouter from './routes/violence.routes.js';
+
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -18,7 +22,7 @@ app.use(bodyparser.json());
 app.use(cors());
 
 app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
+    console.log(`${req.method} ${req.socket.remoteAddress} ${req.url}`);
     next();
 });
 
@@ -28,6 +32,9 @@ app.all('/', (req, res) => {
 
 app.use('/cameras', cameraRouter);
 app.use('/zones', zoneRouter);
+app.use('/events', eventRouter);
+app.use('/forgotten', forgottenRouter);
+app.use('/violence', violenceRouter);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

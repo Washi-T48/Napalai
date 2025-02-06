@@ -10,7 +10,6 @@ import {
 
 const cameraRouter = express.Router();
 
-
 cameraRouter.get('/', async (req, res) => {
     try {
         const cameras = await getAllCameras();
