@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { Icon } from "@iconify/react";
 import EditPopup from "./popupEdit";
 import AddCamera from "./popupAddCamera";
 import { StaticImageData } from "next/image";
 
+
+interface Zone {
+  id: string;
+  created: string;
+  name: string;
+  location: string;
+};
+
 interface SidebarProp {
   setTypeLayout: (type: string) => void;
   setSelectZone: (zoneId: number) => void;
-  zones: Zone[];
-}
-
-interface Zone {
-  id: number;
-  name: string;
-  cameras: Camera[];
 }
 
 interface Camera {
@@ -22,9 +23,17 @@ interface Camera {
   video: any;
 }
 
+interface CameraType {
+  id: string;
+  name: string;
+  location: string;
+  zone_id: string;
+  created: string;
+}
+
+
 const Sidebar: React.FC<SidebarProp> = ({
   setTypeLayout,
-  zones,
   setSelectZone,
 }) => {
   const [openDropdownId, setOpenDropdownId] = useState<{
@@ -72,18 +81,76 @@ const Sidebar: React.FC<SidebarProp> = ({
   const toggleLayout = () => setLayoutActive(!layoutActive);
   const toggleAddPopup = () => setAddPopupActive(!addPopupActive);
   const toggleEditCamera = () => setEditCamera(!editCamera);
-
+  const [groupedCameras, setGroupedCameras] = useState<CameraType[]>([]);
+  const [groupedZone , setGroupedZone ] = useState<Zone[]>([]);
+  const groupedData = groupedCameras.reduce((acc: { [key: string]: typeof groupedCameras }, item) => {
+    if (!acc[item.zone_id]) acc[item.zone_id] = [];
+    acc[item.zone_id].push(item);
+    return acc;
+  }, {});
+  
   const toggleCameraZone = (zoneId: number) => {
     setShowCameraZone((prevZone) => (prevZone === zoneId ? null : zoneId));
   };
-
+  useEffect(() => {
+    const getCamera = async () => {
+      try {
+        const response = await fetch('http://sardines.thddns.net:7270/cameras', {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+          }
+        })
+        const responseZone = await fetch('http://sardines.thddns.net:7270/zones', {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+          }
+        })
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Network response was not ok");
+        }
+        if (!responseZone.ok) {
+          const errorData = await responseZone.json();
+          throw new Error(errorData.message || "Network response was not ok");
+        }
+        const data = await response.json();
+        const dataZone = await responseZone.json();
+        setGroupedCameras(data);
+        setGroupedZone(dataZone)
+        console.log(data)
+      } catch (error) {
+      }
+    }
+    getCamera()
+  }, []);
+  
+  const getZoneName = (zoneId:string) => {
+    console.log(zoneId)
+    const zoneInfo = groupedZone.find((zone) => zone.id === zoneId);
+    return zoneInfo ? zoneInfo.name : "Unknown Zone";
+  };
 
   return (
     <div className="flex h-screen bg-gray-900">
       <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16 overflow-auto ">
         {/* List of Zones */}
         <div className="flex-1">
-          {zones.map((zone) => (
+        <div>
+      <h2>Camera List</h2>
+      {Object.entries(groupedData).map(([zoneId, cameras]) => (
+        <div key={zoneId}>
+        <div>{getZoneName(zoneId)}</div>
+          <ul>
+            {cameras.map((camera) => (
+              <li key={camera.id}>{camera.name} - {camera.location}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+          {/* {zones.map((zone) => (
             <div key={zone.id}>
               <div
                 onClick={() => {
@@ -141,7 +208,6 @@ const Sidebar: React.FC<SidebarProp> = ({
                               </div>
                             </div>
                           )}
-
                         </div>
                       </div>
                     </div>
@@ -200,8 +266,9 @@ const Sidebar: React.FC<SidebarProp> = ({
                 ))}
               </div>
             </div>
-          ))}
+          ))} */}
         </div>
+        
 
         {/* Layout and Actions */}
         <div className="mt-auto">
@@ -231,6 +298,7 @@ const Sidebar: React.FC<SidebarProp> = ({
                 </div>
               </div>
             )}
+            </div>
 
             <div className="flex justify-end p-2 w-full">
               {/* Add Camera Button */}
@@ -262,7 +330,6 @@ const Sidebar: React.FC<SidebarProp> = ({
 
               {editCamera && <EditPopup />}
             </div>
-          </div>
         </div>
       </div>
     </div>
