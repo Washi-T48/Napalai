@@ -4,30 +4,17 @@ import Image from "next/image";
 import { StaticImageData } from 'next/image';
 
 interface PopupUndefineItemProps {
-  item: {
-    image: StaticImageData;
-    title: string;
-    time: string;
-    Zone: string;
-    Camera: string;
-  };
+  setStatePopup: (option: boolean) => void; 
 }
 
-const PopupUndefineItem: React.FC<PopupUndefineItemProps> = ({ item }) => {
-  const [isClose, setIsClose] = useState(false); // ตั้งค่าเริ่มต้นเป็น false เพื่อให้ Modal เปิดอยู่
-
-  const closeModal = () => {
-    setIsClose(true); // ปิด Modal เมื่อคลิก
-  };
-
-  if (isClose) return null; // ถ้า isClose เป็น true, ไม่แสดง modal
+const PopupUndefineItem: React.FC<PopupUndefineItemProps> = ({ setStatePopup }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-customBlue rounded-md">
         <div className="flex justify-end p-4 pt-6 text-white text-xl">
           <Icon
-            onClick={closeModal}
+            onClick={() => setStatePopup(false)}
             icon="icon-park-solid:close-one"
             width="30"
             height="30"
@@ -35,7 +22,7 @@ const PopupUndefineItem: React.FC<PopupUndefineItemProps> = ({ item }) => {
         </div>
         <div className="flex flex-col gap-4 pb-16 pl-16 pr-16 pt-5 w-auto h-auto ">
           <div className="flex justify-start pt-2 w-96 h-12 border-b text-2xl">
-            {item.title} 
+            {/* {item.created}  */}
           </div>
           <div className="pt-16 pb-8">Add detail undefined item</div>
           <div className="w-full">

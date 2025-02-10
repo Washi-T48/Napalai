@@ -10,7 +10,7 @@ interface CardProp {
         name: string;
         camera: string;
         status: string;
-        dueDate: string;
+        dueDate?: string;
     };
 }
 

@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useParams } from 'next/navigation'
 
 function Page() {
-    const params = useParams<{ assingForgotten : string }>()
+    const params = useParams<{ assingForgotten: string }>()
     console.log(params.assingForgotten)
 
     const [FilterButton, SetFilterButton] = useState(false);
@@ -18,6 +18,8 @@ function Page() {
     const [selectedZone, setSelectedZone] = useState<string | null>(null);
     const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+
+
 
     type Item = {
         id: number;
@@ -87,7 +89,7 @@ function Page() {
                         {FilterButton && (
                             <div className="absolute top-16 z-10">
                                 <div className="flex justify-center bg-customwhite w-full h-80 rounded-md overflow-hidden">
-                                    
+
                                     <div className="">
                                         <Dropdown
                                             onSelect={(type, value) => {

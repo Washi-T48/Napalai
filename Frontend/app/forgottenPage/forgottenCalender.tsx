@@ -15,14 +15,16 @@ import {
     isToday
 } from 'date-fns';
 
-interface Assignment {
-    name: string;
-    dueDate: string; 
-    itemCount: string; 
+interface ForgottenItem {
+    id: number;
+    description: string;
+    created: string;
+    item_type: string;
+    itemCount: number;
 }
 
 interface CalendarProps {
-    assignments: Assignment[];
+    assignments: ForgottenItem[];
 }
 
 const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
@@ -90,7 +92,7 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                 const displayDate = format(day, 'd');
 
                 const assignmentsForDay = assignments.filter(assignment =>
-                    isSameDay(parseISO(assignment.dueDate), day)
+                    isSameDay(parseISO(assignment.created), day)
                 );
 
                 const isCurrentMonth = isSameMonth(day, monthStart);
@@ -106,17 +108,41 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                                 ${todayClass}`}
                         >
                             <div className="text-start">{isCurrentMonth && isDayFromCurrentMonth ? displayDate : ''}</div>
-                            <div className="overflow-y-auto h-20 mt-1">
-                                {isCurrentMonth && isDayFromCurrentMonth && assignmentsForDay.map((assignment, idx) => (
-                                    <div key={idx} className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
-                                        {assignment.itemCount} ITEM <br /> {assignment.name}
+                            <div className="overflow-y-auto h-20 mt-2 flex justify-center">
+                                {isCurrentMonth && isDayFromCurrentMonth && (
+                                    <div>
+                                        {/* ถ้ามี assignments สำหรับวันนี้ */}
+                                        {assignmentsForDay.length > 0 && (
+                                            (() => {
+                                                // ปรับเปลี่ยนการใช้ itemCount ให้เป็น number
+                                                const sumItemCount = assignmentsForDay.reduce(
+                                                    (total, assignment) => total + (assignment.itemCount || 1), // ถ้าไม่มีค่าให้ใช้ 1
+                                                    0
+                                                );
+                                                
+                                                
+                                                return (
+                                                    <div className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
+                                                        <div className='flex justify-center flex-col'>
+                                                            <div className='flex justify-center'>
+                                                                ITEM
+                                                            </div>
+                                                            <div className='flex justify-center'>
+                                                            {`${sumItemCount} `}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })()
+                                        )}
                                     </div>
-                                ))}
+                                )}
+
                             </div>
                         </div>
                     </Link>
                 );
-                
+
 
                 day = addDays(day, 1);
             }
