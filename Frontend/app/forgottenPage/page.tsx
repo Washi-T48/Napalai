@@ -20,6 +20,7 @@ interface eventCard {
     created: string;
     camera_id: number;
     type: string;
+    position:string;
 }
 
 function Page() {

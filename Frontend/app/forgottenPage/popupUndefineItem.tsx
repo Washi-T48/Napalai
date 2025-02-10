@@ -1,17 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import Image from "next/image"; 
-import { StaticImageData } from 'next/image';
+import Port from "../port";
 
 interface PopupUndefineItemProps {
-  setStatePopup: (option: boolean) => void; 
+  setStatePopup: (option: boolean) => void;
 }
 
+
+
 const PopupUndefineItem: React.FC<PopupUndefineItemProps> = ({ setStatePopup }) => {
+  const [popupEvent, setPupupEvent] = useState<PopupUndefineItemProps[]>([]);
+  useEffect(() => {
+    const getPopupEvent = async () => {
+      try {
+        const popupEventResponse = await fetch(`${Port.URL}/events`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: {
+            // camera_id:,
+            type:,
+            position:,
+            first_detected:,
+            last_seen:,
+            warning_triggered:
+          }
+        });
+        if (!popupEventResponse.ok) {
+          const errorData = await popupEventResponse.json();
+          throw new Error(errorData.message || "Network response was not ok");
+        }
+        const popEventData = await popupEventResponse.json();
+        setPupupEvent(popupEvent)
+      } catch (error) {
+
+      }
+    };
+    getPopupEvent();
+    return () => {
+    };
+  }, []);
+
+
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-customBlue rounded-md">
+      <div className="bg-customBlue text-white rounded-md">
         <div className="flex justify-end p-4 pt-6 text-white text-xl">
           <Icon
             onClick={() => setStatePopup(false)}

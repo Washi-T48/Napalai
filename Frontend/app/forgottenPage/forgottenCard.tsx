@@ -34,10 +34,16 @@ const ForgottenCard: React.FC<Props> = ({ eventCard , setStatePopup }) => {
                             <div className="flex justify-center items-center px-2">
                             </div>
                             <div className="flex-col w-full p-2">
-                                <div>{item.created}</div>
+                                <div>
+                                    {/* {item.created} */}
+                                    Item Name
+                                    </div>
                                 <div className="flex justify-between pt-2 text-gray-400 text-tiny">
-                                    <div>{item.created}</div>
-                                    <div>{item.created} . {item.created}</div>
+                                    <div>
+                                        {item.created}
+                                        
+                                    </div>
+                                    <div>{item.type} . {item.type}</div>
                                 </div>
                             </div>
                         </div>
