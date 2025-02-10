@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Navber from "../component/navber";
 import Sidebar from "./sidebar";
 import Videos from "../viewPage/videos";
+import Port from "../port";
 
 function Page() {
   const [typeLayout, setTypeLayout] = useState("nineLayout");
@@ -13,13 +14,13 @@ function Page() {
   useEffect(() => {
     const getCamera = async () => {
       try {
-        const response = await fetch('http://sardines.thddns.net:7270/cameras', {
+        const response = await fetch(`${Port.URL}/cameras`, {
           method: 'GET',
           headers: {
             "Content-Type": "application/json",
           }
         })
-        const responseZone = await fetch('http://sardines.thddns.net:7270/zones', {
+        const responseZone = await fetch(`${Port.URL}/zones`, {
           method: 'GET',
           headers: {
             "Content-Type": "application/json",

@@ -5,33 +5,81 @@ import Port from "../port";
 interface PopupUndefineItemProps {
   setStatePopup: (option: boolean) => void;
 }
+interface eventCard {
+  id: number;
+  created: string;
+  camera_id: number;
+  type: string;
+  position:string;
+}
+type CameraData = {
+  id: string;
+  created: string;
+  camera_id: string;
+  type: string;
+  position: string | null;
+  first_detected: string | null;
+  last_seen: string | null;
+  warning_triggered: boolean | null;
+};
 
 
 
 const PopupUndefineItem: React.FC<PopupUndefineItemProps> = ({ setStatePopup }) => {
-  const [popupEvent, setPupupEvent] = useState<PopupUndefineItemProps[]>([]);
+  const [itemName , setItemName ] = useState("")
+  const [positionName , setPositionName ] = useState("")
+  const [popupEvent, setPupupEvent] = useState<eventCard[]>([]);
   useEffect(() => {
     const getPopupEvent = async () => {
       try {
+        const getCameraId = await fetch(`${Port.URL}/events`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!getCameraId.ok) {
+          const errorData = await getCameraId.json();
+          throw new Error(errorData.message || "Network response was not ok");
+        }
+        const cameraIdData = await getCameraId.json();
+        console.log(cameraIdData)
+        let cameraId: any;
+
+        if (cameraIdData.length !== 0) {
+          const maxId = Math.max(...cameraIdData.map((item: CameraData) => Number(item.id))); 
+          cameraId = (maxId + 1).toString(); 
+        }
+        else {
+          cameraId = 1
+        }
+        console.log(cameraId)
+        
+        
+
+
+
+
         const popupEventResponse = await fetch(`${Port.URL}/events`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: {
-            // camera_id:,
-            type:,
-            position:,
-            first_detected:,
-            last_seen:,
-            warning_triggered:
-          }
+          body: JSON.stringify ({
+            camera_id:cameraId,
+            type:itemName,
+            // position:,
+            // first_detected:,
+            // last_seen:,
+            // warning_triggered:
+          })
         });
         if (!popupEventResponse.ok) {
           const errorData = await popupEventResponse.json();
           throw new Error(errorData.message || "Network response was not ok");
         }
         const popEventData = await popupEventResponse.json();
+        
         setPupupEvent(popupEvent)
       } catch (error) {
 
@@ -65,6 +113,8 @@ const PopupUndefineItem: React.FC<PopupUndefineItemProps> = ({ setStatePopup }) 
             <div className="pb-1 text-tiny">Item Name</div>
             <input
               className="p-1 w-full text-black bg-customwhite rounded-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+              onChange={(e) => setItemName(e.target.value)}
+              value={itemName}
               type="text"
             />
           </div>

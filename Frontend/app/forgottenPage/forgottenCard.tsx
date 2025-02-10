@@ -11,7 +11,6 @@ interface eventCard {
 
 interface Props {
     eventCard: eventCard[]; 
-    activeItemIndex: number | null;
     setStatePopup: (option: boolean) => void; 
 }
 

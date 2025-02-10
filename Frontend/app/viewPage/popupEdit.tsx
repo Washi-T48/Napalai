@@ -1,14 +1,12 @@
-import React, { useRef } from "react";
-import { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Icon } from "@iconify/react";
+interface setPopup {
+  setOpenPopup: (option: boolean) => void;
+}
 
-function EditPopup() {
-  const [isClose, setIsClose] = useState(true);
-  const closeModal = () => {
-    setIsClose(false);
-  };
-  if (!isClose) return null;
-
+const EditPopup:React.FC<setPopup> = ({ setOpenPopup }) =>  {
+  const [zoneName, setZoneName] = useState("")
+  
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-customBlue p-2 rounded-2xl">
@@ -17,7 +15,7 @@ function EditPopup() {
             <div className="text-2xl font-bold pb-4">Detections Detail</div>
             <div>
               <Icon
-                onClick={closeModal}
+                onClick={() => setOpenPopup(false)}
                 icon="icon-park-solid:close-one"
                 width="30"
                 height="30"

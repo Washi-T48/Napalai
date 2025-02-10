@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import EditPopup from "./popupEdit";
 import AddCamera from "./popupAddCamera";
 import Port from "../port";
 
@@ -36,53 +35,11 @@ const Sidebar: React.FC<SidebarProp> = ({
   setTypeLayout,
   setSelectZone,
 }) => {
-  const [openDropdownId, setOpenDropdownId] = useState<{
-    dropdownA: number | null;
-  }>({ dropdownA: null });
 
-  const [openPopupId, setOpenPopupId] = useState<{
-    reName: number | null;
-    deLete: number | null;
-  }>({ reName: null, deLete: null });
-
-  const toggleDropdown = (dropdownType: "dropdownA", cameraId: number) => {
-    setOpenDropdownId((prevState) => ({
-      ...prevState,
-      [dropdownType]: prevState[dropdownType] === cameraId ? null : cameraId,
-    }));
-  };
-  const showPopup = (popupType: "reName" | "deLete", cameraId: number) => {
-    setOpenPopupId((prevState) => ({
-      ...prevState,
-      [popupType]: cameraId,
-    }));
-  };
-
-  const closePopup = (popupType: "reName" | "deLete") => {
-    setOpenPopupId((prevState) => ({
-      ...prevState,
-      [popupType]: null,
-    }));
-  };
+  const [openPopup, setOpenPopup] = useState(false)
 
   const [layoutActive, setLayoutActive] = useState(false);
-  const [addPopupActive, setAddPopupActive] = useState(false);
-  const [editCamera, setEditCamera] = useState(false);
-  const [showCameraZone, setShowCameraZone] = useState<number | null>(null);
-
-  const changeZone = (zoneId: number) => {
-    setSelectZone(zoneId);
-
-    // รีเซ็ตค่า dropdown และ popup เมื่อเปลี่ยนโซน
-    setOpenDropdownId({ dropdownA: null });
-    setOpenPopupId({ reName: null, deLete: null });
-  };
-
   const toggleLayout = () => setLayoutActive(!layoutActive);
-  const toggleAddPopup = () => setAddPopupActive(!addPopupActive);
-  const toggleEditCamera = () => setEditCamera(!editCamera);
-
-  
 
   const getZoneName = (zoneId: string) => {
     console.log(zoneId)
@@ -90,48 +47,66 @@ const Sidebar: React.FC<SidebarProp> = ({
     return zoneInfo ? zoneInfo.name : "Unknown Zone";
   };
   const [expandedZoneId, setExpandedZoneId] = useState(null); // ใช้สถานะในการติดตามโซนที่ถูกขยาย
-
   const toggleZone = (zoneId: any) => {
     setExpandedZoneId(prevZoneId => (prevZoneId === zoneId ? null : zoneId)); // สลับการแสดงโซน
   };
+
   const [groupedCameras, setGroupedCameras] = useState<CameraType[]>([]);
   const [groupedZone, setGroupedZone] = useState<Zone[]>([]);
+
   const groupedData = groupedCameras.reduce((acc: { [key: string]: typeof groupedCameras }, item) => {
     if (!acc[item.zone_id]) acc[item.zone_id] = [];
     acc[item.zone_id].push(item);
     return acc;
   }, {});
 
-  const toggleCameraZone = (zoneId: number) => {
-    setShowCameraZone((prevZone) => (prevZone === zoneId ? null : zoneId));
-  };
   useEffect(() => {
     const getCamera = async () => {
       try {
+        // const postZone = await fetch(`${Port.URL}/zones`, {
+        //   method: 'POST',
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: {
+
+
+        //   }
+        // })
+        // if (!postZone.ok) {
+        //   const errorData = await postZone.json();
+        //   throw new Error(errorData.message || "Network response was not ok");
+        // }
         const response = await fetch(`${Port.URL}/cameras`, {
           method: 'GET',
           headers: {
             "Content-Type": "application/json",
           }
         })
+
         const responseZone = await fetch(`${Port.URL}/zones`, {
           method: 'GET',
           headers: {
             "Content-Type": "application/json",
           }
         })
+
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Network response was not ok");
         }
+
         if (!responseZone.ok) {
           const errorData = await responseZone.json();
           throw new Error(errorData.message || "Network response was not ok");
         }
+
         const data = await response.json();
         const dataZone = await responseZone.json();
+
         setGroupedCameras(data);
         setGroupedZone(dataZone)
+
         console.log(data)
       } catch (error) {
       }
@@ -143,35 +118,35 @@ const Sidebar: React.FC<SidebarProp> = ({
     <div className="flex h-screen bg-gray-900">
       <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16 overflow-auto ">
         <div className="">
-        {Object.entries(groupedData).map(([zoneId, cameras]) => (
-        <div key={zoneId}>
-          <div 
-            className="w-full p-6 text-xl cursor-pointer hover:bg-customSlateBlue"
-            onClick={() => toggleZone(zoneId)} 
-          >
-            {getZoneName(zoneId)}
-          </div>
-          <ul
-            style={{
-              display: expandedZoneId === zoneId ? 'block' : 'none'
-            }}
-          >
-            {cameras.map((camera) => (
-              <div 
-              className="flex items-center w-full p-6 pl-12 hover:bg-customSlateBlue"
-              key={camera.id}>
-                {camera.name} 
-                {/* <div className=" flex justify-start items-end pl-2 w-full text-gray-500 text-tiny">
+          {Object.entries(groupedData).map(([zoneId, cameras]) => (
+            <div key={zoneId}>
+              <div
+                className="w-full p-6 text-xl cursor-pointer hover:bg-customSlateBlue"
+                onClick={() => toggleZone(zoneId)}
+              >
+                {getZoneName(zoneId)}
+              </div>
+              <ul
+                style={{
+                  display: expandedZoneId === zoneId ? 'block' : 'none'
+                }}
+              >
+                {cameras.map((camera) => (
+                  <div
+                    className="flex items-center w-full p-6 pl-12 hover:bg-customSlateBlue"
+                    key={camera.id}>
+                    {camera.name}
+                    {/* <div className=" flex justify-start items-end pl-2 w-full text-gray-500 text-tiny">
                   {camera.location}
                 </div> */}
-                <div className="flex justify-end w-full">
-                  ...
-                </div>
-              </div>
-            ))}
-          </ul>
-        </div>
-      ))}
+                    <div className="flex justify-end w-full">
+                      ...
+                    </div>
+                  </div>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
 
@@ -211,12 +186,12 @@ const Sidebar: React.FC<SidebarProp> = ({
             {/* Add Camera Button */}
             <div>
               <button
-                onClick={toggleAddPopup}
+                onClick={() => setOpenPopup(true)}
                 className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl"
               >
                 <Icon icon="gg:add" width="24" height="24" />
               </button>
-              {addPopupActive && <AddCamera />}
+              {openPopup && <AddCamera setOpenPopup={setOpenPopup} />}
             </div>
 
             {/* Layout Button */}
@@ -228,14 +203,14 @@ const Sidebar: React.FC<SidebarProp> = ({
             </button>
 
             {/* Edit Camera Button */}
-            <button
-              onClick={toggleEditCamera}
+            {/* <button
+              onClick={() => setOpenPopup(true)}
               className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl"
             >
               <Icon icon="cuida:edit-outline" width="24" height="24" />
             </button>
 
-            {editCamera && <EditPopup />}
+            {openPopup && <EditPopup setOpenPopup={setOpenPopup} />} */}
           </div>
         </div>
       </div>
