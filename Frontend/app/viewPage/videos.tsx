@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CardLiveCamera from "./cardLiveCamera";
+import Port from "../port";
 
 interface VideoProp {
   typeLayout: string;
@@ -9,11 +10,45 @@ interface VideoProp {
     cameras: { cameraName: string; video: any }[];
   }[];
   selectedZoneId: number;
-  responseCameras : any;
 }
 
-const Videos: React.FC<VideoProp> = ({ typeLayout, responseZone, selectedZoneId }) => {
+interface Camera {
+  cameraName: string;
+  video: any;
+}
+
+interface Zone {
+  id: number;
+  name: string;
+  cameras: any
+}
+
+const Videos: React.FC<VideoProp> = ({ typeLayout, selectedZoneId }) => {
+  const [responseZone, setResponseZone] = useState<Zone[]>([]);
   const [displayCameras, setDisplayCameras] = useState<{ cameraName: string; video: any }[]>([]);
+
+  useEffect(() => {
+    const getZones = async () => {
+      try {
+        const responseZone = await fetch(`${Port.URL}/zones`, {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+          }
+        });
+        if (!responseZone.ok) {
+          const errorData = await responseZone.json();
+          throw new Error(errorData.message || "Network response was not ok");
+        }
+        const dataZone = await responseZone.json();
+        setResponseZone(dataZone);
+      } catch (error) {
+        console.error("Error fetching zones:", error);
+      }
+    };
+
+    getZones();
+  }, []);
 
   useEffect(() => {
     if (!Array.isArray(responseZone) || responseZone.length === 0) {
@@ -48,7 +83,7 @@ const Videos: React.FC<VideoProp> = ({ typeLayout, responseZone, selectedZoneId 
   }, [typeLayout, selectedZoneId, responseZone]);
 
   if (displayCameras.length === 0) {
-    return <div className="flex justify-center items-center bg-black w-full h-full text-white ">No cameras available for the selected zone or layout.</div>;
+    return <div className="flex justify-center items-center bg-black w-full h-full text-white">No cameras available for the selected zone or layout.</div>;
   }
 
   return (
@@ -56,13 +91,17 @@ const Videos: React.FC<VideoProp> = ({ typeLayout, responseZone, selectedZoneId 
       {typeLayout === "nineLayout" && (
         <div className="w-full h-full grid grid-cols-3 grid-rows-3">
           {displayCameras.map((camera, index) => (
-            <CardLiveCamera key={index} src={camera.video || null} camName={camera.cameraName} />
+            <CardLiveCamera
+              key={camera.cameraName || index}
+              src={camera.video?.rtsp_url || ""}
+              camName={camera.cameraName}
+              location={camera.video?.location || ""}
+              rtspUrl={camera.video?.rtsp_url || ""}
+            />
           ))}
           {Array.from({ length: Math.max(0, 9 - displayCameras.length) }).map((_, index) => (
             <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
-              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
-                No Signal
-              </div>
+              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">No Signal</div>
             </div>
           ))}
         </div>
@@ -71,16 +110,25 @@ const Videos: React.FC<VideoProp> = ({ typeLayout, responseZone, selectedZoneId 
       {typeLayout === "sixLayout" && (
         <div className="w-full h-full grid grid-cols-3 grid-rows-3">
           <div className="relative w-full h-full col-span-2 row-span-2">
-            <CardLiveCamera src={displayCameras[0]?.video} camName={displayCameras[0]?.cameraName} />
+            <CardLiveCamera
+              src={displayCameras[0]?.video?.rtsp_url || ""}
+              camName={displayCameras[0]?.cameraName || ""}
+              location={displayCameras[0]?.video?.location || ""}
+              rtspUrl={displayCameras[0]?.video?.rtsp_url || ""}
+            />
           </div>
           {displayCameras.slice(1, 6).map((camera, index) => (
-            <CardLiveCamera key={index + 1} src={camera.video} camName={camera.cameraName} />
+            <CardLiveCamera
+              key={camera.cameraName || index + 1}
+              src={camera.video?.rtsp_url || ""}
+              camName={camera.cameraName}
+              location={camera.video?.location || ""}
+              rtspUrl={camera.video?.rtsp_url || ""}
+            />
           ))}
           {Array.from({ length: Math.max(0, 6 - displayCameras.length) }).map((_, index) => (
             <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
-              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
-                No Signal
-              </div>
+              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">No Signal</div>
             </div>
           ))}
         </div>
@@ -89,17 +137,22 @@ const Videos: React.FC<VideoProp> = ({ typeLayout, responseZone, selectedZoneId 
       {typeLayout === "fourLayout" && (
         <div className="w-full h-full grid grid-cols-2 grid-rows-2">
           {displayCameras.map((camera, index) => (
-            <CardLiveCamera key={index} src={camera.video} camName={camera.cameraName} />
+            <CardLiveCamera
+              key={camera.cameraName || index}
+              src={camera.video?.rtsp_url || ""}
+              camName={camera.cameraName}
+              location={camera.video?.location || ""}
+              rtspUrl={camera.video?.rtsp_url || ""}
+            />
           ))}
           {Array.from({ length: Math.max(0, 4 - displayCameras.length) }).map((_, index) => (
             <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
-              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
-                No Signal
-              </div>
+              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">No Signal</div>
             </div>
           ))}
         </div>
       )}
+
     </>
   );
 };

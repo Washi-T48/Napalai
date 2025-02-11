@@ -63,20 +63,6 @@ const Sidebar: React.FC<SidebarProp> = ({
   useEffect(() => {
     const getCamera = async () => {
       try {
-        // const postZone = await fetch(`${Port.URL}/zones`, {
-        //   method: 'POST',
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: {
-
-
-        //   }
-        // })
-        // if (!postZone.ok) {
-        //   const errorData = await postZone.json();
-        //   throw new Error(errorData.message || "Network response was not ok");
-        // }
         const response = await fetch(`${Port.URL}/cameras`, {
           method: 'GET',
           headers: {
@@ -133,7 +119,7 @@ const Sidebar: React.FC<SidebarProp> = ({
               >
                 {cameras.map((camera) => (
                   <div
-                    className="flex items-center w-full p-6 pl-12 hover:bg-customSlateBlue"
+                    className="flex items-center w-full p-5 pl-12 hover:bg-customSlateBlue"
                     key={camera.id}>
                     {camera.name}
                     {/* <div className=" flex justify-start items-end pl-2 w-full text-gray-500 text-tiny">
