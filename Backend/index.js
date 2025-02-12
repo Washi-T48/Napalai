@@ -11,7 +11,7 @@ import zoneRouter from './routes/zone.routes.js';
 import eventRouter from './routes/event.routes.js';
 import forgottenRouter from './routes/forgotten.routes.js';
 import violenceRouter from './routes/violence.routes.js';
-
+import utilsRouter from './routes/utils.routes.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -22,7 +22,7 @@ app.use(bodyparser.json());
 app.use(cors());
 
 app.use((req, res, next) => {
-    console.log(`${req.method} ${req.socket.remoteAddress} ${req.url}`);
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.socket.remoteAddress} ${req.url}`);
     next();
 });
 
@@ -35,6 +35,7 @@ app.use('/zones', zoneRouter);
 app.use('/events', eventRouter);
 app.use('/forgotten', forgottenRouter);
 app.use('/violence', violenceRouter);
+app.use('/utils', utilsRouter);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
