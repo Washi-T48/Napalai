@@ -165,6 +165,7 @@ CREATE TABLE forgotten (
 	event_id varchar NULL,
 	description jsonb NULL,
 	item_type varchar NULL,
+	item_name varchar NULL,
 	status varchar NULL,
 	CONSTRAINT forgotten_event_fk FOREIGN KEY (event_id) REFERENCES "event"(id)
 );
