@@ -15,15 +15,18 @@ import {
     isToday
 } from 'date-fns';
 
-interface Assignment {
-    name: string;
-    dueDate: string; 
-    itemCount: string; 
+interface ForgottenItem {
+    id: number;
+    description: string;
+    created: string;
+    item_type: string;
+    itemCount: number;
 }
 
 interface CalendarProps {
-    assignments: Assignment[];
+    assignments: ForgottenItem[];
 }
+
 
 const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -89,13 +92,17 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                 const formattedDate = format(day, 'yyyy-MM-dd');
                 const displayDate = format(day, 'd');
 
+                // กรอง assignments สำหรับวันนั้น ๆ
                 const assignmentsForDay = assignments.filter(assignment =>
-                    isSameDay(parseISO(assignment.dueDate), day)
+                    isSameDay(parseISO(assignment.created), day)
                 );
 
                 const isCurrentMonth = isSameMonth(day, monthStart);
                 const isDayFromCurrentMonth = getDate(day) <= getDate(monthEnd) && getDate(day) >= 1;
                 const todayClass = isToday(day) ? 'text-primary font-bold' : '';
+
+                // คำนวณ total itemCount
+                const totalItemCount = assignmentsForDay.reduce((total, assignment) => total + (assignment.itemCount || 1), 0);
 
                 days.push(
                     <Link href={`/forgottenLog/${formattedDate}`} key={day.toISOString()}>
@@ -106,17 +113,28 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                                 ${todayClass}`}
                         >
                             <div className="text-start">{isCurrentMonth && isDayFromCurrentMonth ? displayDate : ''}</div>
-                            <div className="overflow-y-auto h-20 mt-1">
-                                {isCurrentMonth && isDayFromCurrentMonth && assignmentsForDay.map((assignment, idx) => (
-                                    <div key={idx} className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
-                                        {assignment.itemCount} ITEM <br /> {assignment.name}
+                            <div className="overflow-y-auto h-20 mt-2 flex justify-center">
+                                {isCurrentMonth && isDayFromCurrentMonth && (
+                                    <div>
+                                        {/* แสดง totalItemCount ถ้ามี assignments */}
+                                        {assignmentsForDay.length > 0 && (
+                                            <div className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
+                                                <div className='flex justify-center flex-col'>
+                                                    <div className='flex justify-center'>
+                                                        ITEM
+                                                    </div>
+                                                    <div className='flex justify-center'>
+                                                        {`${totalItemCount} `} {/* แสดงจำนวน itemCount */}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </div>
                     </Link>
                 );
-                
 
                 day = addDays(day, 1);
             }
@@ -132,6 +150,7 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
 
         return <div>{rows}</div>;
     };
+
 
     return (
         <div className="w-full max-w-7xl mx-auto mt-4">

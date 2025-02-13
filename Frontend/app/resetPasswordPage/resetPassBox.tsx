@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import Image from "next/image";
-import Logo from "../../public/imges/Logo.png";
-import Link from 'next/link';
 
 function ResetPassBox() {
     const [stateForgetPassword, setStateForgetPassword] = useState(false);

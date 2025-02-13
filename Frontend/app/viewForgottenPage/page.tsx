@@ -2,8 +2,6 @@
 
 import React from "react";
 import Navber from "../component/navber";
-import VideoPlayer from "../component/videoPlayer";
-import Calendar from "../component/calender";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import unnyFace from "../../public/imges/unnyFace.jpg";
@@ -23,7 +21,13 @@ function page() {
                     <div className="flex justify-center items-center w-full h-full p-2  rounded-md">
                         <div className="flex justify-center items-center  bg-white w-full h-full rounded-md">
                             <div className="w-full h-full ">
-                                <VideoPlayer />
+                            <video className="h-full min-w-96 w-full rounded-md drop-shadow-2xl object-cover" controls autoPlay muted loop>
+        <source
+            src="https://docs.material-tailwind.com/demo.mp4"
+            type="video/mp4"
+        />
+        Your browser does not support the video tag.
+        </video>
                             </div>
                         </div>
                     </div>
