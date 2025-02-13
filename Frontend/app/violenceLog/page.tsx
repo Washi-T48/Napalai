@@ -7,6 +7,7 @@ import CardVideo from "../component/cardVideo";
 import MyCalendar from "../component/calender";
 import Dropdown from "../component/dropdown";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import Port from "../port";
 
 interface violenceItem {
@@ -20,6 +21,7 @@ interface violenceItem {
 }
 
 function Page() {
+    // const { id } = useParams();
     const [FilterButton, SetFilterButton] = useState(false);
     const toggleFilterButton = () => SetFilterButton(!FilterButton);
 

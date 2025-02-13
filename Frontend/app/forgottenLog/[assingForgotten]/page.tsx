@@ -17,6 +17,7 @@ interface ForgottenItem {
     status: string;
     created: string;
     zone: string;
+    item_type:string;
 }
 
 function Page() {
