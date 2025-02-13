@@ -12,6 +12,7 @@ import eventRouter from './routes/event.routes.js';
 import forgottenRouter from './routes/forgotten.routes.js';
 import violenceRouter from './routes/violence.routes.js';
 import utilsRouter from './routes/utils.routes.js';
+import authRouter from './routes/auth.routes.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -36,6 +37,7 @@ app.use('/events', eventRouter);
 app.use('/forgotten', forgottenRouter);
 app.use('/violence', violenceRouter);
 app.use('/utils', utilsRouter);
+app.use('/auth', authRouter);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
