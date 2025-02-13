@@ -7,6 +7,17 @@ import CardVideo from "../component/cardVideo";
 import MyCalendar from "../component/calender";
 import Dropdown from "../component/dropdown";
 import Link from "next/link";
+import Port from "../port";
+
+interface violenceItem {
+    id: number;
+    video: any;
+    name: string;
+    camera: string;
+    status: string;
+    created: string;
+    zone: string;
+}
 
 function Page() {
     const [FilterButton, SetFilterButton] = useState(false);
@@ -16,97 +27,47 @@ function Page() {
     const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
-    type Item = {
-        id: number;
-        video: any;
-        name: string;
-        camera: string;
-        status: string;
-        timeAgo: string;
-        zone: string;
-    };
-    const items: Item[] = [
-        {
-            id: 1,
-            video: "/video/test.mp4",
-            name: 'Macbook',
-            camera: 'camera1',
-            status: 'Unreturned',
-            timeAgo: '3 days ago',
-            zone: 'Zone1',
-        },
-        {
-            id: 2,
-            video: "/video/test2.mp4",
-            name: 'iPhone 13',
-            camera: 'camera2',
-            status: 'Returned',
-            timeAgo: '5 hours ago',
-            zone: 'Zone1',
-        },
-        {
-            id: 3,
-            video: "/video/test.mp4",
-            name: 'iPad Pro',
-            camera: 'camera3',
-            status: 'Unreturned',
-            timeAgo: '1 day ago',
-            zone: 'Zone2',
-        },
-        {
-            id: 4,
-            video: "/video/test.mp4",
-            name: 'Apple Watch',
-            camera: 'camera4',
-            status: 'Unreturned',
-            timeAgo: '2 days ago',
-            zone: 'Zone3',
-        },
-        {
-            id: 5,
-            video: "/video/test.mp4",
-            name: 'MacBook Pro',
-            camera: 'camera5',
-            status: 'Returned',
-            timeAgo: '6 hours ago',
-            zone: 'Zone9',
-        },
-        {
-            id: 6,
-            video: "/video/test3.mp4",
-            name: 'Samsung Galaxy',
-            camera: 'camera6',
-            status: 'Returned',
-            timeAgo: '1 hour ago',
-            zone: 'Zone3',
-        },
-        {
-            id: 7,
-            video: "/video/test.mp4",
-            name: 'Surface Pro',
-            camera: 'camera7',
-            status: 'Unreturned',
-            timeAgo: '4 hours ago',
-            zone: 'Zone4',
-        },
-    ];
+    const [getViolence, setGetViolence] = useState<violenceItem[]>([]);
+    const [showData, setShowData] = useState<violenceItem[]>([]);  // ประกาศ state ใหม่เพื่อเก็บข้อมูลที่จะแสดงผล
+
+    useEffect(() => {
+        const getViolenceData = async () => {
+            try {
+                const getResponseViolence = await fetch(`${Port.URL}/violence`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!getResponseViolence.ok) {
+                    const errorData = await getResponseViolence.json();
+                    throw new Error(errorData.message || "Network response was not ok");
+                }
+
+                const getDataViolence = await getResponseViolence.json();
+                setGetViolence(getDataViolence);  // set ข้อมูลเพียงครั้งเดียว
+            } catch (error) {
+                console.error("Error fetching cameras:", error);
+            }
+        };
+
+        getViolenceData();
+    }, []);  // การใช้ [] ทำให้ดึงข้อมูลเพียงครั้งเดียวตอนเริ่มต้น
 
     const [switchPage, setSwitchPage] = useState(0);
-    const [showData, setShowData] = useState<Item[]>([]);
     const itemsPerPage = 10;
-    const totalPages: number = Math.ceil(items.length / 10);
+    const totalPages: number = Math.ceil(getViolence.length / itemsPerPage);
+
     useEffect(() => {
-        // คำนวณ startIndex และ endIndex
         const startIndex = switchPage * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
 
-        // อัปเดตข้อมูลที่จะแสดง
-        const dataToShow = items.slice(startIndex, endIndex);
+        const dataToShow = getViolence.slice(startIndex, endIndex);
         setShowData(dataToShow);
-    }, [switchPage]);
+    }, [switchPage, getViolence]);  // เพิ่ม getViolence เป็น dependency
 
-    // กรองข้อมูลตามการเลือกใน Dropdown
-    const filteredData = items.filter((item) => {
+    const filteredData = showData.filter((item) => {
         return (
             (!selectedZone || item.zone === selectedZone) &&
             (!selectedCamera || item.camera === selectedCamera) &&
@@ -114,10 +75,9 @@ function Page() {
         );
     });
 
-    // ดึงข้อมูล zone และ camera ที่ไม่ซ้ำจาก items
-    const uniqueZones = [...new Set(items.map(item => item.zone))];
-    const uniqueCameras = [...new Set(items.map(item => item.camera))];
-    const uniqueStatuses = [...new Set(items.map(item => item.status))];
+    const uniqueZones = [...new Set(getViolence.map((item) => item.zone))];
+    const uniqueCameras = [...new Set(getViolence.map((item) => item.camera))];
+    const uniqueStatuses = [...new Set(getViolence.map((item) => item.status))];
 
     return (
         <>
@@ -148,9 +108,9 @@ function Page() {
                                                 if (type === "camera") setSelectedCamera(value);
                                                 if (type === "status") setSelectedStatus(value);
                                             }}
-                                            zones={uniqueZones}
-                                            cameras={uniqueCameras}
-                                            statuses={uniqueStatuses}
+                                            zone={uniqueZones}
+                                            camera={uniqueCameras}
+                                            status={uniqueStatuses}
                                         />
                                     </div>
                                 </div>
@@ -161,9 +121,10 @@ function Page() {
                     <div className="grid-rows-2 px-10 base:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                         {filteredData.length > 0 ? (
                             filteredData.map((item) => (
-                                <Link href="/viewViolencePage" key={item.id}>
+                                <Link href={`/viewViolencePage/${item.id}`} key={item.id}>
                                     <CardVideo item={item} />
                                 </Link>
+
                             ))
                         ) : (
                             <div>No items available</div>

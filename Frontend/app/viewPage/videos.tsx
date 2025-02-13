@@ -1,42 +1,89 @@
 import React, { useEffect, useState } from "react";
 import CardLiveCamera from "./cardLiveCamera";
-import { StaticImageData } from "next/image";
+import Port from "../port";
 
-interface videoProp {
+interface VideoProp {
   typeLayout: string;
-  zones: {
+  responseZone: {
     id: number;
     name: string;
     cameras: { cameraName: string; video: any }[];
   }[];
-  selectedZoneId: number; // รับค่าของ zone ที่เลือก
+  selectedZoneId: number;
 }
 
-const Videos: React.FC<videoProp> = ({ typeLayout, zones, selectedZoneId }) => {
-  const [displayCameras, setDisplayCameras] = useState<
-    { cameraName: string; video: any }[]
-  >([]);
+interface Camera {
+  cameraName: string;
+  video: any;
+}
+
+interface Zone {
+  id: number;
+  name: string;
+  cameras: any
+}
+
+const Videos: React.FC<VideoProp> = ({ typeLayout, selectedZoneId }) => {
+  const [responseZone, setResponseZone] = useState<Zone[]>([]);
+  const [displayCameras, setDisplayCameras] = useState<{ cameraName: string; video: any }[]>([]);
 
   useEffect(() => {
-    const selectedZone = zones.find((zone) => zone.id === selectedZoneId); // Using selectZone as the chosen zone
-    if (selectedZone) {
-      let camerasToDisplay: { cameraName: string; video: any }[] = []; // Define type clearly
-
-      if (typeLayout === "nineLayout") {
-        camerasToDisplay = selectedZone.cameras.slice(0, 9);
-      } else if (typeLayout === "sixLayout") {
-        camerasToDisplay = selectedZone.cameras.slice(0, 6);
-      } else if (typeLayout === "fourLayout") {
-        camerasToDisplay = selectedZone.cameras.slice(0, 4);
+    const getZones = async () => {
+      try {
+        const responseZone = await fetch(`${Port.URL}/zones`, {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+          }
+        });
+        if (!responseZone.ok) {
+          const errorData = await responseZone.json();
+          throw new Error(errorData.message || "Network response was not ok");
+        }
+        const dataZone = await responseZone.json();
+        setResponseZone(dataZone);
+      } catch (error) {
+        console.error("Error fetching zones:", error);
       }
+    };
 
-      setDisplayCameras(camerasToDisplay);
+    getZones();
+  }, []);
+
+  useEffect(() => {
+    if (!Array.isArray(responseZone) || responseZone.length === 0) {
+      console.warn("Zones data is missing or not an array:", responseZone);
+      return;
     }
-  }, [typeLayout, selectedZoneId, zones]); // Only depend on the necessary values: typeLayout, selectZone, zones
 
+    const selectedZone = responseZone.find((zone) => zone.id === selectedZoneId);
+    if (!selectedZone) {
+      console.warn(`Zone with ID ${selectedZoneId} not found`);
+      return;
+    }
+
+    let camerasToDisplay: { cameraName: string; video: any }[] = [];
+
+    switch (typeLayout) {
+      case "nineLayout":
+        camerasToDisplay = selectedZone.cameras.slice(0, 9);
+        break;
+      case "sixLayout":
+        camerasToDisplay = selectedZone.cameras.slice(0, 6);
+        break;
+      case "fourLayout":
+        camerasToDisplay = selectedZone.cameras.slice(0, 4);
+        break;
+      default:
+        console.warn("Unknown layout type:", typeLayout);
+        break;
+    }
+
+    setDisplayCameras(camerasToDisplay);
+  }, [typeLayout, selectedZoneId, responseZone]);
 
   if (displayCameras.length === 0) {
-    return <div>No cameras available for the selected zone or layout.</div>;
+    return <div className="flex justify-center items-center bg-black w-full h-full text-white">No cameras available for the selected zone or layout.</div>;
   }
 
   return (
@@ -45,21 +92,18 @@ const Videos: React.FC<videoProp> = ({ typeLayout, zones, selectedZoneId }) => {
         <div className="w-full h-full grid grid-cols-3 grid-rows-3">
           {displayCameras.map((camera, index) => (
             <CardLiveCamera
-              key={index}
-              src={camera.video ? camera.video : null} // ใช้ null หากไม่มีข้อมูล
+              key={camera.cameraName || index}
+              src={camera.video?.rtsp_url || ""}
               camName={camera.cameraName}
+              location={camera.video?.location || ""}
+              rtspUrl={camera.video?.rtsp_url || ""}
             />
           ))}
-
-          {/* เติม card สีดำเมื่อข้อมูลไม่ครบ 9 */}
-          {displayCameras.length < 9 &&
-            Array.from({ length: 9 - displayCameras.length }).map((_, index) => (
-              <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
-                <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
-                  No Signal
-                </div>
-              </div>
-            ))}
+          {Array.from({ length: Math.max(0, 9 - displayCameras.length) }).map((_, index) => (
+            <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
+              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">No Signal</div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -67,50 +111,48 @@ const Videos: React.FC<videoProp> = ({ typeLayout, zones, selectedZoneId }) => {
         <div className="w-full h-full grid grid-cols-3 grid-rows-3">
           <div className="relative w-full h-full col-span-2 row-span-2">
             <CardLiveCamera
-              src={displayCameras[0]?.video}
-              camName={displayCameras[0]?.cameraName}
+              src={displayCameras[0]?.video?.rtsp_url || ""}
+              camName={displayCameras[0]?.cameraName || ""}
+              location={displayCameras[0]?.video?.location || ""}
+              rtspUrl={displayCameras[0]?.video?.rtsp_url || ""}
             />
           </div>
-
           {displayCameras.slice(1, 6).map((camera, index) => (
             <CardLiveCamera
-              key={index + 1}
-              src={camera.video}
+              key={camera.cameraName || index + 1}
+              src={camera.video?.rtsp_url || ""}
               camName={camera.cameraName}
+              location={camera.video?.location || ""}
+              rtspUrl={camera.video?.rtsp_url || ""}
             />
           ))}
-          {displayCameras.length < 6 &&
-            Array.from({ length: 6 - displayCameras.length }).map((_, index) => (
-              <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
-                <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
-                  No Signal
-                </div>
-              </div>
-            ))}
-
+          {Array.from({ length: Math.max(0, 6 - displayCameras.length) }).map((_, index) => (
+            <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
+              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">No Signal</div>
+            </div>
+          ))}
         </div>
-        
       )}
 
       {typeLayout === "fourLayout" && (
         <div className="w-full h-full grid grid-cols-2 grid-rows-2">
           {displayCameras.map((camera, index) => (
             <CardLiveCamera
-              key={index}
-              src={camera.video}
+              key={camera.cameraName || index}
+              src={camera.video?.rtsp_url || ""}
               camName={camera.cameraName}
+              location={camera.video?.location || ""}
+              rtspUrl={camera.video?.rtsp_url || ""}
             />
           ))}
-          {displayCameras.length < 4 &&
-            Array.from({ length: 4 - displayCameras.length }).map((_, index) => (
-              <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
-                <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
-                  No Signal
-                </div>
-              </div>
-            ))}
+          {Array.from({ length: Math.max(0, 4 - displayCameras.length) }).map((_, index) => (
+            <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
+              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">No Signal</div>
+            </div>
+          ))}
         </div>
       )}
+
     </>
   );
 };

@@ -1,13 +1,6 @@
 "use client"
-
-import Image from "next/image"
-import { useState } from "react";
-import { count } from "console";
-import Link from "next/link";
 import Navber from "../component/navber";
 import ResetPassBox from "./resetPassBox";
-
-
 
 function page() {
     return (

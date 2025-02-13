@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import EditPopup from "./popupEdit";
 import AddCamera from "./popupAddCamera";
-import { StaticImageData } from "next/image";
+import Port from "../port";
+
+
+interface Zone {
+  id: string;
+  created: string;
+  name: string;
+  location: string;
+};
 
 interface SidebarProp {
   setTypeLayout: (type: string) => void;
   setSelectZone: (zoneId: number) => void;
-  zones: Zone[];
-}
-
-interface Zone {
-  id: number;
-  name: string;
-  cameras: Camera[];
 }
 
 interface Camera {
@@ -22,186 +22,153 @@ interface Camera {
   video: any;
 }
 
+interface CameraType {
+  id: string;
+  name: string;
+  location: string;
+  zone_id: number;
+  created: string;
+}
+
+
 const Sidebar: React.FC<SidebarProp> = ({
   setTypeLayout,
-  zones,
   setSelectZone,
 }) => {
-  const [openDropdownId, setOpenDropdownId] = useState<{
-    dropdownA: number | null;
-  }>({ dropdownA: null });
 
-  const [openPopupId, setOpenPopupId] = useState<{
-    reName: number | null;
-    deLete: number | null;
-  }>({ reName: null, deLete: null });
-
-  const toggleDropdown = (dropdownType: "dropdownA", cameraId: number) => {
-    setOpenDropdownId((prevState) => ({
-      ...prevState,
-      [dropdownType]: prevState[dropdownType] === cameraId ? null : cameraId,
-    }));
-  };
-  const showPopup = (popupType: "reName" | "deLete", cameraId: number) => {
-    setOpenPopupId((prevState) => ({
-      ...prevState,
-      [popupType]: cameraId,
-    }));
-  };
-
-  const closePopup = (popupType: "reName" | "deLete") => {
-    setOpenPopupId((prevState) => ({
-      ...prevState,
-      [popupType]: null,
-    }));
-  };
+  const [openPopup, setOpenPopup] = useState(false)
 
   const [layoutActive, setLayoutActive] = useState(false);
-  const [addPopupActive, setAddPopupActive] = useState(false);
-  const [editCamera, setEditCamera] = useState(false);
-  const [showCameraZone, setShowCameraZone] = useState<number | null>(null);
-
-  const changeZone = (zoneId: number) => {
-    setSelectZone(zoneId);
-    
-    // รีเซ็ตค่า dropdown และ popup เมื่อเปลี่ยนโซน
-    setOpenDropdownId({ dropdownA: null });
-    setOpenPopupId({ reName: null, deLete: null });
-  };
-
   const toggleLayout = () => setLayoutActive(!layoutActive);
-  const toggleAddPopup = () => setAddPopupActive(!addPopupActive);
-  const toggleEditCamera = () => setEditCamera(!editCamera);
 
-  const toggleCameraZone = (zoneId: number) => {
-    setShowCameraZone((prevZone) => (prevZone === zoneId ? null : zoneId));
+  const getZoneName = (zoneId: string) => {
+    console.log(zoneId)
+    const zoneInfo = groupedZone.find((zone) => zone.id === zoneId);
+    return zoneInfo ? zoneInfo.name : "Unknown Zone";
   };
+  const [expandedZoneId, setExpandedZoneId] = useState(null); // ใช้สถานะในการติดตามโซนที่ถูกขยาย
+  const toggleZone = (zoneId: any) => {
+    setExpandedZoneId(prevZoneId => (prevZoneId === zoneId ? null : zoneId)); // สลับการแสดงโซน
+  };
+
+  const [groupedCameras, setGroupedCameras] = useState<CameraType[]>([]);
+  const [groupedZone, setGroupedZone] = useState<Zone[]>([]);
+
+  const groupedData = groupedCameras.reduce((acc: { [key: string]: typeof groupedCameras }, item) => {
+    if (!acc[item.zone_id]) acc[item.zone_id] = [];
+    acc[item.zone_id].push(item);
+    return acc;
+  }, {});
+
+  useEffect(() => {
+    const getCamera = async () => {
+      try {
+        const response = await fetch(`${Port.URL}/cameras`, {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+          }
+        });
+
+        const responseZone = await fetch(`${Port.URL}/zones`, {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json",
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Network response was not ok");
+        }
+
+        if (!responseZone.ok) {
+          const errorData = await responseZone.json();
+          throw new Error(errorData.message || "Network response was not ok");
+        }
+
+        const data = await response.json();
+        const dataZone = await responseZone.json();
+
+        setGroupedCameras(data);
+        setGroupedZone(dataZone);
+
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching camera and zone data:", error);
+      }
+    };
+    getCamera();
+  }, []);
+
+  const deleteCamera = async (cameraId: number) => {
+    console.log(cameraId);
+    try {
+      const deleteResponseCamera = await fetch(`${Port.URL}/cameras/${cameraId}`, {
+        method: 'DELETE',
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      if (!deleteResponseCamera.ok) {
+        const errorData = await deleteResponseCamera.json();
+        throw new Error(errorData.message || "Failed to delete camera");
+      }
+
+      // ถ้าการลบสำเร็จ ให้ปรับข้อมูลกล้องใน state ทันที
+      // setGroupedCameras();
+
+      console.log(`Deleted camera with ID: ${cameraId}`);
+    } catch (error) {
+      console.error("Error deleting camera:", error);
+    }
+  };
+
+
 
 
   return (
     <div className="flex h-screen bg-gray-900">
       <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16 overflow-auto ">
-        {/* List of Zones */}
-        <div className="flex-1">
-          {zones.map((zone) => (
-            <div key={zone.id}>
+        <div className="">
+          {Object.entries(groupedData).map(([zoneId, cameras]) => (
+            <div key={zoneId}>
               <div
-                onClick={() => {
-                  toggleCameraZone(zone.id);
-                  changeZone(zone.id);
-                }}
-                className="flex justify-start items-center hover:bg-customSlateBlue px-8 h-16 cursor-pointer border-customSlateBlue w-full"
+                className="w-full p-6 text-xl cursor-pointer hover:bg-customSlateBlue"
+                onClick={() => toggleZone(zoneId)}
               >
-                <Icon
-                  className="p-2"
-                  icon="material-symbols:activity-zone"
-                  width="40"
-                  height="40"
-                />
-                {zone.name}
+                {getZoneName(zoneId)}
               </div>
-              <div
-                className={`transition-all duration-100 ease-in-out overflow-hidden ${showCameraZone === zone.id ? "max-h-screen" : "max-h-0"
-                  }`}
+              <ul
+                style={{
+                  display: expandedZoneId === zoneId ? 'block' : 'none'
+                }}
               >
-                {zone.cameras.map((camera) => (
+                {cameras.map((camera) => (
                   <div
+                    className="flex items-center w-full p-5 pl-12 hover:bg-customSlateBlue"
                     key={camera.id}
-                    className="hover:bg-customSlateBlue px-8 h-16 flex justify-center items-center cursor-pointer"
                   >
-                    <div className="flex text-sm w-full border-customSlateBlue">
-                      <div className="flex justify-between w-full ml-12">
-                        <div className="flex justify-center items-center">
-                          {camera.cameraName}
-                        </div>
-                        <div className="relative">
-                          <div
-                            className="flex justify-center items-center cursor-pointer"
-                            onClick={() => toggleDropdown("dropdownA", camera.id)}
-                          >
-                            <Icon
-                              icon="flowbite:dots-horizontal-outline"
-                              width="24"
-                              height="24"
-                            />
-                          </div>
-                          {openDropdownId.dropdownA === camera.id && openDropdownId.dropdownA !== null && (
-                            <div className="fixed left-56 w-36 bg-white text-black rounded-md border-gray-300 shadow-lg z-10 transition-all transform duration-300 ease-in-out ">
-                              <div
-                                className="flex justify-center items-center px-4 py-2 hover:bg-gray-100 rounded-t-md w-full cursor-pointer"
-                                onClick={() => showPopup("reName", camera.id)}
-                              >
-                                Rename
-                              </div>
-                              <div
-                                className="flex justify-center items-center px-4 py-2 hover:bg-gray-100 rounded-b-md w-full cursor-pointer"
-                                onClick={() => showPopup("deLete", camera.id)}
-                              >
-                                Delete
-                              </div>
-                            </div>
-                          )}
-
-                        </div>
-                      </div>
+                    {camera.name}
+                    <div className="flex justify-end w-full">
+                      <button
+                        // onClick={() => deleteCamera(camera.id)}
+                        className="text-red-500"
+                      >
+                        Delete
+                      </button>
                     </div>
-
-                    {openPopupId.reName === camera.id && (
-                      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-customBlue w-80 p-10 rounded-xl shadow-lg">
-                          <div className="flex justify-between">
-                            <div className="text-2xl w-48 text-white pb-4">
-                              Rename
-                            </div>
-
-                          </div>
-
-                          <input
-                            placeholder="Enter new camera name"
-                            className="w-full mt-2 text-black p-2 text-xs focus:outline-none focus:ring-2 focus:ring-gray-500"
-                          />
-                          <div className="flex justify-end gap-2">
-                            <div
-                              onClick={() => closePopup("reName")}
-                              className="mt-4 px-4 py-2 bg-gray-400 text-white rounded-sm"
-                            >
-                              close
-                            </div>
-                            <button className="mt-4 px-4 py-2 bg-customฺButton text-white rounded-sm hover:bg-customฺButtomHover">
-                              Confirm
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {openPopupId.deLete === camera.id && (
-                      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                        <div className="bg-customBlue p-10 rounded-2xl shadow-lg">
-                          <h3 className="text-lg text-white ">
-                            Are you sure you want to delete this item?
-                          </h3>
-
-                          <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => closePopup("deLete")}
-                              className="mt-4 px-4 py-2 bg-gray-400 text-white rounded-sm"
-                            >
-                              No
-                            </button>
-                            <button className="mt-4 px-4 py-2 bg-customฺButton text-white rounded-sm">
-                              Yes
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 ))}
-              </div>
+              </ul>
             </div>
           ))}
+
         </div>
+
+
+
 
         {/* Layout and Actions */}
         <div className="mt-auto">
@@ -231,37 +198,37 @@ const Sidebar: React.FC<SidebarProp> = ({
                 </div>
               </div>
             )}
+          </div>
 
-            <div className="flex justify-end p-2 w-full">
-              {/* Add Camera Button */}
-              <div>
-                <button
-                  onClick={toggleAddPopup}
-                  className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl"
-                >
-                  <Icon icon="gg:add" width="24" height="24" />
-                </button>
-                {addPopupActive && <AddCamera />}
-              </div>
-
-              {/* Layout Button */}
+          <div className="flex justify-end p-2 w-full">
+            {/* Add Camera Button */}
+            <div>
               <button
-                onClick={toggleLayout}
+                onClick={() => setOpenPopup(true)}
                 className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl"
               >
-                <Icon icon="mingcute:layout-6-fill" width="24" height="24" />
+                <Icon icon="gg:add" width="24" height="24" />
               </button>
-
-              {/* Edit Camera Button */}
-              <button
-                onClick={toggleEditCamera}
-                className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl"
-              >
-                <Icon icon="cuida:edit-outline" width="24" height="24" />
-              </button>
-
-              {editCamera && <EditPopup />}
+              {openPopup && <AddCamera setOpenPopup={setOpenPopup} />}
             </div>
+
+            {/* Layout Button */}
+            <button
+              onClick={toggleLayout}
+              className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl"
+            >
+              <Icon icon="mingcute:layout-6-fill" width="24" height="24" />
+            </button>
+
+            {/* Edit Camera Button */}
+            {/* <button
+              onClick={() => setOpenPopup(true)}
+              className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl"
+            >
+              <Icon icon="cuida:edit-outline" width="24" height="24" />
+            </button>
+
+            {openPopup && <EditPopup setOpenPopup={setOpenPopup} />} */}
           </div>
         </div>
       </div>

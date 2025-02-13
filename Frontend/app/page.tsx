@@ -1,13 +1,9 @@
 "use client"
 
 import Image from "next/image"
-import Navber from "./component/navber";
 import LoginBox from "./component/loginBox";
-import { useState } from "react";
-import { count } from "console";
-import Link from "next/link";
 import Bg from "../public/imges/cycleBG.png"
-import unnyFace from "../public/imges/unnyFace.jpg"
+
 
 function Home() {
   return (
@@ -28,10 +24,8 @@ function Home() {
         />
         <div className="w-full h-screen flex items-center justify-center ">
         <LoginBox />
-
         </div>
         
-
       </div>
 
     </>

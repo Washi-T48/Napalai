@@ -1,80 +1,153 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Icon } from "@iconify/react";
+import { useParams } from "next/navigation";
 import Navber from "../../component/navber";
 import CardVideo from "../../component/cardVideo";
 import Dropdown from "../../component/dropdown";
+import Port from "@/app/port";
 import Link from "next/link";
-import { useParams } from 'next/navigation'
+
+interface UnifiedForgottenItem {
+    id: number;
+    forgottenid: number;
+    video: string;
+    name: string | null;
+    camera: string | null;
+    status: string;
+    created: string;
+    createdtime: string;
+    zone: string | null;
+    item_type: string;
+    description: string | null;
+    cameraname: string; // *
+    zonename: string; // *
+}
+
+
+interface Camera {
+    id: string;
+    created: string;
+    zone_id: string | null;
+    name: string;
+    location: string;
+}
+
+interface Zone {
+    id: string;
+    created: string;
+    name: string;
+    location: string;
+}
 
 function Page() {
-    const params = useParams<{ assingForgotten : string }>()
-    console.log(params.assingForgotten)
+    const params = useParams();
+    const date = params.assingForgotten;
 
     const [FilterButton, SetFilterButton] = useState(false);
     const toggleFilterButton = () => SetFilterButton(!FilterButton);
-
     const [selectedZone, setSelectedZone] = useState<string | null>(null);
     const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-
-    type Item = {
-        id: number;
-        video: any;
-        name: string;
-        camera: string;
-        status: string;
-        dueDate: string;
-        zone: string;
-    };
-    const items: Item[] = [
-        {
-            id: 1,
-            video: "/video/test.mp4",
-            name: 'Macbook',
-            camera: 'camera1',
-            status: 'Unreturned',
-            dueDate: '2025-01-18',
-            zone: 'Zone1',
-        }
-    ];
-
+    const [getViolence, setGetViolence] = useState<UnifiedForgottenItem[]>([]);
+    const [getCameras, setGetCameras] = useState<Camera[]>([]);
+    const [getZones, setGetZones] = useState<Zone[]>([]);
     const [switchPage, setSwitchPage] = useState(0);
-    const [showData, setShowData] = useState<Item[]>([]);
-
     const itemsPerPage = 10;
-    const totalPages: number = Math.ceil(items.length / 10);
+
     useEffect(() => {
-        // คำนวณ startIndex และ endIndex
-        const startIndex = switchPage * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
+        if (!date) return;
 
-        // อัปเดตข้อมูลที่จะแสดง
-        const dataToShow = items.slice(startIndex, endIndex);
-        setShowData(dataToShow);
-    }, [switchPage]);
+        const getUnifiedForgottenData = async () => {
+            try {
+                const response = await fetch(`${Port.URL}/utils/forgotten`);
+                if (!response.ok) throw new Error("Failed to fetch forgotten items");
+        
+                const data: UnifiedForgottenItem[] = await response.json();
+        
+                const updatedData = data.map((item) => ({
+                    ...item,
+                    zone: item.zonename || "Unknown Zone",
+                    camera: item.cameraname || "Unknown Camera",
+                }));
+        
+                setGetViolence(updatedData);
+            } catch (error) {
+                console.error("Error fetching unified forgotten items:", error);
+            }
+        };
 
-    const filteredData = items.filter((item) => {
-        return (
-            (!selectedZone || item.zone === selectedZone) &&
-            (!selectedCamera || item.camera === selectedCamera) &&
-            (!selectedStatus || item.status === selectedStatus)
-        );
-    });
+        getUnifiedForgottenData();
+    }, [date]);
 
-    // ดึงข้อมูล zone และ camera ที่ไม่ซ้ำจาก items
-    const uniqueZones = [...new Set(items.map(item => item.zone))];
-    const uniqueCameras = [...new Set(items.map(item => item.camera))];
-    const uniqueStatuses = [...new Set(items.map(item => item.status))];
+    useEffect(() => {
+        const fetchCameras = async () => {
+            try {
+                const response = await fetch(`${Port.URL}/cameras`);
+                if (!response.ok) throw new Error("Failed to fetch cameras");
+
+                const camerasData: Camera[] = await response.json();
+                setGetCameras(camerasData);
+            } catch (error) {
+                console.error("Error fetching cameras:", error);
+            }
+        };
+
+        const fetchZones = async () => {
+            try {
+                const response = await fetch(`${Port.URL}/zones`);
+                if (!response.ok) throw new Error("Failed to fetch zones");
+
+                const zonesData: Zone[] = await response.json();
+                setGetZones(zonesData);
+            } catch (error) {
+                console.error("Error fetching zones:", error);
+            }
+        };
+
+        fetchCameras();
+        fetchZones();
+    }, []);
+
+    const mapCamerasToZones = () => {
+        return getCameras.map(camera => {
+            const matchedZone = getZones.find(zone => zone.id === camera.zone_id);
+            return {
+                ...camera,
+                zone: matchedZone ? matchedZone.name : "Unknown Zone"
+            };
+        });
+    };
+
+    const camerasWithZones = mapCamerasToZones();
+
+    const filteredData = getViolence.filter((item) =>
+        (!selectedZone || item.zone === selectedZone) &&
+        (!selectedCamera || item.camera === selectedCamera) &&
+        (!selectedStatus || item.status === selectedStatus) &&
+        (!date || item.createdtime.split("T")[0] === date)
+    );
+
+    const paginatedData = filteredData.slice(switchPage * itemsPerPage, (switchPage + 1) * itemsPerPage);
+
+    const uniqueZones = [...new Set(camerasWithZones.map((item) => item.zone))];
+    const uniqueCameras = [...new Set(camerasWithZones.map((item) => item.name))];
+    const uniqueStatuses = ["returned", "unreturned"];
+
+    const handleClearFilters = () => {
+        setSelectedZone(null);
+        setSelectedCamera(null);
+        setSelectedStatus(null);
+    };
 
     return (
         <>
             <Navber />
             <div className="bg-customBlue min-h-screen pt-20">
                 <div className="flex justify-center items-center text-2xl font-bold text-white p-6">
-                    Detection Violence
+                    Forgotten Violence - {date ? date : "All"}
                 </div>
+
                 <div className="pt-5">
                     <div className="relative w-full flex justify-end pr-10 p-5">
                         <button
@@ -85,31 +158,40 @@ function Page() {
                         </button>
 
                         {FilterButton && (
-                            <div className="absolute top-16 z-10">
-                                <div className="flex justify-center bg-customwhite w-full h-80 rounded-md overflow-hidden">
-                                    
-                                    <div className="">
-                                        <Dropdown
-                                            onSelect={(type, value) => {
-                                                if (type === "zone") setSelectedZone(value);
-                                                if (type === "camera") setSelectedCamera(value);
-                                                if (type === "status") setSelectedStatus(value);
-                                            }}
-                                            zones={uniqueZones}
-                                            cameras={uniqueCameras}
-                                            statuses={uniqueStatuses}
-                                        />
-                                    </div>
+                            <div className="absolute top-16 z-10  bg-white p-4 rounded-md shadow-lg">
+                                <div className="flex flex-col space-y-2 max-h-40 overflow-y-auto">
+                                    <Dropdown
+                                        onSelect={(type, value) => {
+                                            if (type === "zone") setSelectedZone(value);
+                                            if (type === "camera") setSelectedCamera(value);
+                                            if (type === "status") setSelectedStatus(value);
+                                        }}
+                                        zone={uniqueZones}
+                                        camera={uniqueCameras}
+                                        status={uniqueStatuses}
+                                    />
                                 </div>
+                                <button
+                                    onClick={handleClearFilters}
+                                    className="mt-2 text-sm text-white bg-red-500 p-2 rounded"
+                                >
+                                    Clear All Filters
+                                </button>
                             </div>
                         )}
                     </div>
 
-                    <div className="grid-rows-2 px-10 base:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                        {filteredData.length > 0 ? (
-                            filteredData.map((dueDate) => (
-                                <Link href="/viewForgottenPage" key={dueDate.id}>
-                                    <CardVideo item={dueDate} />
+                    <div className="text-white p-4">
+                        {selectedZone && <p>Filtered by Zone: {selectedZone}</p>}
+                        {selectedCamera && <p>Filtered by Camera: {selectedCamera}</p>}
+                        {selectedStatus && <p>Filtered by Status: {selectedStatus}</p>}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-10">
+                        {paginatedData.length > 0 ? (
+                            paginatedData.map((item, index) => (
+                                <Link href={`/viewForgottenPage/${item.forgottenid}`} key={`${item.forgottenid}-${index}`}>
+                                    <CardVideo item={item} />
                                 </Link>
                             ))
                         ) : (
@@ -117,30 +199,21 @@ function Page() {
                         )}
                     </div>
 
-                    <div className="flex justify-end items-center mt-4 px-10">
+
+                    <div className="flex justify-center mt-5">
                         <button
-                            onClick={() => switchPage > 0 && setSwitchPage((prev) => prev - 1)}
-                            className="flex justify-center items-center px-3 py-2 mx-1 w-10 rounded-sm bg-customฺButton text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]"
+                            disabled={switchPage === 0}
+                            onClick={() => setSwitchPage(switchPage - 1)}
+                            className="mx-2 p-2 bg-gray-500 text-white rounded disabled:opacity-50"
                         >
-                            <Icon icon="mingcute:left-fill" width="24" height="24" />
+                            Previous
                         </button>
-
-                        {[...Array(totalPages)].map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setSwitchPage(index)}
-                                className={`flex justify-center items-center px-3 py-2 mx-1 w-10 rounded-sm text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] ${switchPage === index ? "bg-customฺButtomHover" : "bg-customฺButton"
-                                    }`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-
                         <button
-                            onClick={() => switchPage < totalPages - 1 && setSwitchPage((prev) => prev + 1)}
-                            className="flex justify-center items-center px-3 py-2 mx-1 w-10 rounded-sm bg-customฺButton text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]"
+                            disabled={switchPage >= Math.ceil(filteredData.length / itemsPerPage) - 1}
+                            onClick={() => setSwitchPage(switchPage + 1)}
+                            className="mx-2 p-2 bg-gray-500 text-white rounded disabled:opacity-50"
                         >
-                            <Icon icon="mingcute:right-fill" width="24" height="24" />
+                            Next
                         </button>
                     </div>
                 </div>
