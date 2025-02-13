@@ -22,6 +22,12 @@ const updateCamera = async (id, camera) => {
     return rows;
 };
 
+const renameCamera = async (id, camera) => {
+    const { name } = camera;
+    const rows = await pool.query('UPDATE camera SET name = $1 WHERE id = $2 RETURNING id, name', [name, id]);
+    return rows;
+};
+
 const deleteCamera = async (id) => {
     const rows = await pool.query('DELETE FROM camera WHERE id = $1 RETURNING *', [id]);
     return rows;
@@ -37,6 +43,7 @@ export {
     getCameraById,
     getAllCameras,
     updateCamera,
+    renameCamera,
     deleteCamera,
     getCameraByZoneID,
 };
