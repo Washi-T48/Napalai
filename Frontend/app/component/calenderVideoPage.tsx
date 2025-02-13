@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function CalendarVideoPage() {
+function CalendarVideoPage({ highlightDates = [] }: { highlightDates: Date[] }) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const monthName = currentDate.toLocaleString("en-US", { month: "long" });
@@ -19,6 +19,12 @@ function CalendarVideoPage() {
 
   const fullMonthDays = [...daysBefore, ...daysInMonth];
 
+  // Function to check if a date should be highlighted
+  const isHighlighted = (date: Date) =>
+    highlightDates.some((highlightDate) =>
+      date.toDateString() === highlightDate.toDateString()
+    );
+
   return (
     <div className="flex items-center justify-center bg-customSlateBlue p-2 rounded-md text-white ">
       <div className="p-2 w-full">
@@ -26,7 +32,6 @@ function CalendarVideoPage() {
           <span className="focus:outline-none text-base text-white font-bold dark:text-white ">
             {`${monthName} ${year}`}
           </span>
-          <div className="flex items-center"></div>
         </div>
         <div className="flex items-center justify-between overflow-x-auto">
           <table className="w-full table-auto">
@@ -53,7 +58,13 @@ function CalendarVideoPage() {
                       <td key={colIndex} className="">
                         <div className="px-1 py-1 w-8 h-8 cursor-pointer flex justify-center items-center">
                           {date ? (
-                            <p className="text-xs text-white dark:text-gray-100 font-medium">
+                            <p
+                              className={`text-xs text-white font-medium text-center w-4 ${
+                                isHighlighted(date)
+                                  ? "text-red-700 rounded-full font-bold bg-white "
+                                  : ""
+                              }`}
+                            >
                               {date.getDate()}
                             </p>
                           ) : (

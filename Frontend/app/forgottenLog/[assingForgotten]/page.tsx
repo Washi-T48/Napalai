@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Icon } from "@iconify/react";
+import { useParams } from "next/navigation"; 
 import Navber from "../../component/navber";
 import CardVideo from "../../component/cardVideo";
 import Dropdown from "../../component/dropdown";
-import { useRouter } from 'next/navigation';
 import Port from "@/app/port";
 import Link from "next/link";
 
@@ -20,6 +19,9 @@ interface ForgottenItem {
 }
 
 function Page() {
+    const params = useParams(); //ดึงค่า params
+    const date = params.assingForgotten; //ช้ค่าที่ได้จาก URL ตัวอย่างงง : 2025-02-12
+
     const [FilterButton, SetFilterButton] = useState(false);
     const toggleFilterButton = () => SetFilterButton(!FilterButton);
     const [selectedZone, setSelectedZone] = useState<string | null>(null);
@@ -29,9 +31,10 @@ function Page() {
     const [showData, setShowData] = useState<ForgottenItem[]>([]);
     const [switchPage, setSwitchPage] = useState(0);
     const itemsPerPage = 10;
-    const router = useRouter();
 
     useEffect(() => {
+        if (!date) return; 
+
         const getViolenceData = async () => {
             try {
                 const getResponseViolence = await fetch(`${Port.URL}/forgotten`, {
@@ -43,15 +46,19 @@ function Page() {
                     throw new Error("Network response was not ok");
                 }
 
-                const getDataViolence = await getResponseViolence.json();
-                setGetViolence(getDataViolence);
+                const getDataViolence: ForgottenItem[] = await getResponseViolence.json();
+
+                // Filter เฉพาะวันที่ตรงกับ URL ก็คือไอ Param
+                const filteredData = getDataViolence.filter((item) => item.created.split("T")[0] === date);
+
+                setGetViolence(filteredData);
             } catch (error) {
-                console.error("Error fetching cameras:", error);
+                console.error("Error fetching data:", error);
             }
         };
 
         getViolenceData();
-    }, []);
+    }, [date]);
 
     useEffect(() => {
         const startIndex = switchPage * itemsPerPage;
@@ -74,7 +81,7 @@ function Page() {
             <Navber />
             <div className="bg-customBlue min-h-screen pt-20">
                 <div className="flex justify-center items-center text-2xl font-bold text-white p-6">
-                    Forgotten Violence
+                    Forgotten Violence - {date ? date : "All"} 
                 </div>
 
                 <div className="pt-5">
@@ -110,8 +117,6 @@ function Page() {
                                 <Link href={`/viewForgottenPage/${item.id}`} key={item.id}>
                                     <CardVideo item={item} />
                                 </Link>
-                                
-
                             ))
                         ) : (
                             <div>No items available</div>
