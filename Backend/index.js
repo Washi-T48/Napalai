@@ -6,6 +6,8 @@ import dotenv from 'dotenv';
 import { testConnection } from './config/db.js';
 testConnection();
 
+import { authMiddleware, protectedFileMiddleware } from './middlewares/auth.middleware.js';
+
 import cameraRouter from './routes/camera.routes.js';
 import zoneRouter from './routes/zone.routes.js';
 import eventRouter from './routes/event.routes.js';
@@ -20,7 +22,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
-app.use(cors());
+app.use(cors({ credentials: true }));
 
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.socket.remoteAddress} ${req.url}`);
@@ -38,6 +40,9 @@ app.use('/forgotten', forgottenRouter);
 app.use('/violence', violenceRouter);
 app.use('/utils', utilsRouter);
 app.use('/auth', authRouter);
+
+app.use('/public', express.static('public'));
+app.use('/protected', protectedFileMiddleware, express.static('protected'));
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
