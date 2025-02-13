@@ -5,6 +5,7 @@ import {
     getAllZones,
     getZoneById,
     updateZone,
+    renameZone,
     deleteZone,
 } from '../models/zone.model.js';
 
@@ -48,6 +49,17 @@ zoneRouter.put('/:id', async (req, res) => {
         const id = req.params.id;
         const zone = req.body;
         const updatedZone = await updateZone(id, zone);
+        res.status(200).json(updatedZone.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+zoneRouter.patch('/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { name } = req.body;
+        const updatedZone = await renameZone(id, name);
         res.status(200).json(updatedZone.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
