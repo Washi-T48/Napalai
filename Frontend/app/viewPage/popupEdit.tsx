@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 interface setPopup {
   setOpenPopup: (option: boolean) => void;

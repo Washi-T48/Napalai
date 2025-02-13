@@ -24,10 +24,6 @@ interface eventCard {
 }
 
 function Page() {
-    // const assignments = [
-    //     { name: 'Macbook', dueDate: '2025-01-18', itemCount: '2'  },
-    //     { name: 'BookMac', dueDate: '2025-01-19', itemCount: '1' },
-    // ];
     const [eventCard, setEventCard] = useState<eventCard[]>([]);
     const [forgottenResponse, setForgottenResponse] = useState<ForgottenItem[]>([]);
     const [statePopup , setStatePopup] = useState(false);
@@ -35,43 +31,31 @@ function Page() {
     useEffect(() => {
         const getCamera = async () => {
             try {
-                const forgottenResponse = await fetch(`${Port.URL}/forgotten`, {
-                    method: 'GET',
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
-                })
-                const eventsResponse = await fetch(`${Port.URL}/events`, {
-                    method: 'GET',
-                    headers: {
-                        "Content-Type": "application/json",
-                    }
-                })
-
+                const forgottenResponse = await fetch(`${Port.URL}/forgotten`);
+                const eventsResponse = await fetch(`${Port.URL}/events`);
+    
                 if (!forgottenResponse.ok) {
-                    const errorData = await forgottenResponse.json();
-                    throw new Error(errorData.message || "Network response was not ok");
+                    throw new Error(`Failed to fetch forgotten items: ${forgottenResponse.status}`);
                 }
                 if (!eventsResponse.ok) {
-                    throw new Error(`HTTP error! Status: ${eventsResponse.status}`);
+                    throw new Error(`Failed to fetch events: ${eventsResponse.status}`);
                 }
-
+    
                 const forgottenData = await forgottenResponse.json();
-                console.log("API Response:", forgottenData);
-
                 const eventData = await eventsResponse.json();
-                console.log("API Response:", forgottenData);
-
-                setForgottenResponse(forgottenData)
-                setEventCard(eventData)
+    
+                console.log("Forgotten Data:", forgottenData); // Check the data here
+    
+                setForgottenResponse(forgottenData);
+                setEventCard(eventData);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                console.log(forgottenResponse);
             }
-        }
+        };
+    
         getCamera();
     }, []);
-    console.log(eventCard)
+    
 
     return (
         <>

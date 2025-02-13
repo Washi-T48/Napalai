@@ -27,6 +27,7 @@ interface CalendarProps {
     assignments: ForgottenItem[];
 }
 
+
 const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -91,6 +92,7 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                 const formattedDate = format(day, 'yyyy-MM-dd');
                 const displayDate = format(day, 'd');
 
+                // กรอง assignments สำหรับวันนั้น ๆ
                 const assignmentsForDay = assignments.filter(assignment =>
                     isSameDay(parseISO(assignment.created), day)
                 );
@@ -98,6 +100,9 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                 const isCurrentMonth = isSameMonth(day, monthStart);
                 const isDayFromCurrentMonth = getDate(day) <= getDate(monthEnd) && getDate(day) >= 1;
                 const todayClass = isToday(day) ? 'text-primary font-bold' : '';
+
+                // คำนวณ total itemCount
+                const totalItemCount = assignmentsForDay.reduce((total, assignment) => total + (assignment.itemCount || 1), 0);
 
                 days.push(
                     <Link href={`/forgottenLog/${formattedDate}`} key={day.toISOString()}>
@@ -111,38 +116,25 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                             <div className="overflow-y-auto h-20 mt-2 flex justify-center">
                                 {isCurrentMonth && isDayFromCurrentMonth && (
                                     <div>
-                                        {/* ถ้ามี assignments สำหรับวันนี้ */}
+                                        {/* แสดง totalItemCount ถ้ามี assignments */}
                                         {assignmentsForDay.length > 0 && (
-                                            (() => {
-                                                // ปรับเปลี่ยนการใช้ itemCount ให้เป็น number
-                                                const sumItemCount = assignmentsForDay.reduce(
-                                                    (total, assignment) => total + (assignment.itemCount || 1), // ถ้าไม่มีค่าให้ใช้ 1
-                                                    0
-                                                );
-                                                
-                                                
-                                                return (
-                                                    <div className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
-                                                        <div className='flex justify-center flex-col'>
-                                                            <div className='flex justify-center'>
-                                                                ITEM
-                                                            </div>
-                                                            <div className='flex justify-center'>
-                                                            {`${sumItemCount} `}
-                                                            </div>
-                                                        </div>
+                                            <div className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
+                                                <div className='flex justify-center flex-col'>
+                                                    <div className='flex justify-center'>
+                                                        ITEM
                                                     </div>
-                                                );
-                                            })()
+                                                    <div className='flex justify-center'>
+                                                        {`${totalItemCount} `} {/* แสดงจำนวน itemCount */}
+                                                    </div>
+                                                </div>
+                                            </div>
                                         )}
                                     </div>
                                 )}
-
                             </div>
                         </div>
                     </Link>
                 );
-
 
                 day = addDays(day, 1);
             }
@@ -158,6 +150,7 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
 
         return <div>{rows}</div>;
     };
+
 
     return (
         <div className="w-full max-w-7xl mx-auto mt-4">

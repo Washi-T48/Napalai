@@ -68,14 +68,14 @@ const Sidebar: React.FC<SidebarProp> = ({
           headers: {
             "Content-Type": "application/json",
           }
-        })
+        });
 
         const responseZone = await fetch(`${Port.URL}/zones`, {
           method: 'GET',
           headers: {
             "Content-Type": "application/json",
           }
-        })
+        });
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -91,14 +91,42 @@ const Sidebar: React.FC<SidebarProp> = ({
         const dataZone = await responseZone.json();
 
         setGroupedCameras(data);
-        setGroupedZone(dataZone)
+        setGroupedZone(dataZone);
 
-        console.log(data)
+        console.log(data);
       } catch (error) {
+        console.error("Error fetching camera and zone data:", error);
       }
-    }
-    getCamera()
+    };
+    getCamera();
   }, []);
+
+  const deleteCamera = async (cameraId: number) => {
+    console.log(cameraId);
+    try {
+      const deleteResponseCamera = await fetch(`${Port.URL}/cameras/${cameraId}`, {
+        method: 'DELETE',
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+
+      if (!deleteResponseCamera.ok) {
+        const errorData = await deleteResponseCamera.json();
+        throw new Error(errorData.message || "Failed to delete camera");
+      }
+
+      // ถ้าการลบสำเร็จ ให้ปรับข้อมูลกล้องใน state ทันที
+      // setGroupedCameras();
+
+      console.log(`Deleted camera with ID: ${cameraId}`);
+    } catch (error) {
+      console.error("Error deleting camera:", error);
+    }
+  };
+
+
+
 
   return (
     <div className="flex h-screen bg-gray-900">
@@ -120,19 +148,23 @@ const Sidebar: React.FC<SidebarProp> = ({
                 {cameras.map((camera) => (
                   <div
                     className="flex items-center w-full p-5 pl-12 hover:bg-customSlateBlue"
-                    key={camera.id}>
+                    key={camera.id}
+                  >
                     {camera.name}
-                    {/* <div className=" flex justify-start items-end pl-2 w-full text-gray-500 text-tiny">
-                  {camera.location}
-                </div> */}
                     <div className="flex justify-end w-full">
-                      ...
+                      <button
+                        // onClick={() => deleteCamera(camera.id)}
+                        className="text-red-500"
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 ))}
               </ul>
             </div>
           ))}
+
         </div>
 
 

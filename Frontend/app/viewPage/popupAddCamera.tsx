@@ -1,40 +1,38 @@
 import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import Port from "../port";
+
 interface setPopup {
   setOpenPopup: (option: boolean) => void;
 }
+
 interface Zone {
   id: string;
   name: string;
   location: string;
 }
 
-
-
 const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
-  const [createZone, setCreateZones] = useState("")
-  const [locationZone, setLocationZone] = useState("")
+  const [createZone, setCreateZones] = useState("");
+  const [locationZone, setLocationZone] = useState("");
   const [zones, setZones] = useState<Zone[]>([]);
-  const [zoneName, setZoneName] = useState("");
-  const [cameraName, setCameraName] = useState("")
-  const [location, setLocation] = useState("")
-  const [ip, setIp] = useState("")
-  const [port, setPort] = useState("")
-  const [path, setPath] = useState("")
-  const [onvifUsername, setuOnvifUername] = useState("")
-  const [onvifPassword, setOnvifPassword] = useState("")
-  const [rtspUrl, setRtspUrl] = useState("")
-  const [rtspUsername, setRtspUsername] = useState("")
-  const [rtspPassword, setRtspPassword] = useState("")
-
+  const [zoneName, setZoneName] = useState<string>("");
+  const [zoneId, setZoneId] = useState<string>("");
+  const [cameraName, setCameraName] = useState("");
+  const [location, setLocation] = useState("");
+  const [ip, setIp] = useState("");
+  const [port, setPort] = useState("");
+  const [path, setPath] = useState("");
+  const [onvifUsername, setOnvifUsername] = useState("");
+  const [onvifPassword, setOnvifPassword] = useState("");
+  const [rtspUrl, setRtspUrl] = useState("");
+  const [rtspUsername, setRtspUsername] = useState("");
+  const [rtspPassword, setRtspPassword] = useState("");
   const [showCreateZone, setShowCreateZone] = useState(false);
-
 
   useEffect(() => {
     const getZones = async () => {
       try {
-        // ดึงข้อมูลด้วย GET
         const getZone = await fetch(`${Port.URL}/zones`, {
           method: "GET",
           headers: {
@@ -48,7 +46,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
         }
 
         const getDataZone = await getZone.json();
-        setZones(getDataZone); // ตั้งค่า zones
+        setZones(getDataZone);
         console.log("Fetched zones:", getDataZone);
       } catch (error) {
         console.error("Error fetching zones:", error);
@@ -58,7 +56,6 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
     getZones();
   }, []);
 
-  // ฟังก์ชันที่ใช้ส่งข้อมูลแบบ POST
   const postCreateZone = async () => {
     try {
       const postZone = await fetch(`${Port.URL}/zones`, {
@@ -68,7 +65,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
         },
         body: JSON.stringify({
           name: createZone,
-          // location:,
+          location: locationZone,
         }),
       });
 
@@ -85,7 +82,6 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
     }
   };
 
-
   const postCamera = async () => {
     try {
       const postCamera = await fetch(`${Port.URL}/cameras`, {
@@ -94,8 +90,9 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: zoneName,
+          name: cameraName,
           location: location,
+          zone_id: zoneId,
           onvif_ip: ip,
           onvif_port: port,
           onvif_path: path,
@@ -114,18 +111,12 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
 
       const postDataCamera = await postCamera.json();
       console.log("Fetched camera data:", postDataCamera);
-
-
     } catch (error) {
       console.error("Error posting camera data:", error);
     }
   };
 
-
-
   return (
-
-
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="w-[550px] h-auto bg-customBlue p-8 shadow-lg rounded-2xl">
         <div className="flex justify-between pb-2">
@@ -140,25 +131,15 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
           </div>
         </div>
 
-
-        {/* <div className="bg-customwhite w-auto h-32 text-black p-2 rounded-sm">
-          Something...
-        </div> */}
-
-
         <div className="flex flex-col gap-2 pt-8">
           <div className="flex justify-between items-center">
             <div>Zone</div>
             <select
               onChange={(e) => {
-                const selectedValue = e.target.value;
-                setZoneName(selectedValue);
-            
-                if (selectedValue === "Create Name") {
-                  setShowCreateZone(true);
-                } else {
-                  setShowCreateZone(false);
-                }
+                const selectedZone = zones.find(zone => zone.name === e.target.value);
+                setZoneName(e.target.value);
+                setZoneId(selectedZone ? selectedZone.id : "");
+                setShowCreateZone(e.target.value === "Create Name");
               }}
               value={zoneName}
               className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-tiny rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
@@ -173,121 +154,146 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
             </select>
           </div>
 
-          {showCreateZone && 
-          <div className="flex flex-col gap-2 p-4 bg-customDarkSlateBlue rounded-md">
-            <div className="flex justify-between items-center">
-              <div>Zone Name</div>
-              <input
-                onChange={(e) => { setCameraName(e.target.value) }}
-                value={cameraName}
-                type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+          {showCreateZone && (
+            <div className="flex flex-col gap-2 p-4 bg-customDarkSlateBlue rounded-md">
+              <div className="flex justify-between items-center">
+                <div>Zone Name</div>
+                <input
+                  onChange={(e) => { setCreateZones(e.target.value) }}
+                  value={createZone}
+                  type="text"
+                  className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                />
+              </div>
+              <div className="flex justify-between items-center">
+                <div>Location Zone</div>
+                <input
+                  onChange={(e) => { setLocationZone(e.target.value) }}
+                  value={locationZone}
+                  type="text"
+                  className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => {
+                    postCreateZone();
+                    setShowCreateZone(false);
+                  }}
+                  className="w-20 p-2 bg-customฺButton text-xxs rounded-xl hover:bg-customฺButtomHover"
+                >
+                  Create
+                </button>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <div>Location Zone</div>
-              <input
-                onChange={(e) => { setCameraName(e.target.value) }}
-                value={cameraName}
-                type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
-            </div>
-            <div className="flex justify-end">
-              <button
-                onClick={() => {
-                  postCreateZone();  
-                  setShowCreateZone(false);  
-                }}
-                className="w-20 p-2 bg-customฺButton text-xxs rounded-xl hover:bg-customฺButtomHover"
-              >
-                Create
-              </button>
-            </div>
-          </div>
-          }
+          )}
 
-
+          {/* Camera input fields */}
           <div className="flex justify-between items-center">
             <div>Camera Name</div>
             <input
               onChange={(e) => { setCameraName(e.target.value) }}
               value={cameraName}
               type="text"
-              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+            />
           </div>
           <div className="flex justify-between items-center">
             <div>Location</div>
             <input
               onChange={(e) => { setLocation(e.target.value) }}
               value={location}
-              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+            />
           </div>
+
           <div className="flex justify-between items-center">
-            <div>ip</div>
+            <div>IP</div>
             <input
               onChange={(e) => { setIp(e.target.value) }}
               value={ip}
-              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+              type="text"
+              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+            />
           </div>
-          <div className="flex justify-between items-center ">
+          <div className="flex justify-between items-center">
             <div>Port</div>
             <input
               onChange={(e) => { setPort(e.target.value) }}
               value={port}
-              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+              type="text"
+              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+            />
           </div>
           <div className="flex justify-between items-center">
-            <div>path</div>
+            <div>Path</div>
             <input
               onChange={(e) => { setPath(e.target.value) }}
               value={path}
-              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+              type="text"
+              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+            />
           </div>
+
           <div className="flex justify-between items-center">
-            <div>Onvif Uername</div>
+            <div>ONVIF Username</div>
             <input
-              onChange={(e) => { setuOnvifUername(e.target.value) }}
+              onChange={(e) => { setOnvifUsername(e.target.value) }}
               value={onvifUsername}
-              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+              type="text"
+              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+            />
           </div>
           <div className="flex justify-between items-center">
-            <div>Onvif password</div>
+            <div>ONVIF Password</div>
             <input
               onChange={(e) => { setOnvifPassword(e.target.value) }}
               value={onvifPassword}
-              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+              type="text"
+              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+            />
           </div>
+
           <div className="flex justify-between items-center">
-            <div>rtspUrl</div>
+            <div>RTSP URL</div>
             <input
               onChange={(e) => { setRtspUrl(e.target.value) }}
               value={rtspUrl}
-              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+              type="text"
+              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+            />
           </div>
           <div className="flex justify-between items-center">
-            <div>rtspUsername</div>
+            <div>RTSP Username</div>
             <input
               onChange={(e) => { setRtspUsername(e.target.value) }}
               value={rtspUsername}
-              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+              type="text"
+              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+            />
           </div>
           <div className="flex justify-between items-center">
-            <div>rtspPassword</div>
+            <div>RTSP Password</div>
             <input
               onChange={(e) => { setRtspPassword(e.target.value) }}
               value={rtspPassword}
-              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2  focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100" />
+              type="text"
+              className="flex justify-center items-center bg-customwhite w-[230px] h-7 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+            />
           </div>
-        </div>
-        <div className="flex justify-end mt-4">
-          <button
-            onClick={postCamera}
-            className="flex justify-center items-center w-28 bg-customฺButton p-2 rounded-md hover:bg-customฺButtomHover">
-            Submit
-          </button>
+
+          <div className="flex justify-end mt-4">
+            <button
+              onClick={postCamera}
+              className="flex justify-center items-center w-28 bg-customฺButton p-2 rounded-md hover:bg-customฺButtomHover"
+            >
+              Submit
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default AddCamera;

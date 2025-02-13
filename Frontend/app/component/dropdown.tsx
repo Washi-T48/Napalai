@@ -3,12 +3,12 @@ import { Icon } from "@iconify/react";
 
 interface DropdownProps {
   onSelect: (type: string, value: string) => void;
-  zones: string[];
-  cameras: string[];
-  statuses: string[];
+  zone: string[];
+  camera: string[];
+  status: string[];
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses }) => {
+const Dropdown: React.FC<DropdownProps> = ({ onSelect, zone, camera, status }) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
@@ -16,6 +16,7 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses 
   const toggleDropdown = (dropdown: string) => {
     setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
   };
+  console.log(zone,camera,status)
 
 
   return (
@@ -31,12 +32,12 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses 
         </button>
 
         {openDropdown === "zone" && (
-          <div className="absolute z-10 w-56 h-40 overflow-auto mt-1 bg-white shadow-lg rounded-lg">
-            {zones.map((zone) => (
+          <div className="absolute z-10 w-56 max-h-40 overflow-auto mt-1 bg-white shadow-lg rounded-lg">
+            {zone.map((zone, index) => (
               <div
-                key={zone}
+                key={`${zone}-${index}`} // Ensures uniqueness even with duplicate values
                 onClick={() => {
-                  setSelectedZone(zone); // อัปเดตค่าโซนที่เลือก
+                  setSelectedZone(zone);
                   onSelect("zone", zone);
                   setOpenDropdown(null);
                 }}
@@ -60,10 +61,10 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses 
         </button>
 
         {openDropdown === "camera" && (
-          <div className="absolute z-10 w-56 h-40 overflow-auto mt-1 bg-white shadow-lg rounded-lg over">
-            {cameras.map((camera) => (
+          <div className="absolute z-10 w-56 max-h-40 overflow-auto mt-1 bg-white shadow-lg rounded-lg over">
+            {camera.map((camera, index) => (
               <div
-                key={camera}
+                key={`${camera}-${index}`} // Ensures uniqueness even with duplicate values
                 onClick={() => {
                   setSelectedCamera(camera);
                   onSelect("camera", camera);
@@ -89,10 +90,10 @@ const Dropdown: React.FC<DropdownProps> = ({ onSelect, zones, cameras, statuses 
         </button>
 
         {openDropdown === "status" && (
-          <div className="absolute z-10 w-56 mt-1 bg-white shadow-lg rounded-lg">
-            {statuses.map((status) => (
+          <div className="absolute z-10 w-56 max-h-40 mt-1 bg-white shadow-lg rounded-lg">
+            {status.map((status, index) => (
               <div
-                key={status}
+                key={`${status}-${index}`} // Ensures uniqueness even with duplicate values
                 onClick={() => {
                   setSelectedStatus(status);
                   onSelect("status", status);
