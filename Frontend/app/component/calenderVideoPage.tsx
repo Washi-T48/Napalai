@@ -19,7 +19,6 @@ function CalendarVideoPage({ highlightDates = [] }: { highlightDates: Date[] }) 
 
   const fullMonthDays = [...daysBefore, ...daysInMonth];
 
-  // Function to check if a date should be highlighted
   const isHighlighted = (date: Date) =>
     highlightDates.some((highlightDate) =>
       date.toDateString() === highlightDate.toDateString()
@@ -59,7 +58,7 @@ function CalendarVideoPage({ highlightDates = [] }: { highlightDates: Date[] }) 
                         <div className="px-1 py-1 w-8 h-8 cursor-pointer flex justify-center items-center">
                           {date ? (
                             <p
-                              className={`text-xs text-white font-medium text-center w-4 ${
+                              className={`text-xs font-medium text-center w-4 h-4 ${
                                 isHighlighted(date)
                                   ? "text-red-700 rounded-full font-bold bg-white "
                                   : ""

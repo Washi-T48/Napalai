@@ -91,17 +91,13 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
             for (let i = 0; i < 7; i++) {
                 const formattedDate = format(day, 'yyyy-MM-dd');
                 const displayDate = format(day, 'd');
-
-                // กรอง assignments สำหรับวันนั้น ๆ
                 const assignmentsForDay = assignments.filter(assignment =>
                     isSameDay(parseISO(assignment.created), day)
                 );
-
                 const isCurrentMonth = isSameMonth(day, monthStart);
                 const isDayFromCurrentMonth = getDate(day) <= getDate(monthEnd) && getDate(day) >= 1;
                 const todayClass = isToday(day) ? 'text-primary font-bold' : '';
 
-                // คำนวณ total itemCount
                 const totalItemCount = assignmentsForDay.reduce((total, assignment) => total + (assignment.itemCount || 1), 0);
 
                 days.push(
@@ -116,7 +112,6 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                             <div className="overflow-y-auto h-20 mt-2 flex justify-center">
                                 {isCurrentMonth && isDayFromCurrentMonth && (
                                     <div>
-                                        {/* แสดง totalItemCount ถ้ามี assignments */}
                                         {assignmentsForDay.length > 0 && (
                                             <div className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
                                                 <div className='flex justify-center flex-col'>
@@ -124,7 +119,7 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
                                                         ITEM
                                                     </div>
                                                     <div className='flex justify-center'>
-                                                        {`${totalItemCount} `} {/* แสดงจำนวน itemCount */}
+                                                        {`${totalItemCount} `} 
                                                     </div>
                                                 </div>
                                             </div>
@@ -162,3 +157,4 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
 };
 
 export default ForgottenCalendar;
+    

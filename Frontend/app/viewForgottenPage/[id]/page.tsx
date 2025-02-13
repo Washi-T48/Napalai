@@ -32,6 +32,7 @@ interface ForgottenItem {
     rtsp_url: string | null; // *
     cameraname: string; // *
     zonename: string; // *
+    createdtime: string;
 }
 
 
@@ -69,7 +70,7 @@ function Page() {
         );
     }
     console.log(data)
-    const highlightDates = [new Date(data.created)];
+    const highlightDates = [new Date(data.createdtime)];
 
     return (
         <>
@@ -161,7 +162,7 @@ function Page() {
                                                     <Icon icon="mingcute:time-line" width="18" height="18" />
                                                 </div>
                                             </div>
-                                            <div className="flex justify-center">{new Date(data.created).toLocaleString()}</div>
+                                            <div className="flex justify-center">{new Date(data.createdtime).toLocaleString()}</div>
                                         </div>
                                     </div>
                                 </div>
