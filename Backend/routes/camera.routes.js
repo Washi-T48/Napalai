@@ -5,6 +5,7 @@ import {
     getCameraById,
     getAllCameras,
     updateCamera,
+    renameCamera,
     deleteCamera
 } from '../models/camera.model.js';
 
