@@ -29,7 +29,7 @@ const renameCamera = async (id, camera) => {
 };
 
 const deleteCamera = async (id) => {
-    const rows = await pool.query('DELETE FROM camera WHERE id = $1 RETURNING *', [id]);
+    const rows = await pool.query('DELETE FROM camera WHERE id = $1 RETURNING id', [id]);
     return rows;
 };
 
