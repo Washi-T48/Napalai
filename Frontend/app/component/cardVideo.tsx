@@ -18,13 +18,13 @@ interface ForgottenItem {
     name: string;
     camera: string;
     status: string;
-    created: string;
+    createdtime: string;
     zone: string;
     item_type:string;
 }
 
 interface CardVideoProps {
-    item: ForgottenItem;
+    item: ForgottenItem; 
 }
 
 const CardVideo: React.FC<CardVideoProps> = ({ item }) => {

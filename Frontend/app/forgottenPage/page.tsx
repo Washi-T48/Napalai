@@ -1,109 +1,124 @@
 "use client";
 
-import React from 'react'
-import ForgottenCard from './forgottenCard';
-import Navber from '../component/navber';
-import ForgottenCalendar from './forgottenCalender';
-import { useState, useEffect } from 'react';
-import Port from "../port"
-import PopupUndefineItem from './popupUndefineItem';
+import React, { useState, useEffect } from "react";
+import ForgottenCard from "./forgottenCard";
+import Navber from "../component/navber";
+import ForgottenCalendar from "./forgottenCalender";
+import PopupUndefineItem from "./popupUndefineItem";
+import Port from "../port";
+import Link from "next/link";
 
 interface ForgottenItem {
-    id: number;
-    description: string;
-    created: string;
-    item_type: string;
-    itemCount: number;
-}
-interface eventCard {
-    id: number;
-    created: string;
-    camera_id: number;
-    type: string;
-    position:string;
+  id: number;
+  description: string;
+  created: string;
+  item_type: string;
+  itemCount: number;
+  item_name: string;
 }
 
-function Page() {
-    const [eventCard, setEventCard] = useState<eventCard[]>([]);
-    const [forgottenResponse, setForgottenResponse] = useState<ForgottenItem[]>([]);
-    const [statePopup , setStatePopup] = useState(false);
+interface EventCard {
+  id: number;
+  created: string;
+  camera_id: number;
+  type: string;
+  position: string;
+}
 
-    useEffect(() => {
-        const getCamera = async () => {
-            try {
-                const forgottenResponse = await fetch(`${Port.URL}/forgotten`);
-                const eventsResponse = await fetch(`${Port.URL}/events`);
-    
-                if (!forgottenResponse.ok) {
-                    throw new Error(`Failed to fetch forgotten items: ${forgottenResponse.status}`);
-                }
-                if (!eventsResponse.ok) {
-                    throw new Error(`Failed to fetch events: ${eventsResponse.status}`);
-                }
-    
-                const forgottenData = await forgottenResponse.json();
-                const eventData = await eventsResponse.json();
-    
-                console.log("Forgotten Data:", forgottenData); // Check the data here
-    
-                setForgottenResponse(forgottenData);
-                setEventCard(eventData);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-    
-        getCamera();
-    }, []);
-    
+export default function Page() {
+  const [eventCard, setEventCard] = useState<EventCard[]>([]);
+  const [forgottenResponse, setForgottenResponse] = useState<ForgottenItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [statePopup, setStatePopup] = useState(false);
 
-    return (
-        <>
-            <Navber />
-            <div className='bg-customBlue min-h-screen'>
-                <div className='flex justify-center items-center flex-col pt-16 h-full text-white lg:flex-row'>
-                    <div className='flex justify-center items-start flex-col p-4 gap-4 flex-1 w-full h-full text-white lg:flex-row lg:gap-10'>
-                        <div className='w-full lg:max-w-7xl h-full text-black'>
-                            <ForgottenCalendar assignments={forgottenResponse} />
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [forgottenRes, eventsRes] = await Promise.all([
+          fetch(`${Port.URL}/forgotten`),
+          fetch(`${Port.URL}/events`),
+        ]);
 
-                        </div>
-                        <div className='flex justify-between flex-col h-full w-full lg:max-w-md pt-2 '>
-                            <div className='flex justify-center flex-col pt-2 p-2 border-b'>
-                                {/* Search */}
-                                <div className="flex px-4 py-2 rounded-md border-2 bg-customwhite overflow-hidden w-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192.904 192.904" width="16px"
-                                        className="fill-black-600 mr-3 rotate-90">
-                                        <path
-                                            d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z">
-                                        </path>
-                                    </svg>
-                                    <input type="email" placeholder="Search..." className="w-full outline-none bg-transparent text-gray-600 text-sm" />
-                                </div>
-                                <div className='pt-4 mt-3 h-80 overflow-auto'>
+        if (!forgottenRes.ok || !eventsRes.ok) {
+          throw new Error("Failed to fetch data");
+        }
 
-                                </div>
-                            </div>
-                            <div className='flex justify-start flex-col pt-4 p-2'>
-                                <div className='p-2'>Today ITEM</div>
-                                <div className='h-80 overflow-auto'>
-                                    <ForgottenCard 
-                                    setStatePopup={setStatePopup}
-                                    eventCard={eventCard}
-                                    // activeItemIndex={index} 
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
+        const [forgottenData, eventData] = await Promise.all([
+          forgottenRes.json(),
+          eventsRes.json(),
+        ]);
+
+        setForgottenResponse(forgottenData);
+        setEventCard(eventData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+const filteredForgottenItems = forgottenResponse.filter((item) =>
+    item.item_name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
+
+  return (
+    <>
+      <Navber />
+      <div className="bg-customBlue min-h-screen">
+        <div className="flex justify-center items-center flex-col pt-16 h-full text-white lg:flex-row">
+          <div className="flex justify-center items-start flex-col p-4 gap-4 flex-1 w-full h-full text-white lg:flex-row lg:gap-10">
+            <div className="w-full lg:max-w-7xl h-full text-black">
+              <ForgottenCalendar assignments={forgottenResponse} />
             </div>
-            {statePopup && <PopupUndefineItem setStatePopup={setStatePopup}/> }
-            
-        </>
-
-
-    )
+            <div className="flex justify-between flex-col h-full w-full lg:max-w-md pt-2">
+              <div className="flex justify-center flex-col pt-2 p-2 border-b">
+                {/* Search Bar */}
+                <div className="flex px-4 py-2 rounded-md border-2 bg-customwhite overflow-hidden w-full">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 192.904 192.904"
+                    width="16px"
+                    className="fill-black-600 mr-3 rotate-90"
+                  >
+                    <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z" />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search forgotten items..."
+                    className="w-full outline-none bg-transparent text-gray-600 text-sm"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                {/* Search Results */}
+                <div className="pt-4 mt-3 h-80 overflow-auto">
+                  {filteredForgottenItems.length > 0 ? (
+                    filteredForgottenItems.map((item) => (
+                        <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
+                      <div key={item.id} className="p-2 bg-gray-800 text-white rounded-md mb-2">
+                        <p className="text-sm font-bold">{item.item_name}</p>
+                        <p className="text-xs text-gray-400">Created: {item.created}</p>
+                      </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-400">No items found.</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex justify-start flex-col pt-4 p-2">
+                <div className="p-2">Today ITEM</div>
+                <div className="h-80 overflow-auto">
+                  <ForgottenCard setStatePopup={setStatePopup} eventCard={eventCard} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {statePopup && <PopupUndefineItem setStatePopup={setStatePopup} />}
+    </>
+  );
 }
-
-export default Page
