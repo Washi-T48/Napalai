@@ -77,6 +77,7 @@ CREATE TABLE "user" (
 	created timestamptz DEFAULT CURRENT_TIMESTAMP NULL,
 	username varchar NOT NULL,
 	fullname varchar NULL,
+	email varchar NULL,
 	"password" varchar NULL,
 	CONSTRAINT user_pk PRIMARY KEY (id),
 	CONSTRAINT user_unique UNIQUE (username)
@@ -121,7 +122,7 @@ CREATE TABLE camera (
 	rtsp_password varchar NULL,
 	CONSTRAINT camera_pk PRIMARY KEY (id),
 	CONSTRAINT camera_unique UNIQUE (name),
-	CONSTRAINT camera_zone_fk FOREIGN KEY (zone_id) REFERENCES "zone"(id)
+	CONSTRAINT camera_zone_fk FOREIGN KEY (zone_id) REFERENCES "zone"(id) ON DELETE SET NULL
 );
 
 -- Column comments
@@ -145,7 +146,7 @@ CREATE TABLE "event" (
 	last_seen timestamptz NULL,
 	warning_triggered timestamptz NULL,
 	CONSTRAINT event_pk PRIMARY KEY (id),
-	CONSTRAINT event_camera_fk FOREIGN KEY (camera_id) REFERENCES camera(id)
+	CONSTRAINT event_camera_fk FOREIGN KEY (camera_id) REFERENCES camera(id) ON DELETE SET NULL
 );
 
 -- Column comments
@@ -165,6 +166,7 @@ CREATE TABLE forgotten (
 	event_id varchar NULL,
 	description jsonb NULL,
 	item_type varchar NULL,
+	item_name varchar NULL,
 	status varchar NULL,
 	CONSTRAINT forgotten_event_fk FOREIGN KEY (event_id) REFERENCES "event"(id)
 );

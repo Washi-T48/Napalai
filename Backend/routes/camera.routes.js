@@ -5,6 +5,8 @@ import {
     getCameraById,
     getAllCameras,
     updateCamera,
+    renameCamera,
+    changeCameraZone,
     deleteCamera
 } from '../models/camera.model.js';
 
@@ -44,6 +46,28 @@ cameraRouter.put('/:id', async (req, res) => {
         const id = req.params.id;
         const camera = req.body;
         const updatedCamera = await updateCamera(id, camera);
+        res.status(200).json(updatedCamera.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+cameraRouter.patch('/:id/rename', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const camera = req.body;
+        const updatedCamera = await renameCamera(id, camera);
+        res.status(200).json(updatedCamera.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+cameraRouter.patch('/:id/zone', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const camera = req.body;
+        const updatedCamera = await changeCameraZone(id, camera);
         res.status(200).json(updatedCamera.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
