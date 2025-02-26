@@ -37,8 +37,8 @@ export const verifyToken = (token, hash) => {
     });
 };
 
-export const forgetPasswordSender = async (recipient, id) => {
-    const fullURL = rootPage + id;
+export const forgetPasswordSender = async (recipient, token) => {
+    const fullURL = rootPage + token;
     transporter.sendMail({
         from: `${from_name} ${from_mail}`,
         to: recipient,
