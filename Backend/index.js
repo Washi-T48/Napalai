@@ -2,6 +2,9 @@ import express from 'express';
 import bodyparser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import http from 'http';
+import https from 'https';
+import fs from 'fs';
 
 import { testConnection } from './config/db.js';
 testConnection();
@@ -15,9 +18,10 @@ import forgottenRouter from './routes/forgotten.routes.js';
 import violenceRouter from './routes/violence.routes.js';
 import utilsRouter from './routes/utils.routes.js';
 import authRouter from './routes/auth.routes.js';
+import { forgetPasswordSender } from './models/resetpassword.model.js';
 
 dotenv.config();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 443;
 
 const app = express();
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -44,6 +48,15 @@ app.use('/auth', authRouter);
 app.use('/public', express.static('public'));
 app.use('/protected', protectedFileMiddleware, express.static('protected'));
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+http.createServer(app).listen(3000, () => {
+    console.log(`Server is running on port 3000`);
 });
+
+// const options = {
+//     key: fs.readFileSync(process.env.KEY_PATH),
+//     cert: fs.readFileSync(process.env.CERT_PATH),
+// };
+
+// https.createServer(options, app).listen(PORT, () => {
+//     console.log(`Server is running on port {PORT}`);
+// });
