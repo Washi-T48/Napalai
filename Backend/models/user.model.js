@@ -53,6 +53,11 @@ const changeFullname = async (id, fullname) => {
     return result.rows[0];
 };
 
+const changeEmail = async (id, email) => {
+    const result = await pool.query('UPDATE "user" SET email = $2 WHERE id = $1 RETURNING email', [id, email]);
+    return result.rows[0];
+};
+
 export {
     createUser,
     newUser,
@@ -64,4 +69,5 @@ export {
     changeUsername,
     changePassword,
     changeFullname,
+    changeEmail,
 };

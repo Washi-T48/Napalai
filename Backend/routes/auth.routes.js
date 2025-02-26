@@ -13,6 +13,7 @@ import {
     changePassword,
     changeFullname
 } from "../models/user.model.js";
+import { generateToken, verifyToken, forgetPasswordSender } from "../models/resetpassword.model.js";
 
 dotenv.config();
 const authRouter = express.Router();
@@ -67,7 +68,7 @@ authRouter.post("/changeUsername", async (req, res) => {
         res.status(200).json(result);
     } catch (error) {
         console.log(error)
-        res.status(500).json({ error: "Error checking username" });
+        res.status(500).json({ error: "Error changing username" });
     }
 });
 
@@ -101,6 +102,18 @@ authRouter.post("/changeFullname", async (req, res) => {
     };
 });
 
+authRouter.post("/changeEmail", async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ error: "Missing Credentials" });
+        const result = await changeEmail(jwt.decode(req.cookies.token).id, email);
+        res.status(200).json(result);
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "Error changing email" });
+    };
+});
+
 authRouter.get("/user", async (req, res) => {
     try {
         const decoded = jwt.decode(req.cookies.token);
@@ -108,6 +121,27 @@ authRouter.get("/user", async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({ error: "Error checking authorization" });
+    }
+});
+
+authRouter.post("/reset", async (req, res) => {
+    try {
+        const username = req.body.username;
+        if (!username) return res.status(400).json({ error: "Missing credentials" });
+
+        const rows = await getUserByUsername(username);
+        if (!rows || rows.length === 0) return res.status(400).json({ error: "Invalid credentials" });
+
+        const user = rows[0];
+        console.log(user);
+        const { token, hash } = await generateToken();
+
+        await forgetPasswordSender(user.email, hash);
+        res.status(200).json({ message: "Reset link sent" });
+    }
+    catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "Error resetting password" });
     }
 });
 
