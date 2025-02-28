@@ -1,12 +1,10 @@
 import React, { useRef } from 'react';
 
-
-
-interface ForgottenItem {
+interface ViolenceItem {
     id: number;
-    forgottenid: number;
+    violenceid: number;
     video: string;
-    name: string ;
+    name: string;
     camera: string | null;
     status: string;
     created: string;
@@ -16,14 +14,15 @@ interface ForgottenItem {
     description: string | null;
     cameraname: string; 
     zonename: string; 
+    violence_type: string;
 }
 
 
 interface CardVideoProps {
-    item: ForgottenItem; 
+    item: ViolenceItem; 
 }
 
-const CardVideo: React.FC<CardVideoProps> = ({ item }) => {
+const CardViolenceVideo: React.FC<CardVideoProps> = ({ item }) => {
 
     return (
         <div className="max-w-full h-auto rounded-md bg-customSlateBlue text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
@@ -36,7 +35,7 @@ const CardVideo: React.FC<CardVideoProps> = ({ item }) => {
             />
             <div className="flex flex-wrap justify-between p-2">
                 <div className="flex gap-2 flex-col">
-                    <div className="text-2xl md:text-base lg:text-x">{item.item_type}</div>
+                    <div className="text-2xl md:text-base lg:text-x">{item.violence_type}</div>
                     <div className="text-tiny text-gray-400">{item.created}</div>
                 </div>
                 <div className="flex flex-col items-end">
@@ -51,4 +50,4 @@ const CardVideo: React.FC<CardVideoProps> = ({ item }) => {
     );
 };
 
-export default CardVideo;
+export default CardViolenceVideo;

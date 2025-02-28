@@ -12,7 +12,7 @@ interface UnifiedForgottenItem {
     id: number;
     forgottenid: number;
     video: string;
-    name: string | null;
+    name: string ;
     camera: string | null;
     status: string;
     created: string;
@@ -20,8 +20,8 @@ interface UnifiedForgottenItem {
     zone: string | null;
     item_type: string;
     description: string | null;
-    cameraname: string; // *
-    zonename: string; // *
+    cameraname: string; 
+    zonename: string; 
 }
 
 

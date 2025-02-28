@@ -21,6 +21,7 @@ interface EventCard {
   id: number;
   created: string;
   camera_id: number;
+  item_type: string;
   type: string;
   position: string;
 }

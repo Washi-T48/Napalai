@@ -6,6 +6,7 @@ interface eventCard {
     id:number;
     created:string;
     camera_id:number;
+    item_type: string;
     type:string;
 }
 
@@ -15,7 +16,6 @@ interface Props {
 }
 
 const ForgottenCard: React.FC<Props> = ({ eventCard , setStatePopup }) => {
-    // ตรวจสอบว่ามี eventCard หรือไม่
     if (!eventCard || eventCard.length === 0) {
         return <div>No events available</div>; 
     }
@@ -34,8 +34,7 @@ const ForgottenCard: React.FC<Props> = ({ eventCard , setStatePopup }) => {
                             </div>
                             <div className="flex-col w-full p-2">
                                 <div>
-                                    {/* {item.created} */}
-                                    Item Name
+                                    {item.type}
                                     </div>
                                 <div className="flex justify-between pt-2 text-gray-400 text-tiny">
                                     <div>
