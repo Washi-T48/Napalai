@@ -145,7 +145,7 @@ function Page() {
             <Navber />
             <div className="bg-customBlue min-h-screen pt-20">
                 <div className="flex justify-center items-center text-2xl font-bold text-white p-6">
-                    Forgotten Violence - {date ? date : "All"}
+                    Forgotten Violence 
                 </div>
 
                 <div className="pt-5">

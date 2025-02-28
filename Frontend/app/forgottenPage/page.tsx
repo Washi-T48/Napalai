@@ -35,22 +35,22 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [forgottenRes, eventsRes] = await Promise.all([
+        const [forgottenRes] = await Promise.all([
           fetch(`${Port.URL}/forgotten`),
-          fetch(`${Port.URL}/events`),
         ]);
 
-        if (!forgottenRes.ok || !eventsRes.ok) {
+        if (!forgottenRes.ok) {
           throw new Error("Failed to fetch data");
         }
 
-        const [forgottenData, eventData] = await Promise.all([
+        const [forgottenData] = await Promise.all([
           forgottenRes.json(),
-          eventsRes.json(),
         ]);
 
         setForgottenResponse(forgottenData);
-        setEventCard(eventData);
+
+        console.log(forgottenData)
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -59,10 +59,10 @@ export default function Page() {
     fetchData();
   }, []);
 
-const filteredForgottenItems = forgottenResponse.filter((item) =>
+  const filteredForgottenItems = forgottenResponse.filter((item) =>
     item.item_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
+
 
   return (
     <>
@@ -71,7 +71,7 @@ const filteredForgottenItems = forgottenResponse.filter((item) =>
         <div className="flex justify-center items-center flex-col pt-16 h-full text-white lg:flex-row">
           <div className="flex justify-center items-start flex-col p-4 gap-4 flex-1 w-full h-full text-white lg:flex-row lg:gap-10">
             <div className="w-full lg:max-w-7xl h-full text-black">
-              <ForgottenCalendar assignments={forgottenResponse} />
+              <ForgottenCalendar forgottenResponse={forgottenResponse} />
             </div>
             <div className="flex justify-between flex-col h-full w-full lg:max-w-md pt-2">
               <div className="flex justify-center flex-col pt-2 p-2 border-b">
@@ -97,11 +97,11 @@ const filteredForgottenItems = forgottenResponse.filter((item) =>
                 <div className="pt-4 mt-3 h-80 overflow-auto">
                   {filteredForgottenItems.length > 0 ? (
                     filteredForgottenItems.map((item) => (
-                        <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
-                      <div key={item.id} className="p-2 bg-gray-800 text-white rounded-md mb-2">
-                        <p className="text-sm font-bold">{item.item_name}</p>
-                        <p className="text-xs text-gray-400">Created: {item.created}</p>
-                      </div>
+                      <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
+                        <div key={item.id} className="p-2 bg-gray-800 text-white rounded-md mb-2">
+                          <p className="text-sm font-bold">{item.item_name}</p>
+                          <p className="text-xs text-gray-400">Created: {item.created}</p>
+                        </div>
                       </Link>
                     ))
                   ) : (
@@ -112,7 +112,7 @@ const filteredForgottenItems = forgottenResponse.filter((item) =>
               <div className="flex justify-start flex-col pt-4 p-2">
                 <div className="p-2">Today ITEM</div>
                 <div className="h-80 overflow-auto">
-                  <ForgottenCard setStatePopup={setStatePopup} eventCard={eventCard} />
+                  <ForgottenCard setStatePopup={setStatePopup} forgottenResponse={forgottenResponse} />
                 </div>
               </div>
             </div>

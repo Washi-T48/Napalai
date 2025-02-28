@@ -2,27 +2,28 @@ import React from "react";
 import Image from "next/image";
 import PopupUndefineItem from "./popupUndefineItem";
 
-interface eventCard {
-    id:number;
-    created:string;
-    camera_id:number;
+interface ForgottenItem {
+    id: number;
+    description: string;
+    created: string;
     item_type: string;
-    type:string;
-}
+    itemCount: number;
+    item_name: string;
+    }
 
 interface Props {
-    eventCard: eventCard[]; 
+    forgottenResponse: ForgottenItem[]; 
     setStatePopup: (option: boolean) => void; 
 }
 
-const ForgottenCard: React.FC<Props> = ({ eventCard , setStatePopup }) => {
-    if (!eventCard || eventCard.length === 0) {
+const ForgottenCard: React.FC<Props> = ({ forgottenResponse , setStatePopup }) => {
+    if (!forgottenResponse || forgottenResponse.length === 0) {
         return <div>No events available</div>; 
     }
 
     return (
         <div>
-            {eventCard.map((item, id) => (
+            {forgottenResponse.map((item, id) => (
                 <div key={id}>
                     <div
                         onClick={() => setStatePopup(true)}
@@ -34,14 +35,14 @@ const ForgottenCard: React.FC<Props> = ({ eventCard , setStatePopup }) => {
                             </div>
                             <div className="flex-col w-full p-2">
                                 <div>
-                                    {item.type}
+                                    {item.item_name}
                                     </div>
                                 <div className="flex justify-between pt-2 text-gray-400 text-tiny">
                                     <div>
                                         {item.created}
                                         
                                     </div>
-                                    <div>{item.type} . {item.type}</div>
+                                    <div>{item.item_type} . {item.item_type}</div>
                                 </div>
                             </div>
                         </div>
