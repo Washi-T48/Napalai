@@ -18,6 +18,7 @@ import forgottenRouter from './routes/forgotten.routes.js';
 import violenceRouter from './routes/violence.routes.js';
 import utilsRouter from './routes/utils.routes.js';
 import authRouter from './routes/auth.routes.js';
+import aiRouter from './routes/ai.routes.js';
 import { forgetPasswordSender } from './models/resetpassword.model.js';
 
 dotenv.config();
@@ -44,6 +45,7 @@ app.use('/forgotten', forgottenRouter);
 app.use('/violence', violenceRouter);
 app.use('/utils', utilsRouter);
 app.use('/auth', authRouter);
+app.use('/ai', aiRouter);
 
 app.use('/public', express.static('public'));
 app.use('/protected', protectedFileMiddleware, express.static('protected'));
