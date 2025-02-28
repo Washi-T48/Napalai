@@ -1,5 +1,6 @@
 import { transporter } from '../config/mail.js';
 import crypto from 'crypto';
+import pool from '../config/db.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -10,7 +11,7 @@ const leading_text = 'Please head to this URL to reset your password: '
 const trailing_text = ' . The link will expire in 5 minutes. Please do not share this link with anyone.'
 const rootPage = process.env.ROOT_URL + '/auth/reset/';
 
-export const generateToken = async () => {
+const generateToken = async () => {
     return new Promise((resolve, reject) => {
         crypto.randomBytes(32, (err, buffer) => {
             if (err) { reject(err); }
@@ -21,7 +22,12 @@ export const generateToken = async () => {
     });
 };
 
-export const verifyToken = (token, hash) => {
+const hashToken = (token) => {
+    const hash = crypto.createHash('sha256').update(token).digest('hex');
+    return hash;
+};
+
+const verifyToken = (token, hash) => {
     return new Promise((resolve, reject) => {
         try {
             const tokenhash = crypto.createHash('sha256').update(token).digest('hex');
@@ -37,7 +43,23 @@ export const verifyToken = (token, hash) => {
     });
 };
 
-export const forgetPasswordSender = async (recipient, token) => {
+const newHash = async (save) => {
+    const { user_id, hash } = save;
+    const result = await pool.query('INSERT INTO "resettoken" (user_id, hash) VALUES ($1, $2) RETURNING *', [user_id, hash]);
+    return result.rows[0];
+};
+
+const readHash = async (hash) => {
+    const result = await pool.query('SELECT * FROM "resettoken" WHERE hash = $1', [hash]);
+    return result.rows[0];
+};
+
+const consumeHash = async (hash) => {
+    const result = await pool.query('UPDATE "resettoken" SET consumed = true WHERE hash = $1 RETURNING *', [hash]);
+    return result.rows[0];
+};
+
+const forgetPasswordSender = async (recipient, token) => {
     const fullURL = rootPage + token;
     transporter.sendMail({
         from: `${from_name} ${from_mail}`,
@@ -55,4 +77,14 @@ export const forgetPasswordSender = async (recipient, token) => {
             console.log(info);
         }
     });
+};
+
+export {
+    generateToken,
+    hashToken,
+    verifyToken,
+    newHash,
+    readHash,
+    consumeHash,
+    forgetPasswordSender
 };
