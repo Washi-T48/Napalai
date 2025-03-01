@@ -39,9 +39,8 @@ interface ForgottenItem {
 function Page() {
     const { id } = useParams(); 
     const [data, setData] = useState<ForgottenItem | null>(null);
-    const [EditNameCard, SetEditNameCard] = useState(false);
-
-    const toggleEditNameCard = () => SetEditNameCard(!EditNameCard);
+    const [openPopup, setOpenPopup] = useState(false);
+    const [selectedId, setSelectedId] = useState<string | undefined | string[]>(undefined);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -107,13 +106,15 @@ function Page() {
                             </div>
                             <div>
                                 <Icon
-                                    onClick={toggleEditNameCard}
+                                    onClick={() => {setOpenPopup(true),setSelectedId(id) }}
                                     icon="material-symbols:edit-outline"
                                     width="24"
                                     height="24"
                                 />
                             </div>
-                            {EditNameCard && <PopupEditNameViolenceCard />}
+                            {openPopup && <PopupEditNameViolenceCard 
+                            selectedId={selectedId}
+                            setOpenPopup={setOpenPopup}/>}
                         </div>
                         <div className="flex flex-col w-full h-full gap-2">
                             <div className="flex gap-2 w-full lg:flex-col">

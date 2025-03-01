@@ -55,7 +55,7 @@ const Sidebar: React.FC<SidebarProp> = ({
     acc[item.zone_id].push(item);
     return acc;
   }, {});
-
+  const [fatchPage , setFatchPage] = useState(true)
   useEffect(() => {
     const getCamera = async () => {
       try {
@@ -95,7 +95,7 @@ const Sidebar: React.FC<SidebarProp> = ({
       }
     };
     getCamera();
-  }, []);
+  }, [fatchPage]);
 
 
   const [deletePopupData, setDeletePopupData] = useState<Camera | null>(null);
@@ -146,6 +146,7 @@ const Sidebar: React.FC<SidebarProp> = ({
       if (!renameResponseCamera.ok) {
         throw new Error("Failed to rename camera");
       }
+      setFatchPage(!fatchPage)
 
       console.log(`Renamed camera with ID: ${cameraId} to "${newName}"`);
     } catch (error) {

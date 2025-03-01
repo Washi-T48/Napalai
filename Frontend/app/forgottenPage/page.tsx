@@ -17,20 +17,25 @@ interface ForgottenItem {
   item_name: string;
 }
 
-interface EventCard {
-  id: number;
-  created: string;
-  camera_id: number;
-  item_type: string;
-  type: string;
-  position: string;
-}
+
 
 export default function Page() {
-  const [eventCard, setEventCard] = useState<EventCard[]>([]);
   const [forgottenResponse, setForgottenResponse] = useState<ForgottenItem[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [statePopup, setStatePopup] = useState(false);
+  // const [statePopup, setStatePopup] = useState(false);
+  // const [selectedItem, setSelectedItem] = useState<ForgottenItem | null>(null);
+  // const updateItem = (updatedItem: ForgottenItem) => {
+  //   setForgottenResponse((prevItems) =>
+  //     prevItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+  //   );
+  // };
+
+  const today = new Date().toISOString().split("T")[0]; // ดึงวันที่ปัจจุบัน (YYYY-MM-DD)
+
+  const filteredTodayItems = forgottenResponse.filter(
+    (item) => item.created.startsWith(today)
+  );
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,14 +117,40 @@ export default function Page() {
               <div className="flex justify-start flex-col pt-4 p-2">
                 <div className="p-2">Today ITEM</div>
                 <div className="h-80 overflow-auto">
-                  <ForgottenCard setStatePopup={setStatePopup} forgottenResponse={forgottenResponse} />
+                  <div className="h-80 overflow-auto">
+                    <div className="h-80 overflow-auto">
+                      <div className="h-80 overflow-auto">
+                        {filteredTodayItems.length > 0 ? (
+                          filteredTodayItems.map((item) => (
+                            <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
+                              <div className="p-2 bg-gray-800 text-white rounded-md mb-2">
+                                <p className="text-sm font-bold">{item.item_name ?? "Unknow Item"}</p>
+                                <p className="text-xs text-gray-400">Created: {item.created}</p>
+                              </div>
+                            </Link>
+                          ))
+                        ) : (
+                          <p className="text-center text-gray-400">No items available today.</p>
+                        )}
+                      </div>
+
+                    </div>
+
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      {statePopup && <PopupUndefineItem setStatePopup={setStatePopup} />}
+      {/* {statePopup && selectedItem && (
+        <PopupUndefineItem
+          setStatePopup={setStatePopup}
+          selectedItem={selectedItem}
+    
+        />
+      )} */}
+
     </>
   );
 }
