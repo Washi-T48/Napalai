@@ -9,7 +9,6 @@ interface ForgottenItem {
     name: string ;
     camera: string | null;
     status: string;
-    created: string;
     createdtime: string;
     zone: string | null;
     item_type: string;
@@ -37,7 +36,7 @@ const CardVideo: React.FC<CardVideoProps> = ({ item }) => {
             <div className="flex flex-wrap justify-between p-2">
                 <div className="flex gap-2 flex-col">
                     <div className="text-2xl md:text-base lg:text-x">{item.item_type}</div>
-                    <div className="text-tiny text-gray-400">{item.created}</div>
+                    <div className="text-tiny text-gray-400">{item.createdtime}</div>
                 </div>
                 <div className="flex flex-col items-end">
                     {item.status && (

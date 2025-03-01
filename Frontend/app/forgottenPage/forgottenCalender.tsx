@@ -24,11 +24,11 @@ interface ForgottenItem {
 }
 
 interface CalendarProps {
-    assignments: ForgottenItem[];
+    forgottenResponse: ForgottenItem[];
 }
 
 
-const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
+const ForgottenCalendar: React.FC<CalendarProps> = ({ forgottenResponse = [] }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
     const renderHeader = () => {
@@ -91,28 +91,30 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
             for (let i = 0; i < 7; i++) {
                 const formattedDate = format(day, 'yyyy-MM-dd');
                 const displayDate = format(day, 'd');
-                const assignmentsForDay = assignments.filter(assignment =>
-                    isSameDay(parseISO(assignment.created), day)
+                
+                const itemsForDay = forgottenResponse.filter(item =>
+                    format(new Date(item.created), 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
                 );
+                
                 const isCurrentMonth = isSameMonth(day, monthStart);
                 const isDayFromCurrentMonth = getDate(day) <= getDate(monthEnd) && getDate(day) >= 1;
                 const todayClass = isToday(day) ? 'text-primary font-bold' : '';
-
-                const totalItemCount = assignmentsForDay.reduce((total, assignment) => total + (assignment.itemCount || 1), 0);
+                const totalItemCount = itemsForDay.reduce((total, forgottenResponse) => total + (forgottenResponse.itemCount || 1), 0);
 
                 days.push(
                     <Link href={`/forgottenLog/${formattedDate}`} key={day.toISOString()}>
                         <div
                             className={`p-2 h-32 text-white border bg-customDarkSlateBlue 
                                 ${!isCurrentMonth ? 'text-gray-400 bg-customSlateBlue' : ''} 
-                                ${assignmentsForDay.length > 0 ? 'bg-red-500' : ''} 
+                                ${itemsForDay.length > 0 ? 'bg-red-500' : ''} 
                                 ${todayClass}`}
+                                
                         >
                             <div className="text-start">{isCurrentMonth && isDayFromCurrentMonth ? displayDate : ''}</div>
                             <div className="overflow-y-auto h-20 mt-2 flex justify-center">
                                 {isCurrentMonth && isDayFromCurrentMonth && (
                                     <div>
-                                        {assignmentsForDay.length > 0 && (
+                                        {itemsForDay.length > 0 && (
                                             <div className="flex justify-center items-center text-xs mt-3 bg-assign p-1 rounded line-clamp-2 text-primary">
                                                 <div className='flex justify-center flex-col'>
                                                     <div className='flex justify-center'>
@@ -154,6 +156,7 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ assignments = [] }) => {
             {renderCells()}
         </div>
     );
+
 };
 
 export default ForgottenCalendar;

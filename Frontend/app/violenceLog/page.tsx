@@ -21,8 +21,8 @@ interface ViolenceItem {
     zone: string | null;
     item_type: string;
     description: string | null;
-    cameraname: string; 
-    zonename: string; 
+    cameraname: string;
+    zonename: string;
     violence_type: string;
 }
 
@@ -49,6 +49,7 @@ function Page() {
     const [selectedZone, setSelectedZone] = useState<string | null>(null);
     const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [getViolence, setGetViolence] = useState<ViolenceItem[]>([]);
     const [getCameras, setGetCameras] = useState<Camera[]>([]);
     const [getZones, setGetZones] = useState<Zone[]>([]);
@@ -61,15 +62,15 @@ function Page() {
             try {
                 const response = await fetch(`${Port.URL}/utils/violence`);
                 if (!response.ok) throw new Error("Failed to fetch forgotten items");
-        
+
                 const data: ViolenceItem[] = await response.json();
-        
+
                 const updatedData = data.map((item) => ({
                     ...item,
                     zone: item.zonename || "Unknown Zone",
                     camera: item.cameraname || "Unknown Camera",
                 }));
-        
+
                 setGetViolence(updatedData);
             } catch (error) {
                 console.error("Error fetching unified forgotten items:", error);
@@ -118,26 +119,42 @@ function Page() {
         });
     };
 
-    const camerasWithZones = mapCamerasToZones();
+    
 
-    const filteredData = getViolence.filter((item) =>
+    const camerasWithZones = mapCamerasToZones();
+    
+    const [startDate, setStartDate] = useState<string | null>(null);
+const [endDate, setEndDate] = useState<string | null>(null);
+
+
+const handleDateSelect = (start: string, end: string) => {
+    setStartDate(start);
+    setEndDate(end);
+};
+
+const filteredData = getViolence.filter((item) => {
+    const itemDate = new Date(item.created).toISOString().split("T")[0];
+    return (
         (!selectedZone || item.zone === selectedZone) &&
         (!selectedCamera || item.camera === selectedCamera) &&
-        (!selectedStatus || item.status === selectedStatus) 
+        (!selectedStatus || item.status === selectedStatus) &&
+        (!startDate || !endDate || (itemDate >= startDate && itemDate <= endDate))
     );
+});
 
-    const paginatedData = filteredData.slice(switchPage * itemsPerPage, (switchPage + 1) * itemsPerPage);
+const paginatedData = filteredData.slice(switchPage * itemsPerPage, (switchPage + 1) * itemsPerPage);
 
-    const uniqueZones = [...new Set(camerasWithZones.map((item) => item.zone))];
-    const uniqueCameras = [...new Set(camerasWithZones.map((item) => item.name))];
-    const uniqueStatuses = ["returned", "unreturned"];
+const handleClearFilters = () => {
+    setSelectedZone(null);
+    setSelectedCamera(null);
+    setSelectedStatus(null);
+    setStartDate(null);
+    setEndDate(null);
+};
 
-    const handleClearFilters = () => {
-        setSelectedZone(null);
-        setSelectedCamera(null);
-        setSelectedStatus(null);
-    };
+    
 
+    
     return (
         <>
             <Navber />
@@ -147,38 +164,27 @@ function Page() {
                 </div>
 
                 <div className="pt-5">
-                    <div className="relative w-full flex justify-end pr-10 p-5">
-                        <button
-                            onClick={toggleFilterButton}
-                            className="flex justify-center items-center p-2 w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto"
-                        >
+                <div className="relative w-full flex justify-end pr-10 p-5">
+                        <button onClick={() => SetFilterButton(!FilterButton)} className="p-2 w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white">
                             Filter
                         </button>
-                        
                         {FilterButton && (
-                            <div className="absolute top-16 z-10  bg-white  rounded-md shadow-lg">
-                                <div className="flex justify-center bg-customwhite w-full h-full rounded-md overflow-hidden">
-                                    <div className="">
-                                        <MyCalendar />
-                                    </div>
-                                    <div className="flex flex-col space-y-2 max-h-96 overflow-y-auto">
-                                        <Dropdown
-                                            onSelect={(type, value) => {
-                                                if (type === "zone") setSelectedZone(value);
-                                                if (type === "camera") setSelectedCamera(value);
-                                                if (type === "status") setSelectedStatus(value);
-                                            }}
-                                            zone={uniqueZones}
-                                            camera={uniqueCameras}
-                                            status={uniqueStatuses}
-                                        />
-                                    </div>
+                            <div className="absolute top-16 z-10 bg-white rounded-md shadow-lg p-4">
+                                <div className="flex">
+                                <MyCalendar onDateSelect={handleDateSelect} />
+                                <Dropdown
+                                    onSelect={(type, value) => {
+                                        if (type === "zone") setSelectedZone(value);
+                                        if (type === "camera") setSelectedCamera(value);
+                                        if (type === "status") setSelectedStatus(value);
+                                    }}
+                                    zone={getZones.map(z => z.name)}
+                                    camera={getCameras.map(c => c.name)}
+                                    status={["returned", "unreturned"]}
+                                />
                                 </div>
                                 
-                                <button
-                                    onClick={handleClearFilters}
-                                    className="mt-2 text-sm text-white bg-red-500 p-2 rounded"
-                                >
+                                <button onClick={handleClearFilters} className="mt-2 text-sm text-white bg-red-500 p-2 rounded">
                                     Clear All Filters
                                 </button>
                             </div>
