@@ -11,7 +11,7 @@ function ChangeEmailBox() {
 
         setLoading(true); // เริ่มโหลด
         try {
-            const res = await fetch('/api/changeEmail', {
+            const res = await fetch('https://cloud.phraya.net:443/authchangeEmail', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

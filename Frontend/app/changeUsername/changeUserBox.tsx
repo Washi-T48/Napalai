@@ -6,7 +6,7 @@ function ChangeUserBox() {
 
     const handleUsernameChange = async () => {
         try {
-            const res = await fetch('/api/changeUsername', {
+            const res = await fetch('https://cloud.phraya.net:443/auth/changeUsername', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username }),
