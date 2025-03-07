@@ -60,9 +60,9 @@ const CardViolenceVideo: React.FC<CardVideoProps> = ({ item }) => {
                     className="w-full aspect-video bg-cover bg-center rounded-t-md"
                     style={{ backgroundImage: `url(${item.image})` }}
                 >
-                    <div className="w-full h-full flex justify-center items-center bg-black bg-opacity-50">
-                        <span className="text-white text-3xl">▶</span> {/* ปุ่ม play */}
-                    </div>
+                    {/* <div className="w-full h-full flex justify-center items-center bg-black bg-opacity-50">
+                        <span className="text-white text-3xl"></span> 
+                    </div> */}
                 </div>
             </div>
             <div className="flex flex-wrap justify-between p-2 px-3">
