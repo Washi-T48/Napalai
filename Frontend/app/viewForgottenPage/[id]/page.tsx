@@ -37,7 +37,7 @@ interface ForgottenItem {
 
 
 function Page() {
-    const { id } = useParams(); 
+    const { id } = useParams();
     const [data, setData] = useState<ForgottenItem | null>(null);
     const [openPopup, setOpenPopup] = useState(false);
     const [selectedId, setSelectedId] = useState<string | undefined | string[]>(undefined);
@@ -85,6 +85,7 @@ function Page() {
                                     autoPlay
                                     muted
                                     loop
+                                    src={data.video || undefined}
                                 >
                                     <source
                                         src={data.rtsp_url || "https://docs.material-tailwind.com/demo.mp4"}
@@ -106,20 +107,20 @@ function Page() {
                             </div>
                             <div>
                                 <Icon
-                                    onClick={() => {setOpenPopup(true),setSelectedId(id) }}
+                                    onClick={() => { setOpenPopup(true), setSelectedId(id) }}
                                     icon="material-symbols:edit-outline"
                                     width="24"
                                     height="24"
                                 />
                             </div>
-                            {openPopup && <PopupEditNameViolenceCard 
-                            selectedId={selectedId}
-                            setOpenPopup={setOpenPopup}/>}
+                            {openPopup && <PopupEditNameViolenceCard
+                                selectedId={selectedId}
+                                setOpenPopup={setOpenPopup} />}
                         </div>
                         <div className="flex flex-col w-full h-full gap-2">
                             <div className="flex gap-2 w-full lg:flex-col">
                                 <div className="flex justify-center items-center rounded-md">
-                                <CalendarVideoPage highlightDates={highlightDates} />
+                                    <CalendarVideoPage highlightDates={highlightDates} />
                                 </div>
                                 <div className="w-full">
                                     <Image

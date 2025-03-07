@@ -55,7 +55,9 @@ const Sidebar: React.FC<SidebarProp> = ({
     acc[item.zone_id].push(item);
     return acc;
   }, {});
-  const [fatchPage , setFatchPage] = useState(true)
+  const [fatchPage, setFatchPage] = useState(true)
+
+
   useEffect(() => {
     const getCamera = async () => {
       try {
@@ -209,22 +211,25 @@ const Sidebar: React.FC<SidebarProp> = ({
 
 
   return (
-    <div className="flex h-screen bg-gray-900">
-      <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16 overflow-auto ">
+    <div className="flex h-screen bg-gray-90 ">
+      <div className="w-64 h-screen bg-customBlue  text-white flex flex-col pt-16 overflow-auto ">
         <div className="">
           {Object.entries(groupedData).map(([zoneId, cameras]) => (
             <div key={zoneId}>
               <div
-                className="w-full p-6 text-xl cursor-pointer hover:bg-customSlateBlue"
+                className="w-full text-xl cursor-pointer "
                 onClick={() => toggleZone(zoneId)}
               >
-                <div className="flex">
+                <div 
+                tabIndex={1}
+                className="flex justify-between p-6 shadow-md duration-300 rounded-md m-1 hover:bg-customSlateBlue hover:bg-opacity-20 focus:bg-customSlateBlue focus:bg-opacity-20">
+            
                   {getZoneName(zoneId)}
-                  <div className="flex justify-end w-full gap-2">
+                  <div className="flex gap-2">
                     <button onClick={() => setRenameZonePopup({ zoneId: Number(zoneId), currentName: getZoneName(Number(zoneId)) })}>
                       <Icon icon="mdi:rename" width="20" height="20" />
                     </button>
-                    <button onClick={() => setDeleteZonePopup({ id: Number(zoneId), name: getZoneName(zoneId) })} className="text-red-500">
+                    <button onClick={() => setDeleteZonePopup({ id: Number(zoneId), name: getZoneName(zoneId) })} className="text-white">
                       <Icon icon="ic:baseline-delete" width="20" height="20" />
                     </button>
                   </div>
@@ -233,25 +238,33 @@ const Sidebar: React.FC<SidebarProp> = ({
 
               </div>
               <ul
+              className="max-h-96 overflow-auto "
                 style={{
                   display: expandedZoneId === zoneId ? 'block' : 'none'
                 }}
               >
                 {cameras.map((camera) => (
+
                   <div
-                    className="flex items-center w-full p-4 pl-12 hover:bg-customSlateBlue"
+                    className="m-1 duration-300 rounded-md hover:bg-customSlateBlue hover:bg-opacity-20 " 
                     key={camera.id}
                   >
-                    {camera.name}
-                    <div className="flex justify-end w-full gap-2">
-                      <button onClick={() => setRenamePopup({ cameraId: camera.id, currentName: camera.name })}>
-                        <Icon icon="mdi:rename" width="20" height="20" />
-                      </button>
-                      <button onClick={() => confirmDeleteCamera(camera)} className="text-red-500">
-                        <Icon icon="ic:baseline-delete" width="20" height="20" />
-                      </button>
+                    <div className="flex justify-between items-center w-full p-4  ">
+                      <div>
+                        {camera.name}
+                      </div>
 
+                      <div className="flex justify-end  gap-2">
+                        <button onClick={() => setRenamePopup({ cameraId: camera.id, currentName: camera.name })}>
+                          <Icon icon="mdi:rename" width="20" height="20" />
+                        </button>
+                        <button onClick={() => confirmDeleteCamera(camera)} className="text-white">
+                          <Icon icon="ic:baseline-delete" width="20" height="20" />
+                        </button>
+
+                      </div>
                     </div>
+
                   </div>
                 ))}
               </ul>

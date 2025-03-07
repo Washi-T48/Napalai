@@ -79,7 +79,7 @@ export default function Page() {
               <ForgottenCalendar forgottenResponse={forgottenResponse} />
             </div>
             <div className="flex justify-between flex-col h-full w-full lg:max-w-md pt-2">
-              <div className="flex justify-center flex-col pt-2 p-2 border-b">
+              <div className="flex justify-center flex-col pt-2 p-2 border-b gap-2">
                 {/* Search Bar */}
                 <div className="flex px-4 py-2 rounded-md border-2 bg-customwhite overflow-hidden w-full">
                   <svg
@@ -99,13 +99,19 @@ export default function Page() {
                   />
                 </div>
                 {/* Search Results */}
-                <div className="pt-4 mt-3 h-80 overflow-auto">
+                <div className="h-80 overflow-auto">
                   {filteredForgottenItems.length > 0 ? (
                     filteredForgottenItems.map((item) => (
                       <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
-                        <div key={item.id} className="p-2 bg-gray-800 text-white rounded-md mb-2">
-                          <p className="text-sm font-bold">{item.item_name}</p>
-                          <p className="text-xs text-gray-400">Created: {item.created}</p>
+                        <div className="flex flex-col p-3 bg-customDarkSlateBlue bg-opacity-80 text-white rounded-md mb-2 shadow-xl hover:bg-customDarkSlateBlue hover:bg-opacity-100">
+                          <div className="flex justify-between ">
+                            <p className="text-sm p-1 font-bold">{item.item_name ?? "Unknow Item"}</p>
+                            <p className="text-sm p-1 font-bold text-gray-200">{item.item_type ?? "Unknow type"}</p>
+                          </div>
+                          <div className="flex justify-between">
+                            <p className="text-xs p-1 text-gray-400">{item.created}</p>
+                            <p className="text-xs p-1 text-gray-400"> Zone | Camera </p>
+                          </div>
                         </div>
                       </Link>
                     ))
@@ -117,27 +123,26 @@ export default function Page() {
               <div className="flex justify-start flex-col pt-4 p-2">
                 <div className="p-2">Today ITEM</div>
                 <div className="h-80 overflow-auto">
-                  <div className="h-80 overflow-auto">
-                    <div className="h-80 overflow-auto">
-                      <div className="h-80 overflow-auto">
-                        {filteredTodayItems.length > 0 ? (
-                          filteredTodayItems.map((item) => (
-                            <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
-                              <div className="p-2 bg-gray-800 text-white rounded-md mb-2">
-                                <p className="text-sm font-bold">{item.item_name ?? "Unknow Item"}</p>
-                                <p className="text-xs text-gray-400">Created: {item.created}</p>
-                              </div>
-                            </Link>
-                          ))
-                        ) : (
-                          <p className="text-center text-gray-400">No items available today.</p>
-                        )}
-                      </div>
-
-                    </div>
-
-                  </div>
+                  {filteredTodayItems.length > 0 ? (
+                    filteredTodayItems.map((item) => (
+                      <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
+                        <div className="flex flex-col p-3 bg-customDarkSlateBlue bg-opacity-80 text-white rounded-md mb-2 shadow-xl hover:bg-customDarkSlateBlue hover:bg-opacity-100">
+                          <div className="flex justify-between ">
+                            <p className="text-sm p-1 font-bold">{item.item_name ?? "Unknow Item"}</p>
+                            <p className="text-sm p-1 font-bold text-gray-200">{item.item_type ?? "Unknow type"}</p>
+                          </div>
+                          <div className="flex justify-between">
+                            <p className="text-xs p-1 text-gray-400">{item.created}</p>
+                            <p className="text-xs p-1 text-gray-400"> Zone | Camera </p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="flex justify-center items-center h-full text-center text-gray-400">No items available today.</p>
+                  )}
                 </div>
+
               </div>
             </div>
           </div>
