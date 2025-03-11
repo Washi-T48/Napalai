@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Navber from "../component/navber";
 import CardViolenceVideo from "../component/cardViolenceVideo";
-import Dropdown from "../component/dropdown";
+import DropdownViolence from "./dropdownViolence";
 import Port from "@/app/port";
 import Link from "next/link";
 import MyCalendar from "../component/calender";
@@ -161,7 +161,7 @@ function Page() {
         <>
             <Navber />
             <div className="bg-customBlue min-h-screen pt-20">
-                <div className="flex justify-center items-center text-2xl font-bold text-white p-6">
+                <div className="flex justify-center items-center text-2xl font-bold text-white p-6 mt-2 ">
                     Violence
                 </div>
 
@@ -176,11 +176,10 @@ function Page() {
                                     <MyCalendar 
                                     handleClearFilters={handleClearFilters}
                                     onDateSelect={handleDateSelect} />
-                                    <Dropdown
+                                    <DropdownViolence
                                         onSelect={(type, value) => {
                                             if (type === "zone") setSelectedZone(value);
                                             if (type === "camera") setSelectedCamera(value);
-                                            if (type === "status") setSelectedStatus(value);
                                         }}
                                         zone={getZones.map(z => z.name)}
                                         camera={getCameras.map(c => c.name)}

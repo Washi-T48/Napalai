@@ -75,7 +75,7 @@ function Page() {
                   autoPlay
                   muted
                   loop
-                  src={violenceData.video} // ใช้ video จากข้อมูลที่ดึงมา
+                  src={violenceData.video} 
                 >
                   Your browser does not support the video tag.
                 </video>
@@ -119,7 +119,7 @@ function Page() {
                           <Icon icon="mingcute:time-line" width="18" height="18" />
                         </div>
                       </div>
-                      <div className="flex justify-center">{new Date(violenceData.created).toLocaleString()}</div>
+                      <div className="flex justify-center">{new Date(violenceData.createdtime).toLocaleTimeString()}</div>
                     </div>
                   </div>
                 </div>
@@ -128,11 +128,11 @@ function Page() {
                   <div className="px-1 text-tiny">Detail</div>
                   <div className="flex justify-center items-center pb-4">{violenceData.violence_type}</div>
                 </div>
-                <div>
+                {/* <div>
                   <div className="flex justify-center bg-customSlateBlue text-white p-2 w-[70px] text-tiny rounded-md">
                     <Icon icon="material-symbols:download" width="24" height="24" />
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

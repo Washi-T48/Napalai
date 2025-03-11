@@ -32,11 +32,11 @@ interface Props {
   selectedId: string | undefined | string[];
 }
 
-const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup , selectedId }) => {
-
+const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }) => {
+  const [text, setText] = useState("");
+  const maxLength = 50;
+  const isError = text.length === 0;
   const [getData, setGetData] = useState<ForgottenItem[]>([]);
-
-
   const [changeDetail, setChangDetail] = useState({
     created: "",
     event_id: "",
@@ -103,19 +103,19 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup , selectedId 
           zonename: data.zonename,
           createdtime: data.createdtime,
         })
-        console.log("showdata",data)
+        console.log("showdata", data)
       } catch (error) {
         console.error("Error fetching camera and zone data:", error);
       }
     };
 
     fetchData();
-    
+
   }, [selectedId]);
   console.log("show changeDetail", changeDetail)
 
   const changeData = async () => {
-    if (selectedId === null) return; 
+    if (selectedId === null) return;
 
     try {
       const putResponceEditDetail = await fetch(`${Port.URL}/forgotten/${selectedId}`, {
@@ -145,7 +145,7 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup , selectedId 
           cameraname: changeDetail.cameraname,
           zonename: changeDetail.zonename,
           createdtime: changeDetail.createdtime,
-          
+
 
         })
       });
@@ -162,7 +162,7 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup , selectedId 
       console.error("Error fetching camera and zone data:", error);
     }
   };
-  console.log("get data",getData)
+  console.log("get data", getData)
 
 
   return (
@@ -176,43 +176,29 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup , selectedId 
             height="30"
           />
         </div>
-        <div className="flex flex-col gap-4 pb-16 pl-16 pr-16 pt-5 w-auto h-auto ">
-          <div className="flex justify-start pt-2 w-96 h-12 border-b text-2xl">
-
-          </div>
-          <div className="flex justify-start gap-2 w-full">
-            <div className="">Return item detail</div>
-            <div className="flex justify-center items-center px-1 bg-red-700 text-tiny rounded-sm">
-              Unreturn
+        <div className="flex flex-col gap-4 p-10 w-full h-auto ">
+          <div className="w-full">
+            <div className="w-full max-w-md">
+              <label className="block text-sm font-medium text-white">
+                Name (Must be specified.) <span className="text-gray-400">?</span>
+              </label>
+              <input
+                type="text"
+                onChange={(e) => { setChangDetail({ ...changeDetail, item_type: e.target.value }) }}
+                value={changeDetail.item_type}
+                placeholder="Add a title that describes your video."
+                className={`w-96  px-3 py-2 mt-1 pb-8  border ${isError ? "border" : "border-gray-600"
+                  } bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 ${isError ? "focus:ring-red-500 focus:border-red-500 " : "focus:ring-blue-500 focus:border-blue-500"
+                  }`}
+              />
             </div>
           </div>
-          <div className="w-full">
-            <div className="pb-1 text-tiny">Name</div>
-            <input
-              onChange={(e) => { setChangDetail({ ...changeDetail, item_type: e.target.value }) }}
-              value={changeDetail.item_type}
-              className="p-1 w-full text-black bg-customwhite rounded-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100 "
-              type="text"
-            />
-          </div>
-          <div className="w-full">
-            <div className="pb-1 text-tiny">Time to return</div>
-            <input
-              onChange={(e) => { setChangDetail({ ...changeDetail, createdtime: e.target.value }) }}
-              value={changeDetail.createdtime ?? ""}
-              type="text"
-              className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
-            />
-          </div>
           <div className="flex justify-end gap-2 pt-4">
-            <button className="flex justify-center items-center p-2 w-24 h-9 bg-customwhite text-black rounded-sm hover:bg-gray-500">
-              cancle
+            <button
+              onClick={changeData}
+              className="flex justify-center items-center px-4 py-2 rounded-md bg-customฺButton text-white  hover:bg-customฺButtomHover">
+              submit
             </button>
-            <button 
-  onClick={changeData}
-  className="flex justify-center items-center p-2 w-24 h-9 bg-customฺButton text-white rounded-sm hover:bg-customฺButtomHover">
-  submit
-</button>
           </div>
         </div>
       </div>
