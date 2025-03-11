@@ -1,33 +1,35 @@
-import React, { useRef } from 'react';
-
-
+import React from 'react';
 
 interface ForgottenItem {
     id: number;
     forgottenid: number;
     video: string;
-    name: string ;
+    name: string;
     camera: string | null;
     status: string;
     createdtime: string;
     zone: string | null;
     item_type: string;
     description: string | null;
-    cameraname: string; 
-    zonename: string; 
+    cameraname: string;
+    zonename: string;
 }
-
 
 interface CardVideoProps {
-    item: ForgottenItem; 
+    item: ForgottenItem;
 }
 
+const convertToBangkokTime = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleString("en-GB", { timeZone: "Asia/Bangkok" });
+};
+
 const CardVideo: React.FC<CardVideoProps> = ({ item }) => {
+    const formattedDate = convertToBangkokTime(item.createdtime);
 
     return (
         <div className="max-w-full h-auto rounded-md bg-customSlateBlue text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
             <video
-                // ref={videoRef}
                 className="bg-black w-full aspect-video rounded-t-md object-cover"
                 src={item.video}
                 title={item.name}
@@ -36,7 +38,7 @@ const CardVideo: React.FC<CardVideoProps> = ({ item }) => {
             <div className="flex flex-wrap justify-between p-2">
                 <div className="flex gap-2 flex-col">
                     <div className="text-2xl md:text-base lg:text-x">{item.item_type}</div>
-                    <div className="text-tiny text-gray-400">{item.createdtime}</div>
+                    <div className="text-tiny text-gray-400">{formattedDate}</div>
                 </div>
                 <div className="flex flex-col items-end">
                     {item.status && (
