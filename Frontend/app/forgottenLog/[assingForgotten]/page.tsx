@@ -201,7 +201,11 @@ function Page() {
                                     href={`/viewForgottenPage/${item.forgottenid}`}
                                     key={`${item.forgottenid}-${index}`}
                                 >
-                                    <CardVideo item={item} />
+                                    <CardVideo
+                                        item={item}
+                                        className={`${item.status === "unreturned" ? "bg-red-500" : ""}`}
+                                    />
+
                                 </Link>
                             ))
                         ) : (
