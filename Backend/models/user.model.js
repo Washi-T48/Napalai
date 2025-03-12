@@ -58,6 +58,11 @@ const changeEmail = async (id, email) => {
     return result.rows[0];
 };
 
+const updateProfilePicture = async (id, path) => {
+    const result = await pool.query('UPDATE "user" SET picture = $2 WHERE id = $1 RETURNING picture', [id, path]);
+    return result.rows[0];
+};
+
 export {
     createUser,
     newUser,
@@ -70,4 +75,5 @@ export {
     changePassword,
     changeFullname,
     changeEmail,
+    updateProfilePicture,
 };

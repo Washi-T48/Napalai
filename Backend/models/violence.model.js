@@ -27,10 +27,22 @@ const deleteViolence = async (id) => {
     return rows;
 };
 
+const updateViolenceImage = async (id, image) => {
+    const rows = await pool.query('UPDATE event SET image = $1 WHERE event.id = (SELECT violence.event_id FROM violence WHERE violence.id = $2) RETURNING *', [image, id]);
+    return rows;
+}
+
+const updateViolenceVideo = async (id, video) => {
+    const rows = await pool.query('UPDATE event SET video = $1 WHERE event.id = (SELECT violence.event_id FROM violence WHERE violence.id = $2) RETURNING *', [video, id]);
+    return rows;
+}
+
 export {
     createViolence,
     getAllViolences,
     getViolenceById,
     updateViolence,
     deleteViolence,
+    updateViolenceImage,
+    updateViolenceVideo,
 };

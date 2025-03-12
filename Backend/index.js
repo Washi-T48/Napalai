@@ -20,6 +20,7 @@ import utilsRouter from './routes/utils.routes.js';
 import authRouter from './routes/auth.routes.js';
 import aiRouter from './routes/ai.routes.js';
 import { forgetPasswordSender } from './models/resetpassword.model.js';
+import uploadRouter from './routes/upload.routes.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 443;
@@ -46,6 +47,7 @@ app.use('/violence', violenceRouter);
 app.use('/utils', utilsRouter);
 app.use('/auth', authRouter);
 app.use('/ai', aiRouter);
+app.use('/upload', uploadRouter);
 
 app.use('/public', express.static('public'));
 app.use('/protected', protectedFileMiddleware, express.static('protected'));
