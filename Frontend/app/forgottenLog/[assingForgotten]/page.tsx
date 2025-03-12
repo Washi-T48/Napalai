@@ -205,7 +205,7 @@ function Page() {
                                 </Link>
                             ))
                         ) : (
-                            <div>No items available</div>
+                            <div className="text-white">No items available</div>
                         )}
                     </div>
                 </div>
