@@ -17,25 +17,20 @@ interface ForgottenItem {
   item_name: string;
 }
 
-
+const convertToBangkokTime = (isoString: string) => {
+  const date = new Date(isoString);
+  return date.toLocaleString("en-GB", { timeZone: "Asia/Bangkok" });
+};
 
 export default function Page() {
   const [forgottenResponse, setForgottenResponse] = useState<ForgottenItem[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  // const [statePopup, setStatePopup] = useState(false);
-  // const [selectedItem, setSelectedItem] = useState<ForgottenItem | null>(null);
-  // const updateItem = (updatedItem: ForgottenItem) => {
-  //   setForgottenResponse((prevItems) =>
-  //     prevItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-  //   );
-  // };
 
-  const today = new Date().toISOString().split("T")[0]; // ดึงวันที่ปัจจุบัน (YYYY-MM-DD)
+  const today = new Date().toISOString().split("T")[0]; 
 
   const filteredTodayItems = forgottenResponse.filter(
     (item) => item.created.startsWith(today)
   );
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,7 +62,6 @@ export default function Page() {
   const filteredForgottenItems = forgottenResponse.filter((item) =>
     item.item_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
 
   return (
     <>
@@ -105,7 +99,7 @@ export default function Page() {
                       <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
                         <div key={item.id} className="p-2 bg-gray-800 text-white rounded-md mb-2">
                           <p className="text-sm font-bold">{item.item_name}</p>
-                          <p className="text-xs text-gray-400">Created: {item.created}</p>
+                          <p className="text-xs text-gray-400">Created: {convertToBangkokTime(item.created)}</p>
                         </div>
                       </Link>
                     ))
@@ -124,8 +118,8 @@ export default function Page() {
                           filteredTodayItems.map((item) => (
                             <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
                               <div className="p-2 bg-gray-800 text-white rounded-md mb-2">
-                                <p className="text-sm font-bold">{item.item_name ?? "Unknow Item"}</p>
-                                <p className="text-xs text-gray-400">Created: {item.created}</p>
+                                <p className="text-sm font-bold">{item.item_name ?? "Unknown Item"}</p>
+                                <p className="text-xs text-gray-400">Created: {convertToBangkokTime(item.created)}</p>
                               </div>
                             </Link>
                           ))
@@ -133,9 +127,7 @@ export default function Page() {
                           <p className="text-center text-gray-400">No items available today.</p>
                         )}
                       </div>
-
                     </div>
-
                   </div>
                 </div>
               </div>
@@ -143,14 +135,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-      {/* {statePopup && selectedItem && (
-        <PopupUndefineItem
-          setStatePopup={setStatePopup}
-          selectedItem={selectedItem}
-    
-        />
-      )} */}
-
     </>
   );
 }
