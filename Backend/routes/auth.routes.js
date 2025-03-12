@@ -44,7 +44,7 @@ authRouter.post("/login", async (req, res) => {
         if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-        res.cookie("token", token, { httpOnly: true, secure: process.env.SECURE, sameSite: "Strict" });
+        res.cookie("token", token, { httpOnly: process.env.HTTPONLY, secure: process.env.SECURE, sameSite: process.env.SAMESITE });
         res.status(200).json({ message: "Logged in successfully" });
     } catch (error) {
         console.log(error)
@@ -53,7 +53,7 @@ authRouter.post("/login", async (req, res) => {
 });
 
 authRouter.post("/logout", (req, res) => {
-    res.clearCookie("token", { httpOnly: true, secure: process.env.SECURE, sameSite: "Strict" });
+    res.clearCookie("token", { httpOnly: process.env.HTTPONLY, secure: process.env.SECURE, sameSite: process.env.SAMESITE });
     res.json({ message: "Logged out successfully" });
 });
 
