@@ -65,11 +65,13 @@ const forgottenVideoUpload = multer({ storage: forgottenVideoUploader });
 const forgottenReturnUpload = multer({ storage: forgottenReturnUploader });
 const violenceImageUpload = multer({ storage: violenceImageUploader });
 const violenceVideoUpload = multer({ storage: violenceVideoUploader });
+const profilePictureUpload = multer({ storage: profilePictureUploader });
 
 export {
     forgottenImageUpload,
     forgottenVideoUpload,
     forgottenReturnUpload,
     violenceImageUpload,
-    violenceVideoUpload
+    violenceVideoUpload,
+    profilePictureUpload,
 };

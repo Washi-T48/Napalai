@@ -4,7 +4,8 @@ import {
     forgottenVideoUpload,
     forgottenReturnUpload,
     violenceImageUpload,
-    violenceVideoUpload
+    violenceVideoUpload,
+    profilePictureUpload,
 } from '../models/upload.model.js';
 import { updateForgottenImage, updateForgottenReturn, updateForgottenVideo } from '../models/forgotten.model.js';
 import { updateViolenceImage, updateViolenceVideo } from '../models/violence.model.js';
