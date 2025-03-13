@@ -147,11 +147,29 @@ function Page() {
         <>
             <Navber />
             <div className="bg-customBlue min-h-screen pt-20">
-                <div className="flex justify-center items-center text-2xl font-bold text-white p-6">
-                    Forgotten Violence
+                <div className="flex justify-center items-center text-2xl font-bold text-white p-14 mt-2">
+                    Forgotten
                 </div>
 
                 <div className="pt-5">
+                    <div className="flex justify-between">
+                        
+                    <div className="flex justify-start gap-2 p-4 pl-10">
+                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                            <Icon icon="ooui:previous-ltr" width="15" height="15" />
+                        </button>
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setSwitchPage(index)}
+                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
+                                {index + 1}
+                            </button>
+                        ))}
+                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                            <Icon icon="ooui:previous-rtl" width="15" height="15" />
+                        </button>
+                    </div>
                     <div className="relative w-full flex justify-end pr-10 p-5">
                         <button
                             onClick={toggleFilterButton}
@@ -159,7 +177,6 @@ function Page() {
                         >
                             Filter
                         </button>
-
                         {FilterButton && (
                             <div className="absolute top-16 z-10  bg-white p-4 rounded-md shadow-lg">
                                 <div className="flex flex-col space-y-2 h-72 overflow-y-auto">
@@ -183,23 +200,9 @@ function Page() {
                             </div>
                         )}
                     </div>
-
-                    <div className="flex justify-start gap-2 p-4 pl-10">
-                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
-                            <Icon icon="ooui:previous-ltr" width="15" height="15" />
-                        </button>
-                        {Array.from({ length: totalPages }, (_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setSwitchPage(index)}
-                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
-                                {index + 1}
-                            </button>
-                        ))}
-                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
-                            <Icon icon="ooui:previous-rtl" width="15" height="15" />
-                        </button>
                     </div>
+                    
+
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-10">
                         {paginatedData.length > 0 ? (

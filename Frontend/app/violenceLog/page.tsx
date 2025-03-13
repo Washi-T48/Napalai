@@ -58,26 +58,21 @@ function Page() {
     const itemsPerPage = 10;
 
     useEffect(() => {
-
         const getUnifiedForgottenData = async () => {
             try {
                 const response = await fetch(`${Port.URL}/utils/violence`);
                 if (!response.ok) throw new Error("Failed to fetch forgotten items");
-
                 const data: ViolenceItem[] = await response.json();
-
                 const updatedData = data.map((item) => ({
                     ...item,
                     zone: item.zonename || "Unknown Zone",
                     camera: item.cameraname || "Unknown Camera",
                 }));
-
                 setGetViolence(updatedData);
             } catch (error) {
                 console.error("Error fetching unified forgotten items:", error);
             }
         };
-
         getUnifiedForgottenData();
     }, []);
 
@@ -86,7 +81,6 @@ function Page() {
             try {
                 const response = await fetch(`${Port.URL}/cameras`);
                 if (!response.ok) throw new Error("Failed to fetch cameras");
-
                 const camerasData: Camera[] = await response.json();
                 setGetCameras(camerasData);
             } catch (error) {
@@ -98,14 +92,12 @@ function Page() {
             try {
                 const response = await fetch(`${Port.URL}/zones`);
                 if (!response.ok) throw new Error("Failed to fetch zones");
-
                 const zonesData: Zone[] = await response.json();
                 setGetZones(zonesData);
             } catch (error) {
                 console.error("Error fetching zones:", error);
             }
         };
-
         fetchCameras();
         fetchZones();
     }, []);
@@ -161,11 +153,28 @@ function Page() {
         <>
             <Navber />
             <div className="bg-customBlue min-h-screen pt-20">
-                <div className="flex justify-center items-center text-2xl font-bold text-white p-6 mt-2 ">
+                <div className="flex justify-center items-center text-2xl font-bold text-white p-14 mt-2 ">
                     Violence
                 </div>
 
                 <div className="pt-5">
+                    <div className="flex justify-between">
+                    <div className="flex justify-start gap-2 p-4 pl-10">
+                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                        <Icon icon="ooui:previous-ltr" width="15" height="15" />
+                        </button>
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button 
+                                key={index} 
+                                onClick={() => setSwitchPage(index)}
+                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
+                                {index + 1}
+                            </button>
+                        ))}
+                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                        <Icon icon="ooui:previous-rtl" width="15" height="15" />
+                        </button>
+                    </div>
                     <div className="relative w-full flex justify-end pr-10 p-5">
                         <button onClick={() => SetFilterButton(!FilterButton)} className="p-2 w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white">
                             Filter
@@ -186,35 +195,14 @@ function Page() {
                                         status={["returned", "unreturned"]}
                                     />
                                 </div>
-                            
-
                             </div>
-
                         )}
                     </div>
-                    
-                    {/* <div className="text-white p-4">
-                        {selectedZone && <p>Filtered by Zone: {selectedZone}</p>}
-                        {selectedCamera && <p>Filtered by Camera: {selectedCamera}</p>}
-                        {selectedStatus && <p>Filtered by Status: {selectedStatus}</p>}
-                    </div> */}
 
-                    <div className="flex justify-start gap-2 p-4 pl-10">
-                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
-                        <Icon icon="ooui:previous-ltr" width="15" height="15" />
-                        </button>
-                        {Array.from({ length: totalPages }, (_, index) => (
-                            <button 
-                                key={index} 
-                                onClick={() => setSwitchPage(index)}
-                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
-                                {index + 1}
-                            </button>
-                        ))}
-                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
-                        <Icon icon="ooui:previous-rtl" width="15" height="15" />
-                        </button>
                     </div>
+                    
+
+                   
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-10">
                         
