@@ -59,8 +59,8 @@ app.use('/upload', uploadRouter);
 app.use('/public', express.static('public'));
 app.use('/protected', protectedFileMiddleware, express.static('protected'));
 
-http.createServer(app).listen(3001, () => {
-    console.log(`Server is running on port 3000`);
+http.createServer(app).listen(PORT, () => {
+    console.log(`Server is now running on port ${PORT}`);
 });
 
 // const options = {
