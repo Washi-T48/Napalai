@@ -50,7 +50,7 @@ export default function Navber() {
           {/* เมนูแสดงเมื่อคลิก */}
           {showMenu && (
             <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg py-2">
-              <Link href="/change-profile">
+              <Link href="/profile">
                 <div className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Change Profile</div>
               </Link>
               <Link href="/changeUsername">

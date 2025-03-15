@@ -37,7 +37,12 @@ module.exports = {
         customฺBorder: '#5882C1',
         customฺButton: '#0D6E6E',
         customฺButtomHover: '#04504F ',
-        customwhite: '#F1F2F3'
+        customwhite: '#F1F2F3',
+        customRed: '#FA5E55',
+        custemMoreRed:'#8E1616'
+      },
+      backgroundImage: {
+        customLinear: "linear-gradient(170deg, rgba(13, 31, 45, 1) 38%, rgba(28, 47, 64, 1) 78%), url('/imges/cycleBG.png')",
       },
       fontSize: {
         'tiny': '0.625rem',    // เพิ่มขนาดฟอนต์ใหม่ (10px)
@@ -45,6 +50,7 @@ module.exports = {
         'xxl': '1.75rem',      // เพิ่มขนาดฟอนต์ใหม่ (28px)
         'huge': '3rem',        // เพิ่มขนาดฟอนต์ใหม่ (48px)
       },
+      
       boxShadow: {
         'custom-shadow': '0px 48px 100px 0px rgba(17, 12, 46, 0.15)', // Add custom box-shadow
       },
