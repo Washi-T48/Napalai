@@ -45,39 +45,42 @@ const ChangePassBox:React.FC<Props> = ({ setOpenChangePassword }) => {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-gray-800 p-6 rounded-lg w-96">
+            <div className="bg-customBlue p-6 rounded-lg ">
                 <h1 className="text-lg font-medium text-white">Change Password</h1>
 
-                <div className="space-y-3 pt-3">
-                    <label htmlFor="oldpassword" className="text-xs text-white">Current Password</label>
+                <div className="flex flex-col space-y-3 pt-3">
+                    <label htmlFor="oldpassword" className="text-xs px-2 text-white">Current Password</label>
                     <input
                         type="password"
                         id="oldpassword"
+                        placeholder="Enter your current password"
                         value={oldPassword}
                         onChange={(e) => setOldPassword(e.target.value)}
-                        className="w-full p-2 rounded-md text-sm h-10 text-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                        className="w-96 px-3 py-2 mt-1 pb-8 border border-gray-600 bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
 
-                <div className="space-y-3 pt-3">
-                    <label htmlFor="newpassword" className="text-xs text-white">New Password</label>
+                <div className="flex flex-col space-y-3 pt-3">
+                    <label htmlFor="newpassword" className="text-xs px-2 text-white">New Password</label>
                     <input
                         type="password"
                         id="newpassword"
+                        placeholder="Enter a new password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full p-2 rounded-md text-sm h-10 text-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                        className="w-96 px-3 py-2 mt-1 pb-8 border border-gray-600 bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
 
-                <div className="space-y-3 pt-3">
-                    <label htmlFor="confirmpassword" className="text-xs text-white">Confirm Password</label>
+                <div className="flex flex-col space-y-3 pt-3">
+                    <label htmlFor="confirmpassword" className="text-xs px-2 text-white">Confirm Password</label>
                     <input
                         type="password"
                         id="confirmpassword"
+                        placeholder="Confirm new password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full p-2 rounded-md text-sm h-10 text-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                        className="w-96 px-3 py-2 mt-1 pb-8 border border-gray-600 bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     />
                 </div>
 

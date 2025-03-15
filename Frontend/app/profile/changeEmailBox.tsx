@@ -36,19 +36,21 @@ const ChangeEmailBox:React.FC<Props> = ({setOpenChangeEmail}) => {
     return (
         <div>
                 <div className="fixed inset-0 flex justify-center items-center z-50 bg-black bg-opacity-50">
-                    <div className="bg-customBlue p-8 rounded-2xl w-96 text-white">
+                    <div className="bg-customBlue p-8 rounded-2xl w-auto text-white">
                         <div className="flex justify-between items-center">
                             <h1 className="text-lg font-medium">Change Email</h1>
                         </div>
 
-                        <div className="space-y-3 pt-6">
-                            <label htmlFor="email" className="text-xs">New Email</label>
+                        <div className="flex flex-col space-y-3 pt-6">
+                            <label htmlFor="email" className="text-xs px-2">New Email</label>
                             <input
                                 type="email"
                                 id="email"
+                                placeholder='Enter your new username'
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full p-1 rounded-sm text-sm h-8 text-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                                className="w-96 px-3 py-2 mt-1 pb-8 border border-gray-600 bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+
                             />
 
                             <div className="flex justify-end gap-2 pt-6">

@@ -49,21 +49,12 @@ export default function Navber() {
 
           {/* เมนูแสดงเมื่อคลิก */}
           {showMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg py-2">
+            <div className="absolute right-0 mt-2 w-48 bg-CustomDeepTeal  text-white shadow-2xl rounded-md  overflow-hidden">
               <Link href="/profile">
-                <div className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Change Profile</div>
-              </Link>
-              <Link href="/changeUsername">
-                <div className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Change Username</div>
-              </Link>
-              <Link href="/changeEmail">
-                <div className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Change Email</div>
-              </Link>
-              <Link href="/changePassword">
-                <div className="px-4 py-2 hover:bg-gray-200 cursor-pointer">Change Password</div>
+                <div className="px-4 py-3 duration-300 hover:bg-gray-200 hover:text-black cursor-pointer">Change Profile</div>
               </Link>
               <Link href="/logout">
-                <div className="px-4 py-2 hover:bg-red-500 hover:text-white cursor-pointer">Logout</div>
+                <div className="px-4 py-3 duration-300 hover:bg-customRed hover:text-white cursor-pointer">Logout</div>
               </Link>
             </div>
           )}
