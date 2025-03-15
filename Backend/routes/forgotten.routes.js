@@ -6,6 +6,7 @@ import {
     getForgottenById,
     updateForgotten,
     deleteForgotten,
+    updateReceiver,
 } from '../models/forgotten.model.js';
 
 const forgottenRouter = express.Router();
