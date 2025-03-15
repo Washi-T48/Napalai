@@ -20,9 +20,11 @@ interface UnifiedForgottenItem {
     createdtime: string;
     zone: string | null;
     item_type: string;
+    item_name: string;
     description: string | null;
     cameraname: string;
     zonename: string;
+    image:string;
 }
 
 

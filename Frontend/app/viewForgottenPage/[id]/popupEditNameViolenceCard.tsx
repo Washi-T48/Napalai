@@ -184,8 +184,8 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }
               </label>
               <input
                 type="text"
-                onChange={(e) => { setChangDetail({ ...changeDetail, item_type: e.target.value }) }}
-                value={changeDetail.item_type}
+                onChange={(e) => { setChangDetail({ ...changeDetail, item_name: e.target.value }) }}
+                value={changeDetail.item_name}
                 placeholder="Add a title that describes your video."
                 className={`w-96  px-3 py-2 mt-1 pb-8  border ${isError ? "border" : "border-gray-600"
                   } bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 ${isError ? "focus:ring-red-500 focus:border-red-500 " : "focus:ring-blue-500 focus:border-blue-500"

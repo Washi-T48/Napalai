@@ -35,6 +35,7 @@ interface ForgottenItem {
     cameraname: string; // *
     zonename: string; // *
     createdtime: string;
+    
 }
 
 
@@ -49,7 +50,7 @@ function Page() {
     const maxLength = 50;
     const isError = text.length === 0;
     const maxDetailLength = 200;
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState<string | null>(null);
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]; // Access the first file in the FileList
         if (file) {
@@ -151,7 +152,6 @@ function Page() {
                         </div>
                     </div>
 
-
                     <div className="flex gap-2 flex-col h-full w-auto p-2 lg:w-80">
                         <div className="flex flex-col items-start text-white ">
                             <button onClick={toggleStatus} className={`px-2 py-1 w-28 rounded ${status === "unreturned" ? "bg-red-500" : "bg-green-500"}`}>
@@ -161,7 +161,7 @@ function Page() {
                         <div className="flex justify-between p-2 bg-customSlateBlue rounded-md text-white">
 
                             <div className="flex justify-between">
-                                <div className="px-2">{data.item_type || "Unknown Item"}</div>
+                                <div className="px-2">{data.item_name || "Unknown Item"}</div>
 
                             </div>
                             <div>
