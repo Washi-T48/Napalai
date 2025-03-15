@@ -60,4 +60,15 @@ forgottenRouter.delete('/:id', async (req, res) => {
     }
 });
 
+forgottenRouter.put('/:id/receiver', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const receiver = req.body;
+        const updatedReceiver = await updateReceiver(id, receiver);
+        res.status(200).json(updatedReceiver.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 export default forgottenRouter;
