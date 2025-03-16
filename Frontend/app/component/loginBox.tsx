@@ -8,9 +8,10 @@ function LoginBox() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
-    const [errorMessage, setErrorMessage] = useState(''); // เพิ่ม state เก็บข้อความ Error
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const handleLoginSubmit = async () => {
+    const handleLoginSubmit = async (e) => {
+        if (e) e.preventDefault();
         if (!username || !password) return;
 
         try {
@@ -25,9 +26,9 @@ function LoginBox() {
             if (response.ok) {
                 console.log("Login successful:", data);
                 localStorage.setItem("token", data.token);
-                window.location.href = "/viewPage"; // เปลี่ยนหน้าเมื่อเข้าสู่ระบบสำเร็จ
+                window.location.href = "/viewPage";
             } else {
-                setErrorMessage(data.message || "Invalid username or password"); // แสดงข้อความ Error
+                setErrorMessage(data.message || "Invalid username or password");
             }
         } catch (error) {
             console.error("Login error:", error);
@@ -35,7 +36,8 @@ function LoginBox() {
         }
     };
 
-    const handleResetSubmit = () => {
+    const handleResetSubmit = (e) => {
+        if (e) e.preventDefault();
         console.log('Username:', username);
         console.log('Email:', email);
     };
@@ -44,12 +46,12 @@ function LoginBox() {
         <div className="z-10">
             <div className="flex justify-center flex-col items-center border border-customฺBorder p-8 rounded-2xl w-80 m-auto">
                 {!stateForgetPassword ? (
-                    <>
+                    <form onSubmit={handleLoginSubmit} className="flex flex-col items-center w-full">
                         <div className="w-28 h-28">
                             <Image className="rounded-full object-cover w-full h-full" src={Logo} alt="LogoWeb" />
                         </div>
-                        <div className="text-white p-2 space-y-3">
-                            <h1 className="text-lg font-medium">Login</h1>
+                        <div className="text-white p-2 space-y-3 w-full">
+                            <h1 className="text-lg font-medium text-center">Login</h1>
 
                             <div className="space-y-1">
                                 <label htmlFor="username" className="text-xs">Username</label>
@@ -76,12 +78,11 @@ function LoginBox() {
                                 </div>
                             </div>
 
-                            {/* แสดงข้อความ Error หากรหัสผิด */}
                             {errorMessage && <p className="text-red-500 text-xs">{errorMessage}</p>}
 
                             <div>
                                 <button
-                                    onClick={handleLoginSubmit}
+                                    type="submit"
                                     disabled={!username || !password}
                                     className="w-full h-8 p-1 rounded-sm text-sm bg-customฺButton hover:bg-customฺButtomHover disabled:bg-gray-400"
                                 >
@@ -89,11 +90,11 @@ function LoginBox() {
                                 </button>
                             </div>
                         </div>
-                    </>
+                    </form>
                 ) : (
-                    <>
-                        <div className="text-white gap-10 h-auto">
-                            <h1 className="text-lg font-medium">Reset password</h1>
+                    <form onSubmit={handleResetSubmit} className="flex flex-col items-center w-full">
+                        <div className="text-white gap-10 h-auto w-full">
+                            <h1 className="text-lg font-medium text-center">Reset password</h1>
 
                             <div className="space-y-1">
                                 <label htmlFor="username" className="text-xs">Username</label>
@@ -124,7 +125,7 @@ function LoginBox() {
 
                                 <div>
                                     <button
-                                        onClick={handleResetSubmit}
+                                        type="submit"
                                         disabled={!username || !email}
                                         className="w-full h-8 p-1 rounded-sm text-sm bg-customฺButton hover:bg-customฺButtomHover disabled:bg-gray-400"
                                     >
@@ -133,12 +134,11 @@ function LoginBox() {
                                 </div>
                             </div>
                         </div>
-                    </>
+                    </form>
                 )}
             </div>
         </div>
     );
 }
-
 
 export default LoginBox;

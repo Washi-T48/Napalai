@@ -32,7 +32,7 @@ interface Props {
   selectedId: string | undefined | string[];
 }
 
-const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup , selectedId }) => {
+const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }) => {
 
   const [getData, setGetData] = useState<ForgottenItem[]>([]);
 
@@ -103,19 +103,19 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup , selectedId 
           zonename: data.zonename,
           createdtime: data.createdtime,
         })
-        console.log("showdata",data)
+        console.log("showdata", data)
       } catch (error) {
         console.error("Error fetching camera and zone data:", error);
       }
     };
 
     fetchData();
-    
+
   }, [selectedId]);
   console.log("show changeDetail", changeDetail)
 
   const changeData = async () => {
-    if (selectedId === null) return; 
+    if (selectedId === null) return;
 
     try {
       const putResponceEditDetail = await fetch(`${Port.URL}/forgotten/${selectedId}`, {
@@ -145,7 +145,7 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup , selectedId 
           cameraname: changeDetail.cameraname,
           zonename: changeDetail.zonename,
           createdtime: changeDetail.createdtime,
-          
+
 
         })
       });
@@ -162,7 +162,7 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup , selectedId 
       console.error("Error fetching camera and zone data:", error);
     }
   };
-  console.log("get data",getData)
+  console.log("get data", getData)
 
 
   return (
@@ -208,11 +208,11 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup , selectedId 
             <button className="flex justify-center items-center p-2 w-24 h-9 bg-customwhite text-black rounded-sm hover:bg-gray-500">
               cancle
             </button>
-            <button 
-  onClick={changeData}
-  className="flex justify-center items-center p-2 w-24 h-9 bg-customฺButton text-white rounded-sm hover:bg-customฺButtomHover">
-  submit
-</button>
+            <button
+              onClick={changeData}
+              className="flex justify-center items-center p-2 w-24 h-9 bg-customฺButton text-white rounded-sm hover:bg-customฺButtomHover">
+              submit
+            </button>
           </div>
         </div>
       </div>
