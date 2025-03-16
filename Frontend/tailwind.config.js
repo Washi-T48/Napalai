@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -32,8 +33,8 @@ module.exports = {
       colors: {
         customBlue: '#0D1F2D',
         customSlateBlue: '#354656',
-        customDarkSlateBlue:'#1D2E3D',
-        CustomDeepTeal:'#1D374B',
+        customDarkSlateBlue: '#1D2E3D',
+        CustomDeepTeal: '#1D374B',
         customฺBorder: '#5882C1',
         customฺButton: '#0D6E6E',
         customฺButtomHover: '#04504F ',
@@ -53,6 +54,9 @@ module.exports = {
       
       boxShadow: {
         'custom-shadow': '0px 48px 100px 0px rgba(17, 12, 46, 0.15)', // Add custom box-shadow
+      },
+      images: {
+        domains: ["cloud.phraya.net"],
       },
     },
   },

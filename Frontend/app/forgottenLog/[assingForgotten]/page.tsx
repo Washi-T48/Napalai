@@ -7,6 +7,7 @@ import CardVideo from "../../component/cardVideo";
 import Dropdown from "../../component/dropdown";
 import Port from "@/app/port";
 import Link from "next/link";
+import { Icon } from "@iconify/react";
 
 interface UnifiedForgottenItem {
     id: number;
@@ -19,9 +20,11 @@ interface UnifiedForgottenItem {
     createdtime: string;
     zone: string | null;
     item_type: string;
+    item_name: string;
     description: string | null;
     cameraname: string;
     zonename: string;
+    image:string;
 }
 
 interface Camera {
@@ -138,10 +141,8 @@ function Page() {
         );
     });
 
-    const paginatedData = filteredData.slice(
-        switchPage * itemsPerPage,
-        (switchPage + 1) * itemsPerPage
-    );
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const paginatedData = filteredData.slice(switchPage * itemsPerPage, (switchPage + 1) * itemsPerPage);
 
     const uniqueZones = [...new Set(camerasWithZones.map((item) => item.zone))];
     const uniqueCameras = [...new Set(camerasWithZones.map((item) => item.name))];
@@ -152,16 +153,35 @@ function Page() {
         setSelectedCamera(null);
         setSelectedStatus(null);
     };
+    
 
     return (
         <>
             <Navber />
-            <div className="bg-customBlue min-h-screen pt-20">
-                <div className="flex justify-center items-center text-2xl font-bold text-white p-6">
-                    Forgotten Violence
+            <div className="bg-customLinear min-h-screen pt-20">
+                <div className="flex justify-center items-center text-2xl font-bold text-white p-14 mt-2">
+                    Forgotten
                 </div>
 
                 <div className="pt-5">
+                    <div className="flex justify-between">
+                        
+                    <div className="flex justify-start gap-2 p-4 pl-10">
+                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                            <Icon icon="ooui:previous-ltr" width="15" height="15" />
+                        </button>
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setSwitchPage(index)}
+                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
+                                {index + 1}
+                            </button>
+                        ))}
+                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                            <Icon icon="ooui:previous-rtl" width="15" height="15" />
+                        </button>
+                    </div>
                     <div className="relative w-full flex justify-end pr-10 p-5">
                         <button
                             onClick={toggleFilterButton}
@@ -169,30 +189,32 @@ function Page() {
                         >
                             Filter
                         </button>
-
                         {FilterButton && (
-                            <div className="absolute top-16 z-10 bg-white p-4 rounded-md shadow-lg">
-                                <div className="flex flex-col space-y-2 max-h-40 overflow-y-auto">
+                            <div className="absolute top-16 z-10  bg-white p-4 rounded-md shadow-lg">
+                                <div className="flex flex-col space-y-2 h-72 overflow-y-auto">
                                     <Dropdown
                                         onSelect={(type, value) => {
                                             if (type === "zone") setSelectedZone(value);
                                             if (type === "camera") setSelectedCamera(value);
                                             if (type === "status") setSelectedStatus(value);
                                         }}
-                                        zone={uniqueZones}
+                                        zone={uniqueZones }
                                         camera={uniqueCameras}
                                         status={uniqueStatuses}
+                                        
                                     />
                                 </div>
-                                <button
-                                    onClick={handleClearFilters}
-                                    className="mt-2 text-sm text-white bg-red-500 p-2 rounded"
-                                >
-                                    Clear All Filters
+                                <div className="flex justify-end">
+                                <button onClick={handleClearFilters} className="px-6 py-2 text-white rounded-full bg-customฺButton ">
+                                    Clear
                                 </button>
+                                </div>
                             </div>
                         )}
                     </div>
+                    </div>
+                    
+
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-10">
                         {paginatedData.length > 0 ? (
@@ -209,7 +231,7 @@ function Page() {
                                 </Link>
                             ))
                         ) : (
-                            <div className="text-white">No items available</div>
+                            <div className="gird grid-cols-1 grid-rows-1 w-full h-full text-center text-white">No items available</div>
                         )}
                     </div>
                 </div>

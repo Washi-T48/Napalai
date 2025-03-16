@@ -4,22 +4,23 @@ import "react-calendar/dist/Calendar.css";
 
 interface MyCalendarProps {
   onDateSelect: (startDate: string, endDate: string) => void;
+  handleClearFilters: () => void;
 }
 
-const MyCalendar: React.FC<MyCalendarProps> = ({ onDateSelect }) => {
+const MyCalendar: React.FC<MyCalendarProps> = ({ onDateSelect, handleClearFilters }) => {
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [selectedRange, setSelectedRange] = useState<[string, string] | null>(null);
 
   const handleChange = (newValue: Date | [Date, Date] | null) => {
-    if (!newValue) return; 
-    
+    if (!newValue) return;
+
     if (Array.isArray(newValue)) {
       setDateRange([newValue[0], newValue[1]]);
     } else {
       setDateRange([newValue, newValue]);
     }
   };
-  
+
 
   const handleApply = () => {
     if (dateRange[0] && dateRange[1]) {
@@ -34,32 +35,29 @@ const MyCalendar: React.FC<MyCalendarProps> = ({ onDateSelect }) => {
     <div className="w-full">
       <div className="flex justify-between">
         <Calendar
-          className="p-4"
+          className="p-2"
           onChange={handleChange}
           value={dateRange}
           selectRange={true}
           locale="en-US"
+          formatShortWeekday={(locale, date) =>
+            date.toLocaleDateString(locale, { weekday: "narrow" })
+          }
+          // showNeighboringMonth={false}
         />
       </div>
-      <div className="flex flex-col items-center p-2 border-x bg-white border-gray-400">
-        <div className="text-xxs mb-2">
-          {dateRange[0] && dateRange[1] ? (
-            <>📅 {dateRange[0].toDateString()} - {dateRange[1].toDateString()}</>
-          ) : (
-            <>เลือกช่วงวันที่</>
-          )}
+      <div className="flex flex-col items-center p-2  bg-white">
+        <div className="flex justify-end  w-full gap-2 ">
+          <button
+            onClick={handleApply}
+            className="px-6 py-2 bg-customฺButton text-white rounded-full hover:bg-customฺButtomHover"
+          >
+            Apply
+          </button>
+          <button onClick={handleClearFilters} className="px-6 py-2 text-white rounded-full bg-customฺButton ">
+            Clear
+          </button>
         </div>
-        <button
-          onClick={handleApply}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          Apply
-        </button>
-        {selectedRange && (
-          <div className="mt-2 text-sm text-gray-700">
-            🔍 Showing data from {selectedRange[0]} to {selectedRange[1]}
-          </div>
-        )}
       </div>
     </div>
   );
