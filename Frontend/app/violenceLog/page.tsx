@@ -152,7 +152,7 @@ function Page() {
     return (
         <>
             <Navber />
-            <div className="bg-customBlue min-h-screen pt-20">
+            <div className="bg-customLinear min-h-screen pt-20">
                 <div className="flex justify-center items-center text-2xl font-bold text-white p-14 mt-2 ">
                     Violence
                 </div>
