@@ -17,39 +17,40 @@ interface ForgottenItem {
   item_name: string;
 }
 
-interface EventCard {
-  id: number;
-  created: string;
-  camera_id: number;
-  type: string;
-  position: string;
-}
+const convertToBangkokTime = (isoString: string) => {
+  const date = new Date(isoString);
+  return date.toLocaleString("en-GB", { timeZone: "Asia/Bangkok" });
+};
 
 export default function Page() {
-  const [eventCard, setEventCard] = useState<EventCard[]>([]);
   const [forgottenResponse, setForgottenResponse] = useState<ForgottenItem[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [statePopup, setStatePopup] = useState(false);
+
+  const today = new Date().toISOString().split("T")[0]; 
+
+  const filteredTodayItems = forgottenResponse.filter(
+    (item) => item.created.startsWith(today)
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [forgottenRes, eventsRes] = await Promise.all([
+        const [forgottenRes] = await Promise.all([
           fetch(`${Port.URL}/forgotten`),
-          fetch(`${Port.URL}/events`),
         ]);
 
-        if (!forgottenRes.ok || !eventsRes.ok) {
+        if (!forgottenRes.ok) {
           throw new Error("Failed to fetch data");
         }
 
-        const [forgottenData, eventData] = await Promise.all([
+        const [forgottenData] = await Promise.all([
           forgottenRes.json(),
-          eventsRes.json(),
         ]);
 
         setForgottenResponse(forgottenData);
-        setEventCard(eventData);
+
+        console.log(forgottenData)
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -58,22 +59,21 @@ export default function Page() {
     fetchData();
   }, []);
 
-const filteredForgottenItems = forgottenResponse.filter((item) =>
+  const filteredForgottenItems = forgottenResponse.filter((item) =>
     item.item_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
 
   return (
     <>
       <Navber />
-      <div className="bg-customBlue min-h-screen">
+      <div className="bg-customLinear min-h-screen">
         <div className="flex justify-center items-center flex-col pt-16 h-full text-white lg:flex-row">
           <div className="flex justify-center items-start flex-col p-4 gap-4 flex-1 w-full h-full text-white lg:flex-row lg:gap-10">
             <div className="w-full lg:max-w-7xl h-full text-black">
-              <ForgottenCalendar assignments={forgottenResponse} />
+              <ForgottenCalendar forgottenResponse={forgottenResponse} />
             </div>
             <div className="flex justify-between flex-col h-full w-full lg:max-w-md pt-2">
-              <div className="flex justify-center flex-col pt-2 p-2 border-b">
+              <div className="flex justify-center flex-col pt-2 p-2 border-b gap-2">
                 {/* Search Bar */}
                 <div className="flex px-4 py-2 rounded-md border-2 bg-customwhite overflow-hidden w-full">
                   <svg
@@ -93,14 +93,20 @@ const filteredForgottenItems = forgottenResponse.filter((item) =>
                   />
                 </div>
                 {/* Search Results */}
-                <div className="pt-4 mt-3 h-80 overflow-auto">
+                <div className="h-80 overflow-auto">
                   {filteredForgottenItems.length > 0 ? (
                     filteredForgottenItems.map((item) => (
-                        <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
-                      <div key={item.id} className="p-2 bg-gray-800 text-white rounded-md mb-2">
-                        <p className="text-sm font-bold">{item.item_name}</p>
-                        <p className="text-xs text-gray-400">Created: {item.created}</p>
-                      </div>
+                      <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
+                        <div className="flex flex-col p-3 bg-customDarkSlateBlue bg-opacity-80 text-white rounded-md mb-2 shadow-xl hover:bg-customDarkSlateBlue hover:bg-opacity-100">
+                          <div className="flex justify-between ">
+                            <p className="text-sm p-1 font-bold">{item.item_name ?? "Unknow Item"}</p>
+                            <p className="text-sm p-1 font-bold text-gray-200">{item.item_type ?? "Unknow type"}</p>
+                          </div>
+                          <div className="flex justify-between">
+                            <p className="text-xs p-1 text-gray-400">{item.created}</p>
+                            <p className="text-xs p-1 text-gray-400"> Zone | Camera </p>
+                          </div>
+                        </div>
                       </Link>
                     ))
                   ) : (
@@ -111,14 +117,31 @@ const filteredForgottenItems = forgottenResponse.filter((item) =>
               <div className="flex justify-start flex-col pt-4 p-2">
                 <div className="p-2">Today ITEM</div>
                 <div className="h-80 overflow-auto">
-                  <ForgottenCard setStatePopup={setStatePopup} eventCard={eventCard} />
+                  {filteredTodayItems.length > 0 ? (
+                    filteredTodayItems.map((item) => (
+                      <Link key={item.id} href={`/viewForgottenPage/${item.id}`}>
+                        <div className="flex flex-col p-3 bg-customDarkSlateBlue bg-opacity-80 text-white rounded-md mb-2 shadow-xl hover:bg-customDarkSlateBlue hover:bg-opacity-100">
+                          <div className="flex justify-between ">
+                            <p className="text-sm p-1 font-bold">{item.item_name ?? "Unknow Item"}</p>
+                            <p className="text-sm p-1 font-bold text-gray-200">{item.item_type ?? "Unknow type"}</p>
+                          </div>
+                          <div className="flex justify-between">
+                            <p className="text-xs p-1 text-gray-400">{item.created}</p>
+                            <p className="text-xs p-1 text-gray-400"> Zone | Camera </p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="flex justify-center items-center h-full text-center text-gray-400">No items available today.</p>
+                  )}
                 </div>
+
               </div>
             </div>
           </div>
         </div>
       </div>
-      {statePopup && <PopupUndefineItem setStatePopup={setStatePopup} />}
     </>
   );
 }

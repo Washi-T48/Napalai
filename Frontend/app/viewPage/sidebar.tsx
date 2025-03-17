@@ -3,13 +3,12 @@ import { Icon } from "@iconify/react";
 import AddCamera from "./popupAddCamera";
 import Port from "../port";
 
-
 interface Zone {
   id: number;
   created: string;
   name: string;
   location: string;
-};
+}
 
 interface SidebarProp {
   setTypeLayout: (type: string) => void;
@@ -24,53 +23,53 @@ interface Camera {
   created: string;
 }
 
-
-const Sidebar: React.FC<SidebarProp> = ({
-  setTypeLayout,
-  setSelectZone,
-}) => {
-
-  const [openPopup, setOpenPopup] = useState(false)
+const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone }) => {
+  const [openPopup, setOpenPopup] = useState(false);
   const [layoutActive, setLayoutActive] = useState(false);
   const toggleLayout = () => setLayoutActive(!layoutActive);
 
-  const [renamePopup, setRenamePopup] = useState<{ cameraId: number, currentName: string } | null>(null);
+  const [renamePopup, setRenamePopup] = useState<{
+    cameraId: number;
+    currentName: string;
+  } | null>(null);
 
-
-  const getZoneName = (zoneId: number) => {
-    console.log(zoneId)
-    const zoneInfo = groupedZone.find((zone) => zone.id === zoneId);
+  const getZoneName = (zoneId: string) => {
+    console.log(zoneId);
+    const zoneInfo = groupedZone.find((zone) => String(zone.id) === zoneId);
     return zoneInfo ? zoneInfo.name : "Unknown Zone";
   };
   const [expandedZoneId, setExpandedZoneId] = useState(null);
   const toggleZone = (zoneId: any) => {
-    setExpandedZoneId(prevZoneId => (prevZoneId === zoneId ? null : zoneId));
+    setExpandedZoneId((prevZoneId) => (prevZoneId === zoneId ? null : zoneId));
   };
 
   const [groupedCameras, setGroupedCameras] = useState<Camera[]>([]);
   const [groupedZone, setGroupedZone] = useState<Zone[]>([]);
-
-  const groupedData = groupedCameras.reduce((acc: { [key: string]: typeof groupedCameras }, item) => {
-    if (!acc[item.zone_id]) acc[item.zone_id] = [];
-    acc[item.zone_id].push(item);
-    return acc;
-  }, {});
+  const groupedData = groupedZone.reduce(
+    (acc: { [key: string]: Camera[] }, zone) => {
+      acc[zone.id] = groupedCameras.filter((camera) => camera.zone_id === zone.id);
+      return acc;
+    },
+    {}
+  );
+  
+  const [fatchPage, setFatchPage] = useState(true);
 
   useEffect(() => {
     const getCamera = async () => {
       try {
         const response = await fetch(`${Port.URL}/cameras`, {
-          method: 'GET',
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
-          }
+          },
         });
 
         const responseZone = await fetch(`${Port.URL}/zones`, {
-          method: 'GET',
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
-          }
+          },
         });
 
         if (!response.ok) {
@@ -95,8 +94,7 @@ const Sidebar: React.FC<SidebarProp> = ({
       }
     };
     getCamera();
-  }, []);
-
+  }, [fatchPage]);
 
   const [deletePopupData, setDeletePopupData] = useState<Camera | null>(null);
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
@@ -109,17 +107,21 @@ const Sidebar: React.FC<SidebarProp> = ({
     if (!deletePopupData) return;
 
     try {
-      const deleteResponse = await fetch(`${Port.URL}/cameras/${deletePopupData.id}`, {
-        method: 'DELETE',
-        headers: { "Content-Type": "application/json" }
-      });
+      const deleteResponse = await fetch(
+        `${Port.URL}/cameras/${deletePopupData.id}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (!deleteResponse.ok) throw new Error("Failed to delete camera");
 
       // อัปเดต state หลังจากลบสำเร็จ
-      setGroupedCameras(prev => prev.filter(cam => cam.id !== deletePopupData.id));
+      setGroupedCameras((prev) =>
+        prev.filter((cam) => cam.id !== deletePopupData.id)
+      );
       setOpenDeletePopup(false);
-
     } catch (error) {
       console.error("Error deleting camera:", error);
     }
@@ -130,22 +132,25 @@ const Sidebar: React.FC<SidebarProp> = ({
     console.log(`Renaming camera ID: ${cameraId} to "${newName}"`);
 
     try {
-      const renameResponseCamera = await fetch(`${Port.URL}/cameras/${cameraId}/rename`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: newName
-        }),
-      });
+      const renameResponseCamera = await fetch(
+        `${Port.URL}/cameras/${cameraId}/rename`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: newName,
+          }),
+        }
+      );
 
       const responseText = await renameResponseCamera.text();
-      console.log("API Response:", responseText); // ดูว่า API คืนค่าอะไร
-
+      console.log("API Response:", responseText);
       if (!renameResponseCamera.ok) {
         throw new Error("Failed to rename camera");
       }
+      setFatchPage(!fatchPage);
 
       console.log(`Renamed camera with ID: ${cameraId} to "${newName}"`);
     } catch (error) {
@@ -153,10 +158,11 @@ const Sidebar: React.FC<SidebarProp> = ({
     }
   };
 
-  const [renameZonePopup, setRenameZonePopup] = useState<{ zoneId: number, currentName: string } | null>(null);
+  const [renameZonePopup, setRenameZonePopup] = useState<{
+    zoneId: number;
+    currentName: string;
+  } | null>(null);
   const [newZoneName, setNewZoneName] = useState("");
-
-
 
   // Rename Zone API call
   const renameZone = async (zoneId: number, newName: string) => {
@@ -169,7 +175,7 @@ const Sidebar: React.FC<SidebarProp> = ({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: newName
+          name: newName,
         }),
       });
 
@@ -183,81 +189,110 @@ const Sidebar: React.FC<SidebarProp> = ({
     }
   };
 
-
   const [deleteZonePopup, setDeleteZonePopup] = useState<Zone | null>(null);
 
   const deleteZone = async (zoneId: number) => {
-    console.log("this zone :", zoneId)
+    console.log("this zone :", zoneId);
     try {
       const deleteResponseZone = await fetch(`${Port.URL}/zones/${zoneId}`, {
-        method: 'DELETE',
-        headers: { "Content-Type": "application/json" }
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
       });
 
       if (!deleteResponseZone.ok) throw new Error("Failed to delete zone");
 
       // ลบโซนจาก state
-      setGroupedZone(prev => prev.filter(zone => zone.id !== zoneId));
+      setGroupedZone((prev) => prev.filter((zone) => zone.id !== zoneId));
       setDeleteZonePopup(null);
-
     } catch (error) {
       console.error("Error deleting zone:", error);
     }
   };
 
-
-
   return (
-    <div className="flex h-screen bg-gray-900">
-      <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16 overflow-auto ">
+    <div className="flex h-screen bg-gray-90 ">
+      <div className="w-64 h-screen bg-customBlue  text-white flex flex-col pt-16 overflow-auto ">
         <div className="">
           {Object.entries(groupedData).map(([zoneId, cameras]) => (
             <div key={zoneId}>
               <div
-                className="w-full p-6 text-xl cursor-pointer hover:bg-customSlateBlue"
+                className="w-full text-xl cursor-pointer "
                 onClick={() => toggleZone(zoneId)}
               >
-                <div className="flex">
+                <div
+                  tabIndex={1}
+                  className="flex justify-between p-6 shadow-md duration-300 rounded-md m-1 hover:bg-customSlateBlue hover:bg-opacity-20 focus:bg-customSlateBlue focus:bg-opacity-20"
+                >
                   {getZoneName(zoneId)}
-                  <div className="flex justify-end w-full gap-2">
-                    <button onClick={() => setRenameZonePopup({ zoneId: Number(zoneId), currentName: getZoneName(Number(zoneId)) })}>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() =>
+                        setRenameZonePopup({
+                          zoneId: Number(zoneId),
+                          currentName: getZoneName(zoneId),
+                        })
+                      }
+                    >
                       <Icon icon="mdi:rename" width="20" height="20" />
                     </button>
-                    <button onClick={() => setDeleteZonePopup({ id: Number(zoneId), name: getZoneName(zoneId) })} className="text-red-500">
+                    <button
+                      onClick={() =>
+                        setDeleteZonePopup({
+                          id: Number(zoneId),
+                          name: getZoneName(zoneId),
+                          created: "",
+                          location: "",
+                        })
+                      }
+                      className="text-white"
+                    >
                       <Icon icon="ic:baseline-delete" width="20" height="20" />
                     </button>
                   </div>
-
                 </div>
-
               </div>
               <ul
+                className="max-h-96 overflow-auto "
                 style={{
-                  display: expandedZoneId === zoneId ? 'block' : 'none'
+                  display: expandedZoneId === zoneId ? "block" : "none",
                 }}
               >
                 {cameras.map((camera) => (
                   <div
-                    className="flex items-center w-full p-4 pl-12 hover:bg-customSlateBlue"
+                    className="m-1 duration-300 rounded-md hover:bg-customSlateBlue hover:bg-opacity-20 "
                     key={camera.id}
                   >
-                    {camera.name}
-                    <div className="flex justify-end w-full gap-2">
-                      <button onClick={() => setRenamePopup({ cameraId: camera.id, currentName: camera.name })}>
-                        <Icon icon="mdi:rename" width="20" height="20" />
-                      </button>
-                      <button onClick={() => confirmDeleteCamera(camera)} className="text-red-500">
-                        <Icon icon="ic:baseline-delete" width="20" height="20" />
-                      </button>
+                    <div className="flex justify-between items-center w-full p-4  ">
+                      <div>{camera.name}</div>
 
+                      <div className="flex justify-end  gap-2">
+                        <button
+                          onClick={() =>
+                            setRenamePopup({
+                              cameraId: camera.id,
+                              currentName: camera.name,
+                            })
+                          }
+                        >
+                          <Icon icon="mdi:rename" width="20" height="20" />
+                        </button>
+                        <button
+                          onClick={() => confirmDeleteCamera(camera)}
+                          className="text-white"
+                        >
+                          <Icon
+                            icon="ic:baseline-delete"
+                            width="20"
+                            height="20"
+                          />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
               </ul>
             </div>
-
           ))}
-
         </div>
         {renamePopup && (
           <div className="fixed inset-0 flex items-center justify-center  bg-black bg-opacity-50">
@@ -270,7 +305,12 @@ const Sidebar: React.FC<SidebarProp> = ({
                 onChange={(e) => setNewCameraName(e.target.value)}
               />
               <div className="flex justify-end gap-2 mt-4">
-                <button onClick={() => setRenamePopup(null)} className="w-24 py-2 bg-gray-300 text-black rounded hover:bg-gray-400">Cancel</button>
+                <button
+                  onClick={() => setRenamePopup(null)}
+                  className="w-24 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
                 <button
                   onClick={() => {
                     renameCamera(renamePopup.cameraId, newCameraName);
@@ -287,21 +327,30 @@ const Sidebar: React.FC<SidebarProp> = ({
         {openDeletePopup && deletePopupData && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-customBlue p-6 rounded-lg shadow-lg">
-              <h2 className="flex justify-start text-xl font-bold mb-4 text-center">Delete Camera</h2>
-              <p className="text-white">Are you sure you want to delete <b>{deletePopupData.name}</b> ?</p>
+              <h2 className="flex justify-start text-xl font-bold mb-4 text-center">
+                Delete Camera
+              </h2>
+              <p className="text-white">
+                Are you sure you want to delete <b>{deletePopupData.name}</b> ?
+              </p>
               <div className="flex flex-col justify-center bg-red-200 p-2 my-2 border-l-8 border-red-950">
-                <div className="text-red-800 text-lg">
-                  warning
-                </div>
+                <div className="text-red-800 text-lg">warning</div>
                 <div className="text-gray-500 text-sm">
-                  By Deleteing this camera,you won't be able to access the system.
+                  By Deleteing this camera,you won't be able to access the
+                  system.
                 </div>
               </div>
               <div className="flex justify-end gap-3 mt-5">
-                <button onClick={() => setOpenDeletePopup(false)} className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400">
+                <button
+                  onClick={() => setOpenDeletePopup(false)}
+                  className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+                >
                   Cancel
                 </button>
-                <button onClick={deleteCamera} className="px-4 py-2 bg-customฺButton text-white rounded hover:bg-customฺButtomHover">
+                <button
+                  onClick={deleteCamera}
+                  className="px-4 py-2 bg-customฺButton text-white rounded hover:bg-customฺButtomHover"
+                >
                   Confirm
                 </button>
               </div>
@@ -320,7 +369,12 @@ const Sidebar: React.FC<SidebarProp> = ({
                 onChange={(e) => setNewZoneName(e.target.value)}
               />
               <div className="flex justify-end gap-2 mt-4">
-                <button onClick={() => setRenameZonePopup(null)} className="w-24 py-2 bg-gray-300 text-black rounded hover:bg-gray-400">Cancel</button>
+                <button
+                  onClick={() => setRenameZonePopup(null)}
+                  className="w-24 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
                 <button
                   onClick={() => {
                     renameZone(renameZonePopup.zoneId, newZoneName);
@@ -337,24 +391,29 @@ const Sidebar: React.FC<SidebarProp> = ({
         {deleteZonePopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-customBlue p-6 rounded-lg shadow-lg">
-              <h2 className="text-xl font-bold mb-4 text-center">Delete Zone</h2>
-              <p className="text-white">Are you sure you want to delete <b>{deleteZonePopup.name}</b> ?</p>
+              <h2 className="text-xl font-bold mb-4 text-center">
+                Delete Zone
+              </h2>
+              <p className="text-white">
+                Are you sure you want to delete <b>{deleteZonePopup.name}</b> ?
+              </p>
               <div className="flex justify-end gap-3 mt-5">
-                <button onClick={() => setDeleteZonePopup(null)} className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400">
+                <button
+                  onClick={() => setDeleteZonePopup(null)}
+                  className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
+                >
                   Cancel
                 </button>
-                <button onClick={() => deleteZone(deleteZonePopup.id)} className="px-4 py-2 bg-customฺButton text-white rounded hover:bg-customฺButtomHover">
+                <button
+                  onClick={() => deleteZone(deleteZonePopup.id)}
+                  className="px-4 py-2 bg-customฺButton text-white rounded hover:bg-customฺButtomHover"
+                >
                   Confirm
                 </button>
               </div>
             </div>
           </div>
         )}
-
-
-
-
-
 
         {/* Layout and Actions */}
         <div className="mt-auto">
@@ -367,13 +426,21 @@ const Sidebar: React.FC<SidebarProp> = ({
                     onClick={() => setTypeLayout("nineLayout")}
                     className="flex justify-center items-center p-2 hover:bg-customSlateBlue hover:rounded-md"
                   >
-                    <Icon icon="material-symbols-light:grid-on" width="24" height="24" />
+                    <Icon
+                      icon="material-symbols-light:grid-on"
+                      width="24"
+                      height="24"
+                    />
                   </div>
                   <div
                     onClick={() => setTypeLayout("sixLayout")}
                     className="flex justify-center items-center p-2 hover:bg-customSlateBlue hover:rounded-md"
                   >
-                    <Icon icon="mingcute:layout-8-fill" width="24" height="24" />
+                    <Icon
+                      icon="mingcute:layout-8-fill"
+                      width="24"
+                      height="24"
+                    />
                   </div>
                   <div
                     onClick={() => setTypeLayout("fourLayout")}
@@ -381,7 +448,6 @@ const Sidebar: React.FC<SidebarProp> = ({
                   >
                     <Icon icon="flowbite:grid-solid" width="24" height="24" />
                   </div>
-
                 </div>
               </div>
             )}

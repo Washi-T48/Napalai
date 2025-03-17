@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 
+
+
 function CalendarVideoPage({ highlightDates = [] }: { highlightDates: Date[] }) {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(
+    highlightDates.length > 0 ? new Date(highlightDates[0]) : new Date()
+  );
 
   const monthName = currentDate.toLocaleString("en-US", { month: "long" });
   const year = currentDate.getFullYear();
@@ -21,7 +25,7 @@ function CalendarVideoPage({ highlightDates = [] }: { highlightDates: Date[] }) 
 
   const isHighlighted = (date: Date) =>
     highlightDates.some((highlightDate) =>
-      date.toDateString() === highlightDate.toDateString()
+      date.toDateString() === new Date(highlightDate).toDateString()
     );
 
   return (
