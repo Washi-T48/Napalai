@@ -131,11 +131,12 @@ authRouter.get("/user", async (req, res) => {
 
 authRouter.post("/reset", async (req, res) => {
     try {
-        const username = req.body.username;
+        const { username, email } = req.body;
         if (!username) return res.status(400).json({ error: "Missing credentials" });
 
         const rows = await getUserByUsername(username);
         if (!rows || rows.length === 0) return res.status(400).json({ error: "Invalid credentials" });
+        if (rows[0].email !== email) return res.status(400).json({ error: "Invalid credentials" });
 
         const user = rows[0];
         console.log(user);
