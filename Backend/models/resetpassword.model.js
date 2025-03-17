@@ -9,7 +9,7 @@ const from_mail = process.env.MAIL_USER;
 const mail_subject = "Password Reset Link for Your Napalai Account"
 const leading_text = 'Please head to this URL to reset your password: '
 const trailing_text = ' . The link will expire in 5 minutes. Please do not share this link with anyone.'
-const rootPage = process.env.ROOT_URL + '/auth/reset/';
+const rootPage = process.env.FRONTEND_URL + process.env.PWRESET_PATH;
 
 const generateToken = async () => {
     return new Promise((resolve, reject) => {
