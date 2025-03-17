@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Image from "next/image";
 import Logo from "../../public/imges/Logo.png";
+import Port from "../port";
 import Link from 'next/link';
 
 function LoginBox() {
@@ -16,7 +17,7 @@ function LoginBox() {
         if (!username || !password) return;
     
         try {
-            const response = await fetch("https://cloud.phraya.net:443/auth/login", {
+            const response = await fetch(`${Port.URL}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
