@@ -6,16 +6,18 @@ interface Props {
 const ChangeUserBox: React.FC<Props> = ({ setOpenChangeUser }) => {
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
-    const [image, setImage] = useState(null);
-    const [preview, setPreview] = useState(null);
+    const [image, setImage] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string | null>(null);
 
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]; // Use optional chaining to prevent runtime errors
         if (file) {
             setImage(file);
-            setPreview(URL.createObjectURL(file)); // แสดงตัวอย่างรูป
+            setPreview(URL.createObjectURL(file));
         }
     };
+    
 
     const handleUpload = async () => {
         if (!image) return alert("Please select an image first!");

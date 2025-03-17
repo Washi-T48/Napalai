@@ -10,19 +10,20 @@ function LoginBox() {
     const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleLoginSubmit = async (e) => {
-        if (e) e.preventDefault();
+    const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+    
         if (!username || !password) return;
-
+    
         try {
             const response = await fetch("https://cloud.phraya.net:443/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
             });
-
+    
             const data = await response.json();
-
+    
             if (response.ok) {
                 console.log("Login successful:", data);
                 localStorage.setItem("token", data.token);
@@ -35,8 +36,9 @@ function LoginBox() {
             setErrorMessage("Something went wrong. Please try again.");
         }
     };
+    
 
-    const handleResetSubmit = (e) => {
+    const handleResetSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         if (e) e.preventDefault();
         console.log('Username:', username);
         console.log('Email:', email);

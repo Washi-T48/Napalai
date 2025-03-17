@@ -60,6 +60,9 @@ function Page() {
   if (!violenceData) {
     return <div>Loading...</div>;
   }
+  const highlightDates = [new Date(violenceData.createdtime)];
+
+
 
   return (
     <>
@@ -85,7 +88,7 @@ function Page() {
           <div className="p-2 ">
             <div className="flex flex-row w-full h-full gap-2 lg:flex-col">
               <div className="flex justify-center items-center rounded-md">
-                <CalendarVideoPage />
+              <CalendarVideoPage highlightDates={highlightDates} />
               </div>
               <div className="flex flex-col w-full gap-2">
                 <div className="flex h-36 w-full gap-x-2">

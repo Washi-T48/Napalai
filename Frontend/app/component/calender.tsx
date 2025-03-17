@@ -11,15 +11,16 @@ const MyCalendar: React.FC<MyCalendarProps> = ({ onDateSelect, handleClearFilter
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [selectedRange, setSelectedRange] = useState<[string, string] | null>(null);
 
-  const handleChange = (newValue: Date | [Date, Date] | null) => {
+  const handleChange = (newValue: Date | [Date | null, Date | null] | null) => {
     if (!newValue) return;
-
+  
     if (Array.isArray(newValue)) {
-      setDateRange([newValue[0], newValue[1]]);
+      setDateRange([newValue[0] ?? null, newValue[1] ?? null]); 
     } else {
       setDateRange([newValue, newValue]);
     }
   };
+  
 
 
   const handleApply = () => {
