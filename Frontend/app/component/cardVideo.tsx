@@ -22,6 +22,7 @@ interface UnifiedForgottenItem {
 
 interface CardVideoProps {
     item: UnifiedForgottenItem;
+    className?: string;
 }
 
 const convertToBangkokTime = (isoString: string) => {
