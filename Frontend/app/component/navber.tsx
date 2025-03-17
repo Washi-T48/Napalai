@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import unnyFace from "../../public/imges/unnyFace.jpg";
 import Link from "next/link";
+import Port from "../port";
 
 export default function Navber() {
   const [showMenu, setShowMenu] = useState(false);
@@ -20,6 +21,29 @@ export default function Navber() {
     };
   }, []);
 
+  const logout = async () => {
+    try {
+      const response = await fetch(`${Port.URL}/auth/logout`, {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Logout failed");
+      }
+
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   return (
     <div className="flex justify-between fixed bg-customBlue text-white p-4 px-14 w-full h-16 z-50">
       <div className="text-3xl font-bold">NAPALAI</div>
@@ -34,7 +58,6 @@ export default function Navber() {
           <div className="cursor-pointer">Forgotten</div>
         </Link>
 
-        {/* คลิกเพื่อเปิด/ปิดเมนู */}
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setShowMenu(!showMenu)}
@@ -47,15 +70,17 @@ export default function Navber() {
             />
           </button>
 
-          {/* เมนูแสดงเมื่อคลิก */}
           {showMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-CustomDeepTeal  text-white shadow-2xl rounded-md  overflow-hidden">
+            <div className="absolute right-0 mt-2 w-48 bg-CustomDeepTeal text-white shadow-2xl rounded-md overflow-hidden">
               <Link href="/profile">
                 <div className="px-4 py-3 duration-300 hover:bg-gray-200 hover:text-black cursor-pointer">Change Profile</div>
               </Link>
-              <Link href="/logout">
-                <div className="px-4 py-3 duration-300 hover:bg-customRed hover:text-white cursor-pointer">Logout</div>
-              </Link>
+              <div
+                onClick={logout}
+                className="px-4 py-3 duration-300 hover:bg-customRed hover:text-white cursor-pointer"
+              >
+                Logout
+              </div>
             </div>
           )}
         </div>

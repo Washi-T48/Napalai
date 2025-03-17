@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Image from "next/image";
 import Logo from "../../public/imges/Logo.png";
 import Port from "../port";
-import Link from 'next/link';
 
 function LoginBox() {
     const [stateForgetPassword, setStateForgetPassword] = useState(false);
@@ -39,11 +38,38 @@ function LoginBox() {
     };
     
 
-    const handleResetSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        if (e) e.preventDefault();
-        console.log('Username:', username);
-        console.log('Email:', email);
+    const handleResetSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+    
+        if (!username || !email) {
+            setErrorMessage("Please enter both username and email.");
+            return;
+        }
+    
+        try {
+            const response = await fetch(`${Port.URL}/auth/reset`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username, email }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                setErrorMessage("");
+                alert("An email with instructions to reset your password has been sent.");
+                setStateForgetPassword(false); 
+            } else {
+                setErrorMessage(data.message || "Something went wrong. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error resetting password:", error);
+            setErrorMessage("Something went wrong. Please try again.");
+        }
     };
+    
 
     return (
         <div className="z-10">
