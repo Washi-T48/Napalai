@@ -6,6 +6,7 @@ import {
     getForgottenById,
     updateForgotten,
     deleteForgotten,
+    updateReceiver,
 } from '../models/forgotten.model.js';
 
 const forgottenRouter = express.Router();
@@ -55,6 +56,17 @@ forgottenRouter.delete('/:id', async (req, res) => {
         const id = req.params.id;
         const deletedForgotten = await deleteForgotten(id);
         res.status(200).json(deletedForgotten.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+forgottenRouter.put('/:id/receiver', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const receiver = req.body;
+        const updatedReceiver = await updateReceiver(id, receiver);
+        res.status(200).json(updatedReceiver.rows[0]);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
