@@ -105,7 +105,7 @@ const ChangeUserBox: React.FC<Props> = ({ setOpenChangeUser }) => {
                         <div className="flex justify-end gap-2 pt-6">
                             <button
                                 onClick={() => setOpenChangeUser(false)}
-                                className='flex justify-center items-center p-2 w-24 h-9 bg-customwhite text-black rounded-sm hover:bg-gray-500'
+                                className='btn btn-cancle'
                             >
                                 Cancle
                             </button>
@@ -115,7 +115,7 @@ const ChangeUserBox: React.FC<Props> = ({ setOpenChangeUser }) => {
                                     handleUpload();
                                 }}
                                 disabled={!username}
-                                className="flex justify-center items-center p-2 w-24 h-9 bg-customฺButton text-white rounded-sm hover:bg-customฺButtomHover"
+                                className="btn btn-outline"
                             >
                                 Save
                             </button>

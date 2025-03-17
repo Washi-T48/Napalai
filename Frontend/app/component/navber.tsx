@@ -28,7 +28,7 @@ export default function Navber() {
       {/* Hamburger Menu for mobile */}
       <div className="lg:hidden flex items-center">
         <button onClick={() => setShowHamberger(!showHamberger)} className="text-3xl">
-          &#9776; {/* สัญลักษณ์ hamburger */}
+          &#9776; 
         </button>
       </div>
 

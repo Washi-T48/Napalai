@@ -167,25 +167,25 @@ function Page() {
                     <div className="flex justify-between">
                         
                     <div className="flex justify-start gap-2 p-4 pl-10">
-                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
                             <Icon icon="ooui:previous-ltr" width="15" height="15" />
                         </button>
                         {Array.from({ length: totalPages }, (_, index) => (
                             <button
                                 key={index}
                                 onClick={() => setSwitchPage(index)}
-                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
+                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 text-xs bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
                                 {index + 1}
                             </button>
                         ))}
-                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
                             <Icon icon="ooui:previous-rtl" width="15" height="15" />
                         </button>
                     </div>
-                    <div className="relative w-full flex justify-end pr-10 p-5">
+                    <div className="relative w-full flex justify-end pr-10 p-4">
                         <button
                             onClick={toggleFilterButton}
-                            className="flex justify-center items-center p-2 w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto"
+                            className="flex justify-center items-center p-2 w-20 lg:w-28 text-xs rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto"
                         >
                             Filter
                         </button>
@@ -205,7 +205,7 @@ function Page() {
                                     />
                                 </div>
                                 <div className="flex justify-end">
-                                <button onClick={handleClearFilters} className="px-6 py-2 text-white rounded-full bg-customฺButton ">
+                                <button onClick={handleClearFilters} className="btn btn-outline">
                                     Clear
                                 </button>
                                 </div>

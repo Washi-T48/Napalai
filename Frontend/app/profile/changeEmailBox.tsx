@@ -56,15 +56,15 @@ const ChangeEmailBox:React.FC<Props> = ({setOpenChangeEmail}) => {
                             <div className="flex justify-end gap-2 pt-6">
                                 <button
                                 onClick={() => setOpenChangeEmail(false)}
-                                className='flex justify-center items-center p-2 w-24 h-9 bg-customwhite text-black rounded-sm hover:bg-gray-500'>
+                                className='btn btn-cancle'>
                                     Cancle
                                 </button>
                                 <button
                                     onClick={handleChangeEmail}
                                     disabled={!email || loading}
-                                    className="flex justify-center items-center p-2 w-24 h-9 bg-customฺButton text-white rounded-sm hover:bg-customฺButtomHover"
+                                    className="btn btn-outline"
                                 >
-                                    {loading ? 'Saving...' : 'Save'}
+                                    Save
                                 </button>
                             </div>
                         </div>

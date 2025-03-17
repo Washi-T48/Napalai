@@ -210,7 +210,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                       postCreateZone();
                       setShowCreateZone(false);
                     }}
-                    className="w-20 p-2 bg-customฺButton text-xxs rounded-xl hover:bg-customฺButtomHover"
+                    className="btn btn-outline"
                   >
                     Create
                   </button>
@@ -315,7 +315,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
             <div className="flex justify-end mt-4">
               <button
                 onClick={postCamera}
-                className="flex justify-center items-center w-28 bg-customฺButton p-2 rounded-md hover:bg-customฺButtomHover"
+                className="btn btn-outline"
               >
                 Submit
               </button>
@@ -351,7 +351,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                     postCreateZone();
                     setShowCreateZone(false);
                   }}
-                  className="flex justify-center items-center w-28 bg-customฺButton p-2 rounded-md hover:bg-customฺButtomHover"
+                  className="btn btn-outline"
                 >
                   Create
                 </button>

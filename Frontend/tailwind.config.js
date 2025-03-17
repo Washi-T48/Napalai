@@ -60,6 +60,51 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addComponents }) {
+      addComponents({
+        '.btn': {
+          padding: '0.5rem 1.5rem',
+          width:'100px',
+          borderRadius: '2rem',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          display: 'inline-block',
+          transition: 'all 0.3s ease-in-out',
+        },
+        '.btn-primary': {
+          backgroundColor: '#0D6E6E',
+          color: '#F1F2F3',
+          border: '1px solid #5882C1',
+          boxShadow: '0px 4px 10px rgba(17, 12, 46, 0.15)',
+          '&:hover': {
+            backgroundColor: '#04504F',
+          },
+        },
+        '.btn-danger': {
+          backgroundColor: '#FA5E55',
+          color: '#fff',
+          '&:hover': {
+            backgroundColor: '#8E1616',
+          },
+        },
+        '.btn-outline': {
+          backgroundColor: '#0D6E6E',
+          color: '#F1F2F3',
+          '&:hover': {
+            backgroundColor: '#04504F',
+            color: '#F1F2F3',
+          },
+        },
+        '.btn-cancle': {
+          backgroundColor: '#F1F2F3',
+          color: '#000000',
+          '&:hover': {
+            backgroundColor: '#DCDCDC',
+          },
+        },
+      });
+    },
+  ],
 }
 

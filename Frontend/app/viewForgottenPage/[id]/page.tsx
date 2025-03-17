@@ -299,7 +299,7 @@ function Page() {
                                 <div className="flex justify-center w-full">
                                     <button
                                         onClick={() => setOpenPopupCreate(true)}
-                                        className="p-2 px-4 bg-customฺButton text-white rounded-full cursor-pointer"
+                                        className="btn btn-outline"
                                     >
                                         Create
                                     </button>

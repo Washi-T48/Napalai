@@ -82,9 +82,9 @@ const Videos: React.FC<VideoProp> = ({ typeLayout, selectedZoneId }) => {
     setDisplayCameras(camerasToDisplay);
   }, [typeLayout, selectedZoneId, responseZone]);
 
-  if (displayCameras.length === 0) {
-    return <div className="flex justify-center items-center bg-black w-full h-full text-white">No cameras available for the selected zone or layout.</div>;
-  }
+  // if (displayCameras.length === 0) {
+  //   return <div className="flex justify-center items-center bg-black w-full h-full text-white">No cameras available for the selected zone or layout.</div>;
+  // }
 
   return (
     <>
@@ -101,34 +101,9 @@ const Videos: React.FC<VideoProp> = ({ typeLayout, selectedZoneId }) => {
           ))}
           {Array.from({ length: Math.max(0, 9 - displayCameras.length) }).map((_, index) => (
             <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
-              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">No Signal</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {typeLayout === "sixLayout" && (
-        <div className="w-full h-full grid grid-cols-3 grid-rows-3">
-          <div className="relative w-full h-full col-span-2 row-span-2">
-            <CardLiveCamera
-              src={displayCameras[0]?.video?.rtsp_url || ""}
-              camName={displayCameras[0]?.cameraName || ""}
-              location={displayCameras[0]?.video?.location || ""}
-              rtspUrl={displayCameras[0]?.video?.rtsp_url || ""}
-            />
-          </div>
-          {displayCameras.slice(1, 6).map((camera, index) => (
-            <CardLiveCamera
-              key={camera.cameraName || index + 1}
-              src={camera.video?.rtsp_url || ""}
-              camName={camera.cameraName}
-              location={camera.video?.location || ""}
-              rtspUrl={camera.video?.rtsp_url || ""}
-            />
-          ))}
-          {Array.from({ length: Math.max(0, 6 - displayCameras.length) }).map((_, index) => (
-            <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
-              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">No Signal</div>
+              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
+                No Signal
+              </div>
             </div>
           ))}
         </div>

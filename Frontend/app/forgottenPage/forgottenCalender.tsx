@@ -88,14 +88,14 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ forgottenResponse = [] }) 
                 days.push(
                     <Link href={`/forgottenLog/${formattedDate}`} key={day.toISOString()}>
                         <div
-                            className={`relative p-2 h-32 text-white border 
-                                ${isCurrentMonth ? (itemsForDay.length > 0 ? 'bg-red-500' : 'bg-customDarkSlateBlue') : 'bg-gray-700'}
+                            className={`relative p-2 h-20 lg:h-28 text-white text-tiny border 
+                                ${isCurrentMonth ? (itemsForDay.length > 0 ? 'bg-customRed' : 'bg-customDarkSlateBlue') : 'bg-gray-700'}
                                 ${todayClass}`}
                         >
                             <div className="absolute top-2 left-2">{displayDate}</div>
                             {isCurrentMonth && itemsForDay.length > 0 && (
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="text-xs bg-assign p-1 rounded text-primary text-center">
+                                    <div className="text-tiny lg:text-xs bg-assign p-1 rounded text-primary text-center">
                                         <div>ITEM</div>
                                         <div>{totalItemCount}</div>
                                     </div>
