@@ -29,7 +29,7 @@ const getUserByID = async (id) => {
 };
 
 const getUserDetails = async (id) => {
-    const result = await pool.query('SELECT fullname, username, fullname FROM "user" WHERE id = $1', [id]);
+    const result = await pool.query('SELECT username, fullname, email, picture FROM "user" WHERE id = $1', [id]);
     return result.rows[0];
 };
 
