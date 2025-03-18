@@ -433,16 +433,6 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone }) => {
                     />
                   </div>
                   <div
-                    onClick={() => setTypeLayout("sixLayout")}
-                    className="flex justify-center items-center p-2 hover:bg-customSlateBlue hover:rounded-md"
-                  >
-                    <Icon
-                      icon="mingcute:layout-8-fill"
-                      width="24"
-                      height="24"
-                    />
-                  </div>
-                  <div
                     onClick={() => setTypeLayout("fourLayout")}
                     className="flex justify-center items-center p-2 hover:bg-customSlateBlue hover:rounded-md"
                   >
@@ -472,16 +462,6 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone }) => {
             >
               <Icon icon="mingcute:layout-6-fill" width="24" height="24" />
             </button>
-
-            {/* Edit Camera Button */}
-            {/* <button
-              onClick={() => setOpenPopup(true)}
-              className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl"
-            >
-              <Icon icon="cuida:edit-outline" width="24" height="24" />
-            </button>
-
-            {openPopup && <EditPopup setOpenPopup={setOpenPopup} />} */}
           </div>
         </div>
       </div>

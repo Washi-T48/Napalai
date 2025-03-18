@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import Port from '../port';
 interface Props {
     setOpenChangeUser: (open: boolean) => void;
 }
@@ -26,7 +27,7 @@ const ChangeUserBox: React.FC<Props> = ({ setOpenChangeUser }) => {
         formData.append("file", image);
 
         try {
-            const response = await fetch("http://localhost:5000/upload", {
+            const response = await fetch(`${Port.URL}/upload`, {
                 method: "POST",
                 body: formData,
             });
@@ -43,7 +44,7 @@ const ChangeUserBox: React.FC<Props> = ({ setOpenChangeUser }) => {
 
     const handleUsernameChange = async () => {
         try {
-            const res = await fetch('https://cloud.phraya.net:443/auth/changeUsername', {
+            const res = await fetch('${Port.URL}/auth/changeUsername', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username }),
@@ -105,7 +106,7 @@ const ChangeUserBox: React.FC<Props> = ({ setOpenChangeUser }) => {
                         <div className="flex justify-end gap-2 pt-6">
                             <button
                                 onClick={() => setOpenChangeUser(false)}
-                                className='flex justify-center items-center p-2 w-24 h-9 bg-customwhite text-black rounded-sm hover:bg-gray-500'
+                                className='btn btn-cancle'
                             >
                                 Cancle
                             </button>
@@ -115,7 +116,7 @@ const ChangeUserBox: React.FC<Props> = ({ setOpenChangeUser }) => {
                                     handleUpload();
                                 }}
                                 disabled={!username}
-                                className="flex justify-center items-center p-2 w-24 h-9 bg-customฺButton text-white rounded-sm hover:bg-customฺButtomHover"
+                                className="btn btn-outline"
                             >
                                 Save
                             </button>

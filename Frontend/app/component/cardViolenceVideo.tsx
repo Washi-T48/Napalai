@@ -67,7 +67,7 @@ const CardViolenceVideo: React.FC<CardVideoProps> = ({ item }) => {
             </div>
             <div className="flex flex-wrap justify-between p-2 px-3">
                 <div className="flex gap-2 flex-col w-full">
-                    <div className="text-2xl md:text-base lg:text-x">{item.violence_type ?? "Unknown"}</div>
+                    <div className="text-md  md:text-base lg:text-x">{item.violence_type ?? "Unknown"}</div>
                     <div className="flex justify-between gap-10">
                         <div className="text-tiny text-gray-400">{item.created}</div>
                         <div className="flex text-tiny text-gray-400">

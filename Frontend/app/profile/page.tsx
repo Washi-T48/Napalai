@@ -23,27 +23,29 @@ function page() {
                     <div className='w-full p-5 gap-5'>
                         <p className='font-bold text-xl p-2 pb-8'>My Profile</p>
                         <div className='text-xl p-2 pb-8'></div>
-                        <div className='flex justify-between bg-customSlateBlue shadow-2xl bg-opacity-70 rounded-md p-8 gap-5'>
+                        <div className='flex justify-center bg-customSlateBlue shadow-2xl bg-opacity-70 rounded-md p-8 gap-5'>
+
                             <div className='flex flex-col justify-center items-center w-full  lg:flex gap-5'>
+                                <div className='flex justify-end w-full'>
+                                    <Icon
+                                        onClick={() => setOpenChangeUser(true)}
+                                        className=' cursor-pointer'
+                                        icon="lucide:edit" width="24" height="24" />
+                                </div>
                                 <div className=' rounded-xl'>
                                     <Image
                                         className='w-52 h-52 rounded-full object-cover'
                                         src={profilepic}
                                         alt='profile' />
                                 </div>
-                                <div className='flex justify-between w-full text-4xl front-bold gap-2'>
-                                    <div className='flex flex-col pt-5'>
-                                        <p>Folk</p>
-                                        <p>Phacharaphon Aiamphan</p>
-                                        <p className='text-lg'>Gmail:admin12435</p>
+
+                                <div className='flex justify-center w-full text-4xl front-bold gap-2'>
+                                    <div className='flex flex-col justify-center items-center w-full pt-5'>
+                                        <p className='text-center text-lg'>Gmail:admin12435</p>
                                     </div>
-                                    <div>
-                                        <Icon
-                                            onClick={() => setOpenChangeUser(true)}
-                                            className=' cursor-pointer'
-                                            icon="lucide:edit" width="24" height="24" />
-                                    </div>
+
                                 </div>
+
 
                             </div>
 
