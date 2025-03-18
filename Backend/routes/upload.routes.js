@@ -11,7 +11,7 @@ import { updateForgottenImage, updateForgottenReturn, updateForgottenVideo } fro
 import { updateViolenceImage, updateViolenceVideo } from '../models/violence.model.js';
 import { updateProfilePicture } from '../models/user.model.js';
 
-const ROOT_URL = process.env.ROOT_URL;
+const ROOT_URL = process.env.ROOT_URL + "/";
 
 const uploadRouter = express.Router();
 
