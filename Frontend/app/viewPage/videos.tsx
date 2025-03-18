@@ -68,9 +68,6 @@ const Videos: React.FC<VideoProp> = ({ typeLayout, selectedZoneId }) => {
       case "nineLayout":
         camerasToDisplay = selectedZone.cameras.slice(0, 9);
         break;
-      case "sixLayout":
-        camerasToDisplay = selectedZone.cameras.slice(0, 6);
-        break;
       case "fourLayout":
         camerasToDisplay = selectedZone.cameras.slice(0, 4);
         break;
@@ -102,7 +99,7 @@ const Videos: React.FC<VideoProp> = ({ typeLayout, selectedZoneId }) => {
           {Array.from({ length: Math.max(0, 9 - displayCameras.length) }).map((_, index) => (
             <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
               <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
-                No Signal
+                camera
               </div>
             </div>
           ))}
@@ -122,7 +119,9 @@ const Videos: React.FC<VideoProp> = ({ typeLayout, selectedZoneId }) => {
           ))}
           {Array.from({ length: Math.max(0, 4 - displayCameras.length) }).map((_, index) => (
             <div key={`black-card-${index}`} className="w-full h-full bg-gradient-to-bl from-slate-900 to-zinc-900">
-              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">No Signal</div>
+              <div className="flex justify-center items-center w-full h-full text-white text-xxs shadow-lg">
+                camrea
+                </div>
             </div>
           ))}
         </div>

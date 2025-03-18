@@ -103,6 +103,21 @@ module.exports = {
             backgroundColor: '#DCDCDC',
           },
         },
+        '.custom-input': {
+          width: '18rem',
+          padding: '4px',
+          border: '1px solid #4A5568',
+          backgroundColor: '#1A202C',
+          color: '#fff',
+          fontSize:'16px',
+          borderRadius: '0.375rem',
+          outline: 'none',
+          transition: 'border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+        },
+        '.custom-input:focus': {
+          borderColor: '#3182CE',
+          boxShadow: '0 0 0 1px #3182CE',
+        },
       });
     },
   ],
