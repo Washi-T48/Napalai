@@ -15,7 +15,7 @@ const ROOT_URL = process.env.ROOT_URL + "/";
 
 const uploadRouter = express.Router();
 
-uploadRouter.post('/forgotten/image', forgottenImageUpload.single('image'), async (req, res) => {
+uploadRouter.post('/forgotten/image', forgottenImageUpload.single('file'), async (req, res) => {
     try {
         const id = req.body.id;
         const path = ROOT_URL + req.file.path;
@@ -26,7 +26,7 @@ uploadRouter.post('/forgotten/image', forgottenImageUpload.single('image'), asyn
     }
 });
 
-uploadRouter.post('/forgotten/video', forgottenVideoUpload.single('video'), async (req, res) => {
+uploadRouter.post('/forgotten/video', forgottenVideoUpload.single('file'), async (req, res) => {
     try {
         const id = req.body.id;
         const path = ROOT_URL + req.file.path;
@@ -37,7 +37,7 @@ uploadRouter.post('/forgotten/video', forgottenVideoUpload.single('video'), asyn
     }
 });
 
-uploadRouter.post('/forgotten/return', forgottenReturnUpload.single('return'), async (req, res) => {
+uploadRouter.post('/forgotten/return', forgottenReturnUpload.single('file'), async (req, res) => {
     try {
         const id = req.body.id;
         const path = ROOT_URL + req.file.path;
@@ -48,7 +48,7 @@ uploadRouter.post('/forgotten/return', forgottenReturnUpload.single('return'), a
     }
 });
 
-uploadRouter.post('/violence/image', violenceImageUpload.single('image'), async (req, res) => {
+uploadRouter.post('/violence/image', violenceImageUpload.single('file'), async (req, res) => {
     try {
         const id = req.body.id;
         const path = ROOT_URL + req.file.path;
@@ -59,7 +59,7 @@ uploadRouter.post('/violence/image', violenceImageUpload.single('image'), async 
     }
 });
 
-uploadRouter.post('/violence/video', violenceVideoUpload.single('video'), async (req, res) => {
+uploadRouter.post('/violence/video', violenceVideoUpload.single('file'), async (req, res) => {
     try {
         const id = req.body.id;
         const path = ROOT_URL + req.file.path;
@@ -70,7 +70,7 @@ uploadRouter.post('/violence/video', violenceVideoUpload.single('video'), async 
     }
 });
 
-uploadRouter.post('/profile', profilePictureUpload.single('image'), async (req, res) => {
+uploadRouter.post('/profile', profilePictureUpload.single('file'), async (req, res) => {
     try {
         const id = req.body.id;
         const path = ROOT_URL + req.file.path;
