@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Port from "../port";
 interface Props {
     setOpenChangePassword: (open: boolean) => void;
   }
@@ -19,7 +20,7 @@ const ChangePassBox:React.FC<Props> = ({ setOpenChangePassword }) => {
 
         setLoading(true);
         try {
-            const res = await fetch("/api/changePassword", {
+            const res = await fetch(`${Port.URL}/changePassword`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
