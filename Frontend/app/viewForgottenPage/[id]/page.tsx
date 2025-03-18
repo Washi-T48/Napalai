@@ -92,7 +92,7 @@ function Page() {
             const uploadResponseText = await uploadResponse.text();
             let uploadResult;
             try {
-                uploadResult = JSON.parse(uploadResponseText); // Attempt to parse as JSON
+                uploadResult = JSON.parse(uploadResponseText); 
             } catch (parseError) {
                 console.log("Falling back to plain text URL:", uploadResponseText);
                 uploadResult = {
@@ -119,7 +119,7 @@ function Page() {
             const updatedReceiver = await updateResponse.json();
             const updatedReceiverData = updatedReceiver.rows && updatedReceiver.rows.length > 0 
                 ? updatedReceiver.rows[0] 
-                : { receiver_name: text, receiver_description: detail }; // Fallback to form values
+                : { receiver_name: text, receiver_description: detail }; 
 
             setData((prevData) =>
                 prevData
@@ -130,7 +130,6 @@ function Page() {
                       }
                     : prevData
             );
-
 
             const refetchResponse = await fetch(`${Port.URL}/utils/forgotten/${id}`);
             if (refetchResponse.ok) {
@@ -143,7 +142,7 @@ function Page() {
             setDetail("");
             setImageFile(null);
         } catch (error) {
-            console.error("Error processing submission:", error.message);
+            console.error("Error updating receiver:", error);
         }
     };
 
@@ -185,7 +184,7 @@ function Page() {
                     throw new Error("Failed to fetch data");
                 }
                 const result = await response.json();
-                setData(result); // Set data with the fetched result, including 'return' if present
+                setData(result);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -215,7 +214,7 @@ function Page() {
                         <div className="flex justify-center items-center bg-white w-full h-full rounded-md">
                             <div className="w-full h-full">
                                 <video
-                                    className="h-full min-w-96 w-full rounded-md drop-shadow-2xl object-cover"
+                                    className="h-full w-full rounded-md drop-shadow-2xl object-cover"
                                     controls
                                     autoPlay
                                     muted
@@ -264,7 +263,7 @@ function Page() {
                             )}
                         </div>
                         <div className="flex flex-col w-full h-full gap-2">
-                            <div className="flex gap-2 w-full lg:flex-col">
+                            <div className="flex gap-2 w-full flex-col">
                                 <div className="flex justify-center items-center rounded-md">
                                     <CalendarVideoPage highlightDates={highlightDates} />
                                 </div>

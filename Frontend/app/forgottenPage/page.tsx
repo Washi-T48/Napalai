@@ -17,25 +17,20 @@ interface ForgottenItem {
   item_name: string;
 }
 
-
+const convertToBangkokTime = (isoString: string) => {
+  const date = new Date(isoString);
+  return date.toLocaleString("en-GB", { timeZone: "Asia/Bangkok" });
+};
 
 export default function Page() {
   const [forgottenResponse, setForgottenResponse] = useState<ForgottenItem[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  // const [statePopup, setStatePopup] = useState(false);
-  // const [selectedItem, setSelectedItem] = useState<ForgottenItem | null>(null);
-  // const updateItem = (updatedItem: ForgottenItem) => {
-  //   setForgottenResponse((prevItems) =>
-  //     prevItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-  //   );
-  // };
 
-  const today = new Date().toISOString().split("T")[0]; // ดึงวันที่ปัจจุบัน (YYYY-MM-DD)
+  const today = new Date().toISOString().split("T")[0]; 
 
   const filteredTodayItems = forgottenResponse.filter(
     (item) => item.created.startsWith(today)
   );
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,11 +63,10 @@ export default function Page() {
     item.item_name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-
   return (
     <>
       <Navber />
-      <div className="bg-customBlue min-h-screen">
+      <div className="bg-customLinear min-h-screen">
         <div className="flex justify-center items-center flex-col pt-16 h-full text-white lg:flex-row">
           <div className="flex justify-center items-start flex-col p-4 gap-4 flex-1 w-full h-full text-white lg:flex-row lg:gap-10">
             <div className="w-full lg:max-w-7xl h-full text-black">
@@ -148,14 +142,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-      {/* {statePopup && selectedItem && (
-        <PopupUndefineItem
-          setStatePopup={setStatePopup}
-          selectedItem={selectedItem}
-    
-        />
-      )} */}
-
     </>
   );
 }

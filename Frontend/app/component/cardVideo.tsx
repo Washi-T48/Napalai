@@ -1,6 +1,4 @@
-import React, { useRef } from 'react';
-
-
+import React from "react";
 
 interface UnifiedForgottenItem {
     id: number;
@@ -24,9 +22,16 @@ interface UnifiedForgottenItem {
 
 interface CardVideoProps {
     item: UnifiedForgottenItem;
+    className?: string;
 }
 
+const convertToBangkokTime = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleString("en-GB", { timeZone: "Asia/Bangkok" });
+};
+
 const CardVideo: React.FC<CardVideoProps> = ({ item }) => {
+    const formattedDate = convertToBangkokTime(item.createdtime);
 
 
     return (

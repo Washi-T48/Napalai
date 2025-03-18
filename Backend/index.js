@@ -18,7 +18,9 @@ import forgottenRouter from './routes/forgotten.routes.js';
 import violenceRouter from './routes/violence.routes.js';
 import utilsRouter from './routes/utils.routes.js';
 import authRouter from './routes/auth.routes.js';
+import aiRouter from './routes/ai.routes.js';
 import { forgetPasswordSender } from './models/resetpassword.model.js';
+import uploadRouter from './routes/upload.routes.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 443;
@@ -26,7 +28,14 @@ const PORT = process.env.PORT || 443;
 const app = express();
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
-app.use(cors({ credentials: true }));
+app.use(cors({
+    origin: [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'https://cloud.phraya.net'
+    ],
+    credentials: true
+}));
 
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.socket.remoteAddress} ${req.url}`);
@@ -44,12 +53,14 @@ app.use('/forgotten', forgottenRouter);
 app.use('/violence', violenceRouter);
 app.use('/utils', utilsRouter);
 app.use('/auth', authRouter);
+app.use('/ai', aiRouter);
+app.use('/upload', uploadRouter);
 
 app.use('/public', express.static('public'));
 app.use('/protected', protectedFileMiddleware, express.static('protected'));
 
-http.createServer(app).listen(3000, () => {
-    console.log(`Server is running on port 3000`);
+http.createServer(app).listen(PORT, () => {
+    console.log(`Server is now running on port ${PORT}`);
 });
 
 // const options = {

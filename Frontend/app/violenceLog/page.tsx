@@ -152,31 +152,31 @@ function Page() {
     return (
         <>
             <Navber />
-            <div className="bg-customBlue min-h-screen pt-20">
+            <div className="bg-customLinear min-h-screen pt-20">
                 <div className="flex justify-center items-center text-2xl font-bold text-white p-14 mt-2 ">
                     Violence
                 </div>
 
                 <div className="pt-5">
                     <div className="flex justify-between">
-                    <div className="flex justify-start gap-2 p-4 pl-10">
-                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                    <div className="flex justify-start gap-2 p-4">
+                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center  items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
                         <Icon icon="ooui:previous-ltr" width="15" height="15" />
                         </button>
                         {Array.from({ length: totalPages }, (_, index) => (
                             <button 
                                 key={index} 
                                 onClick={() => setSwitchPage(index)}
-                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
+                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 text-xs bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
                                 {index + 1}
                             </button>
                         ))}
-                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center text-xs w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
                         <Icon icon="ooui:previous-rtl" width="15" height="15" />
                         </button>
                     </div>
-                    <div className="relative w-full flex justify-end pr-10 p-5">
-                        <button onClick={() => SetFilterButton(!FilterButton)} className="p-2 w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white">
+                    <div className="relative w-full flex justify-end p-4">
+                        <button onClick={() => SetFilterButton(!FilterButton)} className="p-2 w-20 text-xs lg:w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white">
                             Filter
                         </button>
                         {FilterButton && (

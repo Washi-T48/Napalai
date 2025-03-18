@@ -27,7 +27,6 @@ interface UnifiedForgottenItem {
     image:string;
 }
 
-
 interface Camera {
     id: string;
     created: string;
@@ -45,7 +44,15 @@ interface Zone {
 
 function Page() {
     const params = useParams();
-    const date = params.assingForgotten;
+    const dateParam = Array.isArray(params.assingForgotten) ? params.assingForgotten[0] : params.assingForgotten;
+
+
+    const convertToBangkokTime = (isoString: string) => {
+        const date = new Date(isoString);
+        return date.toLocaleDateString("en-CA", { timeZone: "Asia/Bangkok" });
+    };
+
+    const formattedDate = dateParam ? convertToBangkokTime(dateParam) : null;
 
     const [FilterButton, SetFilterButton] = useState(false);
     const toggleFilterButton = () => SetFilterButton(!FilterButton);
@@ -59,7 +66,7 @@ function Page() {
     const itemsPerPage = 10;
 
     useEffect(() => {
-        if (!date) return;
+        if (!formattedDate) return;
 
         const getUnifiedForgottenData = async () => {
             try {
@@ -81,7 +88,7 @@ function Page() {
         };
 
         getUnifiedForgottenData();
-    }, [date]);
+    }, [formattedDate]);
 
     useEffect(() => {
         const fetchCameras = async () => {
@@ -113,23 +120,26 @@ function Page() {
     }, []);
 
     const mapCamerasToZones = () => {
-        return getCameras.map(camera => {
-            const matchedZone = getZones.find(zone => zone.id === camera.zone_id);
+        return getCameras.map((camera) => {
+            const matchedZone = getZones.find((zone) => zone.id === camera.zone_id);
             return {
                 ...camera,
-                zone: matchedZone ? matchedZone.name : "Unknown Zone"
+                zone: matchedZone ? matchedZone.name : "Unknown Zone",
             };
         });
     };
 
     const camerasWithZones = mapCamerasToZones();
 
-    const filteredData = getViolence.filter((item) =>
-        (!selectedZone || item.zone === selectedZone) &&
-        (!selectedCamera || item.camera === selectedCamera) &&
-        (!selectedStatus || item.status === selectedStatus) &&
-        (!date || item.createdtime.split("T")[0] === date)
-    );
+    const filteredData = getViolence.filter((item) => {
+        const itemDate = convertToBangkokTime(item.createdtime);
+        return (
+            (!selectedZone || item.zone === selectedZone) &&
+            (!selectedCamera || item.camera === selectedCamera) &&
+            (!selectedStatus || item.status === selectedStatus) &&
+            (!formattedDate || itemDate === formattedDate)
+        );
+    });
 
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
     const paginatedData = filteredData.slice(switchPage * itemsPerPage, (switchPage + 1) * itemsPerPage);
@@ -148,7 +158,7 @@ function Page() {
     return (
         <>
             <Navber />
-            <div className="bg-customBlue min-h-screen pt-20">
+            <div className="bg-customLinear min-h-screen pt-20">
                 <div className="flex justify-center items-center text-2xl font-bold text-white p-14 mt-2">
                     Forgotten
                 </div>
@@ -157,25 +167,25 @@ function Page() {
                     <div className="flex justify-between">
                         
                     <div className="flex justify-start gap-2 p-4 pl-10">
-                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
                             <Icon icon="ooui:previous-ltr" width="15" height="15" />
                         </button>
                         {Array.from({ length: totalPages }, (_, index) => (
                             <button
                                 key={index}
                                 onClick={() => setSwitchPage(index)}
-                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
+                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 text-xs bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
                                 {index + 1}
                             </button>
                         ))}
-                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
                             <Icon icon="ooui:previous-rtl" width="15" height="15" />
                         </button>
                     </div>
-                    <div className="relative w-full flex justify-end pr-10 p-5">
+                    <div className="relative w-full flex justify-end pr-10 p-4">
                         <button
                             onClick={toggleFilterButton}
-                            className="flex justify-center items-center p-2 w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto"
+                            className="flex justify-center items-center p-2 w-20 lg:w-28 text-xs rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto"
                         >
                             Filter
                         </button>
@@ -195,7 +205,7 @@ function Page() {
                                     />
                                 </div>
                                 <div className="flex justify-end">
-                                <button onClick={handleClearFilters} className="px-6 py-2 text-white rounded-full bg-customฺButton ">
+                                <button onClick={handleClearFilters} className="btn btn-outline">
                                     Clear
                                 </button>
                                 </div>
@@ -209,8 +219,15 @@ function Page() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-10">
                         {paginatedData.length > 0 ? (
                             paginatedData.map((item, index) => (
-                                <Link href={`/viewForgottenPage/${item.forgottenid}`} key={`${item.forgottenid}-${index}`}>
-                                    <CardVideo item={item} />
+                                <Link
+                                    href={`/viewForgottenPage/${item.forgottenid}`}
+                                    key={`${item.forgottenid}-${index}`}
+                                >
+                                    <CardVideo
+                                        item={item}
+                                        className={`${item.status === "unreturned" ? "bg-red-500" : ""}`}
+                                    />
+
                                 </Link>
                             ))
                         ) : (

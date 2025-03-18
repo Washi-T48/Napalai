@@ -1,45 +1,121 @@
-"use client"; // ใช้ฝั่ง client เพราะใช้ usePathname()
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import unnyFace from "../../public/imges/unnyFace.jpg";
+import Link from "next/link";
+import Port from "../port";
 
-export default function Navbar() {
-  const pathname = usePathname(); // ดึง URL ปัจจุบัน
+export default function Navber() {
+  const [showMenu, setShowMenu] = useState(false); 
+  const [showHamberger, setShowHamberger] = useState(false);// ใช้เพื่อควบคุมการแสดงผลเมนู
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // คลิกนอกเมนูจะปิดเมนู
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const logout = async () => {
+    try {
+      const response = await fetch(`${Port.URL}/auth/logout`, {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Logout failed");
+      }
+
+      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
+
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
   return (
-    <div className="flex justify-between fixed bg-customBlue text-white p-4 px-14 w-full h-16 z-50">
+    <div className="flex justify-between fixed bg-customBlue text-white p-4 lg:px-14 w-full h-16 z-50">
       <div className="text-3xl font-bold">NAPALAI</div>
-      <div className="flex justify-center items-center text-lg space-x-12">
-        <NavItem href="/viewPage" pathname={pathname}>View</NavItem>
-        <NavItem href="/violenceLog" pathname={pathname}>Violence</NavItem>
-        <NavItem href="/forgottenPage" pathname={pathname}>Forgotten</NavItem>
-        <Link
-          href="/resetPasswordPage"
-          className={pathname === "/resetPasswordPage" ? "text-yellow-300" : "text-white"}
-        >
-          <div className="w-8 h-8">
+
+      {/* Hamburger Menu for mobile */}
+      <div className="lg:hidden flex items-center">
+        <button onClick={() => setShowHamberger(!showHamberger)} className="text-3xl">
+          &#9776; 
+        </button>
+      </div>
+
+      {/* Menu items for large screens */}
+      <div className="hidden lg:flex justify-center items-center text-lg space-x-12 relative">
+        <Link href="/viewPage">
+          <div className="cursor-pointer">View</div>
+        </Link>
+        <Link href="/violenceLog">
+          <div className="cursor-pointer">Violence</div>
+        </Link>
+        <Link href="/forgottenPage">
+          <div className="cursor-pointer">Forgotten</div>
+        </Link>
+        
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setShowMenu(!showMenu)}
+            className="w-8 h-8 focus:outline-none"
+          >
             <Image
-              className="rounded-full object-cover w-full h-full"
+              className="rounded-full object-cover w-full h-full cursor-pointer"
               src={unnyFace}
               alt="Profile"
             />
-          </div>
-        </Link>
-      </div>
-    </div>
-  );
-}
+          </button>
 
-// Component สำหรับลิงก์ Navbar
-function NavItem({ href, pathname, children }: { href: string; pathname: string; children: React.ReactNode }) {
-  const isActive = pathname === href;
-  return (
-    <Link
-      href={href}
-      className={`cursor-pointer duration-300 ${isActive ? "border-b-2 mb-1" : "text-white"}`}
-    >
-      {children}
-    </Link>
+          {showMenu && (
+            <div className="absolute right-0 mt-2 w-48 bg-CustomDeepTeal text-white shadow-2xl rounded-md overflow-hidden">
+              <Link href="/profile">
+                <div className="px-4 py-3 duration-300 hover:bg-gray-200 hover:text-black cursor-pointer">Change Profile</div>
+              </Link>
+              <div
+                onClick={logout}
+                className="px-4 py-3 duration-300 hover:bg-customRed hover:text-white cursor-pointer"
+              >
+                Logout
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Hamburger Menu Dropdown for mobile */}
+      {showHamberger && (
+        <div className=" w-full  lg:hidden absolute top-16 left-0  bg-customBlue text-white shadow-2xl">
+          <Link href="/viewPage">
+            <div className="flex justify-center items-center px-4 py-4 font-bold duration-300 hover:bg-gray-200 hover:text-black cursor-pointer">View</div>
+          </Link>
+          <Link href="/violenceLog">
+            <div className="flex justify-center items-center px-4 py-4 font-bold  duration-300 hover:bg-gray-200 hover:text-black cursor-pointer">Violence</div>
+          </Link>
+          <Link href="/forgottenPage">
+            <div className="flex justify-center items-center px-4 py-4 font-bold  duration-300 hover:bg-gray-200 hover:text-black cursor-pointer">Forgotten</div>
+          </Link>
+          <Link href="/profile">
+            <div className="flex justify-center items-center px-4 py-4 font-bold  duration-300 hover:bg-gray-200 hover:text-black cursor-pointer">Profile</div>
+          </Link>
+          <Link href="/logout">
+            <div className="flex justify-center items-center px-4 py-4 font-bold  duration-300 hover:bg-customRed hover:text-white cursor-pointer">Logout</div>
+          </Link>
+        </div>
+      )}
+    </div>
   );
 }

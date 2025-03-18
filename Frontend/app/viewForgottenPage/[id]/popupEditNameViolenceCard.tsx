@@ -196,7 +196,7 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }
           <div className="flex justify-end gap-2 pt-4">
             <button
               onClick={changeData}
-              className="flex justify-center items-center px-4 py-2 rounded-md bg-customฺButton text-white  hover:bg-customฺButtomHover">
+              className="btn btn-outline">
               submit
             </button>
           </div>

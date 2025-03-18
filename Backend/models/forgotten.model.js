@@ -27,10 +27,35 @@ const deleteForgotten = async (id) => {
     return rows;
 };
 
+const updateForgottenImage = async (id, image) => {
+    const rows = await pool.query('UPDATE event SET image = $1 WHERE event.id = (SELECT forgotten.event_id FROM forgotten WHERE forgotten.id = $2) RETURNING *', [image, id]);
+    return rows;
+};
+
+const updateForgottenVideo = async (id, video) => {
+    const rows = await pool.query('UPDATE event SET video = $1 WHERE event.id = (SELECT forgotten.event_id FROM forgotten WHERE forgotten.id = $2) RETURNING *', [video, id]);
+    return rows;
+};
+
+const updateForgottenReturn = async (id, return_image) => {
+    const rows = await pool.query('UPDATE event SET return = $1 WHERE event.id = (SELECT forgotten.event_id FROM forgotten WHERE forgotten.id = $2) RETURNING *', [return_image, id]);
+    return rows;
+};
+
+const updateReceiver = async (id, receiver) => {
+    const { receiver_name, receiver_description } = receiver;
+    const rows = await pool.query('UPDATE forgotten SET receiver_name = $1, receiver_description = $2 WHERE id = $3 RETURNING *', [receiver_name, receiver_description, id]);
+    return rows;
+};
+
 export {
     createForgotten,
     getAllForgottens,
     getForgottenById,
     updateForgotten,
     deleteForgotten,
+    updateForgottenImage,
+    updateForgottenVideo,
+    updateForgottenReturn,
+    updateReceiver,
 };
