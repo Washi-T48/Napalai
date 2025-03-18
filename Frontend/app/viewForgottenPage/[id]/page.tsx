@@ -9,7 +9,6 @@ import unnyFace from "../../../public/imges/unnyFace.jpg";
 import PopupEditNameViolenceCard from "./popupEditNameViolenceCard";
 import CalendarVideoPage from "../../component/calenderVideoPage";
 import Port from "@/app/port";
-import Time from "react-datepicker/dist/time";
 
 interface ForgottenItem {
     id: string;
@@ -35,7 +34,8 @@ interface ForgottenItem {
     zonename: string;
     createdtime: string;
     receiver_name: string;
-    receiver_description : string;
+    receiver_description: string;
+    return: string; // Updated to use 'return' instead of 'url' for the image path
 }
 
 function Page() {
@@ -46,64 +46,101 @@ function Page() {
     const [selectedId, setSelectedId] = useState<string | undefined | string[]>(undefined);
     const [text, setText] = useState("");
     const [detail, setDetail] = useState("");
+    const [imageFile, setImageFile] = useState<File | null>(null);
     const maxLength = 50;
     const isError = text.length === 0;
     const maxDetailLength = 200;
-    const [image, setImage] = useState<string | null>(null);
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            const image = URL.createObjectURL(file);
-            setImage(image);
+            setImageFile(file);
         }
     };
 
     const handleRemoveImage = () => {
-        setImage(null);
+        setImageFile(null);
     };
 
     const handleSubmit = async () => {
-        if (!text || !detail) {
-            console.error("Text and Detail are required.");
+        if (!text || !detail || !imageFile) {
+            console.error("Text, Detail, and Image are required.");
             return;
         }
 
         try {
+            const formData = new FormData();
+            const idString = Array.isArray(id) ? id[0] : id || "";
+            if (!idString) {
+                throw new Error("Invalid or missing ID");
+            }
+            formData.append("id", idString);
+            formData.append("file", imageFile);
+            formData.append("receiver_name", text);
+            formData.append("receiver_description", detail);
+
+            const uploadResponse = await fetch(`${Port.URL}/upload/forgotten/return`, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+                const errorText = await uploadResponse.text();
+                throw new Error(`Failed to upload return item: ${errorText || uploadResponse.statusText}`);
+            }
+
+            const uploadResponseText = await uploadResponse.text();
+            let uploadResult;
+            try {
+                uploadResult = JSON.parse(uploadResponseText); 
+            } catch (parseError) {
+                console.log("Falling back to plain text URL:", uploadResponseText);
+                uploadResult = {
+                    return: uploadResponseText, 
+                    receiver_name: text,
+                    receiver_description: detail,
+                };
+            }
+
             const receiverData = {
                 receiver_name: text,
                 receiver_description: detail,
             };
-
-            const response = await fetch(`${Port.URL}/forgotten/${id}/receiver`, {
+            const updateResponse = await fetch(`${Port.URL}/forgotten/${idString}/receiver`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(receiverData),
             });
 
-            if (!response.ok) {
-                throw new Error("Failed to update receiver data");
+            if (!updateResponse.ok) {
+                throw new Error("Failed to update receiver information");
             }
 
-            const updatedData = await response.json();
-            console.log("Receiver updated successfully:", updatedData);
+            const updatedReceiver = await updateResponse.json();
+            const updatedReceiverData = updatedReceiver.rows && updatedReceiver.rows.length > 0 
+                ? updatedReceiver.rows[0] 
+                : { receiver_name: text, receiver_description: detail }; 
 
             setData((prevData) =>
                 prevData
                     ? {
                           ...prevData,
-                          receiver_name: updatedData.receiver_name,
-                          receiver_description: updatedData.receiver_description,
+                          ...uploadResult,
+                          ...updatedReceiverData,
                       }
                     : prevData
             );
 
+            const refetchResponse = await fetch(`${Port.URL}/utils/forgotten/${id}`);
+            if (refetchResponse.ok) {
+                const refetchedData = await refetchResponse.json();
+                setData(refetchedData);
+            }
+
             setOpenPopupCreate(false);
             setText("");
             setDetail("");
-            setImage(null);
+            setImageFile(null);
         } catch (error) {
             console.error("Error updating receiver:", error);
         }
@@ -121,7 +158,6 @@ function Page() {
         const newStatus = status === "returned" ? "unreturned" : "returned";
         setStatus(newStatus);
         try {
-            // Corrected: This should be a PUT request to update the status
             const response = await fetch(`${Port.URL}/forgotten/${id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -167,7 +203,6 @@ function Page() {
         );
     }
 
-    console.log(data);
     const highlightDates = [new Date(data.createdtime)];
 
     return (
@@ -208,13 +243,12 @@ function Page() {
                             </button>
                         </div>
                         <div className="flex justify-between p-2 bg-customSlateBlue rounded-md text-white">
-                            <div className="flex justify-between">
-                                <div className="px-2">{data.item_name || "Unknown Item"}</div>
-                            </div>
+                            <div className="px-2">{data.item_name || "Unknown Item"}</div>
                             <div>
                                 <Icon
                                     onClick={() => {
-                                        setOpenPopup(true), setSelectedId(id);
+                                        setOpenPopup(true);
+                                        setSelectedId(id);
                                     }}
                                     icon="material-symbols:edit-outline"
                                     width="24"
@@ -259,7 +293,6 @@ function Page() {
                                                 {data.cameraname || "Unknown"}
                                             </div>
                                         </div>
-
                                         <div className="flex flex-col flex-1 p-2 bg-customSlateBlue rounded-md text-white">
                                             <div className="flex justify-between text-tiny">
                                                 <div>Time</div>
@@ -276,30 +309,40 @@ function Page() {
                             </div>
 
                             <div className="flex flex-col w-full gap-2">
-                                {(data.receiver_name || data.description) ? (
+                                {(data.receiver_name || data.receiver_description || data.return) && (
                                     <>
                                         <div className="w-full">
-                                            <Image
-                                                className="rounded-md object-cover w-full h-full max-h-[330px]"
-                                                src={unnyFace}
-                                                alt=""
-                                            />
+                                            {data.return ? (
+                                                <img
+                                                    className="rounded-md object-cover w-full h-full max-h-[330px]"
+                                                    src={data.return}
+                                                    alt={data.receiver_name || "Uploaded Image"}
+                                                />
+                                            ) : (
+                                                <Image
+                                                    className="rounded-md object-cover w-full h-full max-h-[330px]"
+                                                    src={unnyFace}
+                                                    alt="Default Image"
+                                                />
+                                            )}
                                         </div>
                                         <div className="flex w-full">
                                             <div className="p-3 w-full bg-customSlateBlue rounded-md text-white">
                                                 <div className="p-2 border-b">
                                                     {data.receiver_name || "Unknown Receiver"}
                                                 </div>
-                                                <div className="p-2">{data.receiver_description || "No description available"}</div>
+                                                <div className="p-2">
+                                                    {data.receiver_description || "No description available"}
+                                                </div>
                                             </div>
                                         </div>
                                     </>
-                                ) : null}
+                                )}
 
                                 <div className="flex justify-center w-full">
                                     <button
                                         onClick={() => setOpenPopupCreate(true)}
-                                        className="btn btn-outline"
+                                        className="p-2 px-4 bg-customฺButton text-white rounded-full cursor-pointer"
                                     >
                                         Create
                                     </button>
@@ -353,7 +396,7 @@ function Page() {
                                                         <span className="text-gray-400">?</span>
                                                     </label>
                                                     <input
-                                                        type="detail"
+                                                        type="text"
                                                         value={detail}
                                                         onChange={(e) => setDetail(e.target.value)}
                                                         placeholder="Add details that describe your video."
@@ -368,17 +411,17 @@ function Page() {
                                                     />
                                                     <div className="flex justify-end text-sm mt-1">
                                                         <span>
-                                                            {text.length}/{maxDetailLength}
+                                                            {detail.length}/{maxDetailLength}
                                                         </span>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <label className="relative flex flex-col items-center justify-center w-72 h-52 border-2 border-dashed border-gray-400 rounded-lg cursor-pointer mt-4">
-                                                {image ? (
+                                                {imageFile ? (
                                                     <>
                                                         <img
-                                                            src={image}
+                                                            src={URL.createObjectURL(imageFile)}
                                                             alt="Uploaded"
                                                             className="w-full h-full object-cover rounded-lg"
                                                         />
@@ -403,9 +446,9 @@ function Page() {
                                         <div className="flex justify-end w-full mt-2">
                                             <button
                                                 onClick={handleSubmit}
-                                                disabled={!text || !detail}
+                                                disabled={!text || !detail || !imageFile}
                                                 className={`px-4 py-2 rounded-md ${
-                                                    text && detail
+                                                    text && detail && imageFile
                                                         ? "bg-customฺButton hover:bg-customฺButtomHover"
                                                         : "bg-gray-600 cursor-not-allowed"
                                                 } text-white`}
