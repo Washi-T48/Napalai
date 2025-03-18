@@ -33,7 +33,6 @@ interface Props {
 }
 
 const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }) => {
-
   const [text, setText] = useState("");
   const maxLength = 50;
   const isError = text.length === 0;
@@ -197,12 +196,7 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }
           <div className="flex justify-end gap-2 pt-4">
             <button
               onClick={changeData}
-              className="flex justify-center items-center px-4 py-2 rounded-md bg-customฺButton text-white  hover:bg-customฺButtomHover">
-              submit
-            </button>
-            <button
-              onClick={changeData}
-              className="flex justify-center items-center p-2 w-24 h-9 bg-customฺButton text-white rounded-sm hover:bg-customฺButtomHover">
+              className="btn btn-outline">
               submit
             </button>
           </div>

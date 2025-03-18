@@ -51,11 +51,11 @@ const MyCalendar: React.FC<MyCalendarProps> = ({ onDateSelect, handleClearFilter
         <div className="flex justify-end  w-full gap-2 ">
           <button
             onClick={handleApply}
-            className="px-6 py-2 bg-customฺButton text-white rounded-full hover:bg-customฺButtomHover"
+            className="btn btn-outline"
           >
             Apply
           </button>
-          <button onClick={handleClearFilters} className="px-6 py-2 text-white rounded-full bg-customฺButton ">
+          <button onClick={handleClearFilters} className="btn btn-outline">
             Clear
           </button>
         </div>
