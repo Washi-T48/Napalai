@@ -35,7 +35,7 @@ interface ForgottenItem {
     createdtime: string;
     receiver_name: string;
     receiver_description: string;
-    url?: string; // Add url to interface for the image URL
+    return: string; // Updated to use 'return' instead of 'url' for the image path
 }
 
 function Page() {
@@ -74,52 +74,76 @@ function Page() {
             if (!idString) {
                 throw new Error("Invalid or missing ID");
             }
-
-            console.log("Sending FormData with:", { id: idString, receiver_name: text, receiver_description: detail, file: imageFile.name });
-
             formData.append("id", idString);
             formData.append("file", imageFile);
             formData.append("receiver_name", text);
             formData.append("receiver_description", detail);
 
-            const response = await fetch(`${Port.URL}/upload/forgotten/return`, {
+            const uploadResponse = await fetch(`${Port.URL}/upload/forgotten/return`, {
                 method: "POST",
                 body: formData,
             });
 
-            const responseText = await response.text();
-            console.log("Raw response:", responseText);
-
-            if (!response.ok) {
-                throw new Error(`Failed to upload return item: ${responseText || response.statusText}`);
+            if (!uploadResponse.ok) {
+                const errorText = await uploadResponse.text();
+                throw new Error(`Failed to upload return item: ${errorText || uploadResponse.statusText}`);
             }
 
-            let result;
+            const uploadResponseText = await uploadResponse.text();
+            let uploadResult;
             try {
-                result = await response.json(); // Attempt to parse as JSON
+                uploadResult = JSON.parse(uploadResponseText); // Attempt to parse as JSON
             } catch (parseError) {
-                // Fallback: Treat the response as a plain text URL
-                console.log("Falling back to plain text URL:", responseText);
-                result = {
-                    status: "returned",
-                    url: responseText,
-                    receiver_name: text, // Use form values since server didn’t return them
-                    receiver_description: detail
+                console.log("Falling back to plain text URL:", uploadResponseText);
+                uploadResult = {
+                    return: uploadResponseText, 
+                    receiver_name: text,
+                    receiver_description: detail,
                 };
             }
 
-            console.log("Processed result:", result);
+            const receiverData = {
+                receiver_name: text,
+                receiver_description: detail,
+            };
+            const updateResponse = await fetch(`${Port.URL}/forgotten/${idString}/receiver`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(receiverData),
+            });
+
+            if (!updateResponse.ok) {
+                throw new Error("Failed to update receiver information");
+            }
+
+            const updatedReceiver = await updateResponse.json();
+            const updatedReceiverData = updatedReceiver.rows && updatedReceiver.rows.length > 0 
+                ? updatedReceiver.rows[0] 
+                : { receiver_name: text, receiver_description: detail }; // Fallback to form values
 
             setData((prevData) =>
-                prevData ? { ...prevData, ...result } : prevData
+                prevData
+                    ? {
+                          ...prevData,
+                          ...uploadResult,
+                          ...updatedReceiverData,
+                      }
+                    : prevData
             );
+
+
+            const refetchResponse = await fetch(`${Port.URL}/utils/forgotten/${id}`);
+            if (refetchResponse.ok) {
+                const refetchedData = await refetchResponse.json();
+                setData(refetchedData);
+            }
 
             setOpenPopupCreate(false);
             setText("");
             setDetail("");
             setImageFile(null);
         } catch (error) {
-            console.error("Error uploading return item:", error.message);
+            console.error("Error processing submission:", error.message);
         }
     };
 
@@ -161,7 +185,7 @@ function Page() {
                     throw new Error("Failed to fetch data");
                 }
                 const result = await response.json();
-                setData(result);
+                setData(result); // Set data with the fetched result, including 'return' if present
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -180,7 +204,6 @@ function Page() {
         );
     }
 
-    console.log(data);
     const highlightDates = [new Date(data.createdtime)];
 
     return (
@@ -221,13 +244,12 @@ function Page() {
                             </button>
                         </div>
                         <div className="flex justify-between p-2 bg-customSlateBlue rounded-md text-white">
-                            <div className="flex justify-between">
-                                <div className="px-2">{data.item_name || "Unknown Item"}</div>
-                            </div>
+                            <div className="px-2">{data.item_name || "Unknown Item"}</div>
                             <div>
                                 <Icon
                                     onClick={() => {
-                                        setOpenPopup(true), setSelectedId(id);
+                                        setOpenPopup(true);
+                                        setSelectedId(id);
                                     }}
                                     icon="material-symbols:edit-outline"
                                     width="24"
@@ -272,7 +294,6 @@ function Page() {
                                                 {data.cameraname || "Unknown"}
                                             </div>
                                         </div>
-
                                         <div className="flex flex-col flex-1 p-2 bg-customSlateBlue rounded-md text-white">
                                             <div className="flex justify-between text-tiny">
                                                 <div>Time</div>
@@ -289,20 +310,20 @@ function Page() {
                             </div>
 
                             <div className="flex flex-col w-full gap-2">
-                                {(data.receiver_name || data.receiver_description || data.url) ? (
+                                {(data.receiver_name || data.receiver_description || data.return) && (
                                     <>
                                         <div className="w-full">
-                                            {data.url ? (
+                                            {data.return ? (
                                                 <img
                                                     className="rounded-md object-cover w-full h-full max-h-[330px]"
-                                                    src={data.url}
+                                                    src={data.return}
                                                     alt={data.receiver_name || "Uploaded Image"}
                                                 />
                                             ) : (
                                                 <Image
                                                     className="rounded-md object-cover w-full h-full max-h-[330px]"
                                                     src={unnyFace}
-                                                    alt=""
+                                                    alt="Default Image"
                                                 />
                                             )}
                                         </div>
@@ -311,11 +332,13 @@ function Page() {
                                                 <div className="p-2 border-b">
                                                     {data.receiver_name || "Unknown Receiver"}
                                                 </div>
-                                                <div className="p-2">{data.receiver_description || "No description available"}</div>
+                                                <div className="p-2">
+                                                    {data.receiver_description || "No description available"}
+                                                </div>
                                             </div>
                                         </div>
                                     </>
-                                ) : null}
+                                )}
 
                                 <div className="flex justify-center w-full">
                                     <button
