@@ -59,13 +59,11 @@ authRouter.post("/logout", (req, res) => {
 
 authRouter.post("/changeUsername", async (req, res) => {
     try {
-        const { oldUsername, username } = req.body;
+        const { username } = req.body;
         if (!username) return res.status(400).json({ error: "Missing Credentials" });
         const rows = await getUserByUsername(username);
         if (rows && rows.length > 0) return res.status(400).json({ error: "Username already taken" });
-
-        // const result = await changeUsername(jwt.decode(req.cookies.token).id, username);
-        const result = await changeUsername(oldUsername, username);
+        const result = await changeUsername(jwt.decode(req.cookies.token).id, username);
         res.status(200).json(result);
     } catch (error) {
         console.log(error)
@@ -78,13 +76,9 @@ authRouter.post("/changePassword", async (req, res) => {
         const { oldpassword, newpassword } = req.body;
         if (!oldpassword || !newpassword) return res.status(400).json({ error: "Missing Credentials" });
         const user = await getUserByID(jwt.decode(req.cookies.token).id);
-        // const { username } = req.body;
-        // const row = await getUserByUsername(username);
-        // const user = row[0];
         if (await bcrypt.compare(oldpassword, user.password)) {
             const hashedPassword = await bcrypt.hash(newpassword, 12);
             const result = await changePassword(jwt.decode(req.cookies.token).id, hashedPassword);
-            // const result = await changePassword(user.id, hashedPassword);
             res.status(200).json(result);
         } else {
             res.status(400).json({ error: "Invalid credentials" });
