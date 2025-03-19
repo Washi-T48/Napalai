@@ -12,7 +12,8 @@ interface Zone {
 
 interface SidebarProp {
   setTypeLayout: (type: string) => void;
-  setSelectZone: (zoneId: number) => void;
+  setSelectZone: (zoneId: any) => void;
+  togglePopup: (value: boolean) => void;
 }
 
 interface Camera {
@@ -23,7 +24,7 @@ interface Camera {
   created: string;
 }
 
-const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone }) => {
+const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePopup }) => {
   const [openPopup, setOpenPopup] = useState(false);
   const [layoutActive, setLayoutActive] = useState(false);
   const toggleLayout = () => setLayoutActive(!layoutActive);
@@ -43,6 +44,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone }) => {
     setExpandedZoneId((prevZoneId) => (prevZoneId === zoneId ? null : zoneId));
   };
 
+
   const [groupedCameras, setGroupedCameras] = useState<Camera[]>([]);
   const [groupedZone, setGroupedZone] = useState<Zone[]>([]);
   const groupedData = groupedZone.reduce(
@@ -52,8 +54,37 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone }) => {
     },
     {}
   );
-  
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedCameras, setSelectedCameras] = useState<number[]>([]); // เพื่อเก็บกล้องที่ถูกเลือก
+  const [currentZoneId, setCurrentZoneId] = useState<number | null>(null); // เก็บ zone ที่เลือก
+
+  const handleCameraSelectionChange = (cameraId: number) => {
+    setSelectedCameras((prevSelected) =>
+      prevSelected.includes(cameraId)
+        ? prevSelected.filter((id) => id !== cameraId) // ลบออกถ้าเลือกซ้ำ
+        : [...prevSelected, cameraId] // เพิ่มถ้ายังไม่ได้เลือก
+    );
+  };
+
+  const handleZoneChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const zoneId = parseInt(event.target.value); // zoneId จะต้องเป็นตัวเลข
+    setSelectZone(zoneId); // ส่งค่าการเลือก zone ไปยัง Page
+  };
+
+
+
+  useEffect(() => {
+    console.log("Updated Selected Cameras:", selectedCameras);
+  }, [selectedCameras]);
+
+
+
+  const camerasInSelectedZone = groupedCameras.filter(camera => camera.zone_id === currentZoneId);
+
+
   const [fatchPage, setFatchPage] = useState(true);
+
 
   useEffect(() => {
     const getCamera = async () => {
@@ -217,11 +248,15 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone }) => {
             <div key={zoneId}>
               <div
                 className="w-full text-xl cursor-pointer "
-                onClick={() => toggleZone(zoneId)}
+                onClick={() => {
+                  setSelectZone(zoneId);
+                  toggleZone(zoneId);
+                }}
+
               >
                 <div
                   tabIndex={1}
-                  className="flex justify-between p-6 shadow-md duration-300 rounded-md m-1 hover:bg-customSlateBlue hover:bg-opacity-20 focus:bg-customSlateBlue focus:bg-opacity-20"
+                  className="flex justify-between p-6 border-b border-opacity-20 border-gray-500 duration-300  hover:bg-customSlateBlue hover:bg-opacity-20 focus:bg-customSlateBlue focus:bg-opacity-20"
                 >
                   {getZoneName(zoneId)}
                   <div className="flex gap-2">
@@ -259,13 +294,14 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone }) => {
               >
                 {cameras.map((camera) => (
                   <div
-                    className="m-1 duration-300 rounded-md hover:bg-customSlateBlue hover:bg-opacity-20 "
+                    className=" duration-300 rounded-md m-3 bg-customBlue bg-opacity-90  border-b border-opacity-20 border-gray-500 hover:bg-customSlateBlue hover:bg-opacity-20 "
                     key={camera.id}
                   >
                     <div className="flex justify-between items-center w-full p-4  ">
                       <div>{camera.name}</div>
 
                       <div className="flex justify-end  gap-2">
+
                         <button
                           onClick={() =>
                             setRenamePopup({
@@ -442,10 +478,16 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone }) => {
               </div>
             )}
           </div>
+          
+
 
           <div className="flex justify-end p-2 w-full">
             {/* Add Camera Button */}
-            <div>
+            <div className="flex">
+              <button onClick={() => togglePopup(true)}
+                className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl">
+                <Icon icon="carbon:select-window" width="24" height="24" />
+              </button>
               <button
                 onClick={() => setOpenPopup(true)}
                 className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl"
