@@ -1,16 +1,14 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Port from "../port";
 
 interface CardLiveCameraProps {
-  src: string;
   camName: string;
   location: string;
   rtspUrl: string;
 }
 
-const CardLiveCamera: React.FC<CardLiveCameraProps> = ({ src, camName, location, rtspUrl }) => {
-  const [responseCameras, setResponseCameras] = useState<any>(null);
+const CardLiveCamera: React.FC<CardLiveCameraProps> = ({ camName, location, rtspUrl }) => {
+  const [responseCameras, setResponseCameras] = useState<any[]>([]);
 
   useEffect(() => {
     const getCameras = async () => {
@@ -35,23 +33,19 @@ const CardLiveCamera: React.FC<CardLiveCameraProps> = ({ src, camName, location,
   }, []);
 
   return (
-    <div className="relative w-full h-full">
-    <video src={rtspUrl} autoPlay muted loop className="w-full h-full object-cover" />
-    <div className="absolute bottom-0 left-0 bg-opacity-75 p-2 px-4 text-sm text-white drop-shadow-2xl">
-      {camName} - {location}
-    </div>
-    <div className="absolute top-0 right-0 bg-opacity-50 p-2 text-white">
-      {responseCameras && responseCameras.length > 0 ? (
-        <ul>
-          {responseCameras.map((camera: any, index: number) => (
-            <li key={index}>{camera.cameraName}</li>
-          ))}
-        </ul>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {responseCameras.length > 0 ? (
+        responseCameras.map((camera, index) => (
+          <div key={index} className="bg-white p-4 rounded shadow-md">
+            <h3 className="text-xl font-semibold">{camera.camName}</h3>
+            <p className="text-sm text-gray-600">{camera.location}</p>
+            <p className="text-sm text-gray-600">{camera.rtspUrl}</p>
+          </div>
+        ))
       ) : (
-        <p>No cameras data available</p>
+        <p>Loading cameras...</p>
       )}
     </div>
-  </div>
   );
 };
 
