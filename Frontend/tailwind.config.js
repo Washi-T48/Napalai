@@ -100,7 +100,7 @@ module.exports = {
           backgroundColor: '#F1F2F3',
           color: '#000000',
           '&:hover': {
-            backgroundColor: '#DCDCDC',
+            backgroundColor: '#D4D4D4',
           },
         },
         '.custom-input': {

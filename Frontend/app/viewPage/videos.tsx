@@ -111,7 +111,7 @@ const Videos: React.FC<VideoProp> = ({ typeLayout, selectedZoneId }) => {
           {displayCameras.map((camera, index) => (
             <CardLiveCamera
               key={camera.cameraName || index}
-              src={camera.video?.rtsp_url || ""}
+            
               camName={camera.cameraName}
               location={camera.video?.location || ""}
               rtspUrl={camera.video?.rtsp_url || ""}
