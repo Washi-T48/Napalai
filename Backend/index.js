@@ -19,8 +19,8 @@ import violenceRouter from './routes/violence.routes.js';
 import utilsRouter from './routes/utils.routes.js';
 import authRouter from './routes/auth.routes.js';
 import aiRouter from './routes/ai.routes.js';
-import { forgetPasswordSender } from './models/resetpassword.model.js';
 import uploadRouter from './routes/upload.routes.js';
+import { addAllCameraFromDatabase, updateAllCameraDBPath } from './models/mtx.model.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 443;
@@ -58,6 +58,13 @@ app.use('/upload', uploadRouter);
 
 app.use('/public', express.static('public'));
 app.use('/protected', protectedFileMiddleware, express.static('protected'));
+
+try {
+    await addAllCameraFromDatabase();
+    await updateAllCameraDBPath();
+} catch (err) {
+    console.log("error ")
+}
 
 http.createServer(app).listen(PORT, () => {
     console.log(`Server is now running on port ${PORT}`);
