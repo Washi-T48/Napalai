@@ -1,0 +1,31 @@
+services:
+  mediamtx:
+    image: bluenviron/mediamtx:latest-ffmpeg
+    container_name: mediamtx
+    restart: always
+    environment:
+      - MTX_API_ENABLED="yes"
+    ports:
+      - "8554:8554"
+      - "8322:8322"
+      - "8888:8888"
+      - "8889:8889"
+      - "1935:1935"
+      - "9997:9997"
+    expose:
+      - "8554" # RTSP
+      - "8322" # RTSPS
+      - "8888" # HLS
+      - "8889" # WEBRTC
+      - "1935" # RTMP
+      - "9997" # API
+    # volumes:
+    #   - ./data/mediamtx:/data
+    #   - ./mediamtx:/mediamtx.yml
+    #   - ./server.key:/server.key
+    #   - ./server.crt:/server.crt
+
+networks:
+  napalai:
+    driver: host
+    external: true
