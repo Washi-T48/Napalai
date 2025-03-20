@@ -32,6 +32,7 @@ function Page() {
   const [selectedCamerasFourLayout, setSelectedCamerasFourLayout] = useState<number[]>([]);
   const [selectedCamerasByZone, setSelectedCamerasByZone] = useState<Record<number, number[]>>({});
   const [groupedCameras, setGroupedCameras] = useState<Zone[]>([]);
+  const [groupedZone, setGroupedZone] = useState<Zone[]>([]);
 
   const [expandedZoneId, setExpandedZoneId] = useState<number | null>(null);
   const [selectedCount, setSelectedCount] = useState<number>(0);
@@ -39,26 +40,38 @@ function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${Port.URL}/cameras`, {
+        const cameraResponse = await fetch(`${Port.URL}/cameras`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
         });
-        const data = await response.json();
-        console.log("Fetched Camera Data:", data);
-        setGroupedCameras(data);
-        console.log(setGroupedCameras)
-
-        if (data.length > 0) {
-          setSelectedZoneId(data[0].zone_id);
+        const cameraData = await cameraResponse.json();
+        console.log("Fetched Camera Data:", cameraData);
+        setGroupedCameras(cameraData);
+  
+        if (cameraData.length > 0) {
+          setSelectedZoneId(cameraData[0].zone_id);
         }
+  
+        const zoneResponse = await fetch(`${Port.URL}/zones`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const zoneData = await zoneResponse.json();
+        console.log("Fetched Zone Data:", zoneData);
+        setGroupedZone(zoneData);
+  
       } catch (error) {
-        console.error("Error fetching camera data:", error);
+        console.error("Error fetching data:", error);
       }
     };
+  
     fetchData();
   }, []);
+  
 
   useEffect(() => {
     const storedTypeLayout = localStorage.getItem("typeLayout");
@@ -133,10 +146,11 @@ function Page() {
     setExpandedZoneId(expandedZoneId === zoneId ? null : zoneId);
   };
 
-  const getZoneName = (zoneId: string) => {
-    const zoneInfo = groupedCameras.find((zone) => String(zone.zone_id) === zoneId);
+  const getZoneName = (zoneId: any) => {
+    const zoneInfo = groupedZone.find((zone) => zone.id === zoneId); // ใช้ groupedZone แทน groupedCameras
     return zoneInfo ? zoneInfo.name : "Unknown Zone";
   };
+  
   
 
   return (
