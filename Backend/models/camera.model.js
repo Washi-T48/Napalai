@@ -44,6 +44,11 @@ const getCameraByZoneID = async (zone_id) => {
     return rows;
 };
 
+const updateCameraStreamURL = async (id, stream_url) => {
+    const rows = await pool.query('UPDATE camera SET stream_url = $1 WHERE id = $2 RETURNING id, stream_url', [stream_url, id]);
+    return rows;
+};
+
 export {
     createCamera,
     getCameraById,
@@ -53,4 +58,5 @@ export {
     changeCameraZone,
     deleteCamera,
     getCameraByZoneID,
+    updateCameraStreamURL,
 };
