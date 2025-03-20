@@ -13,6 +13,7 @@ interface Camera {
   ip?: string;
   created: string;
   zone_id: number;
+  stream_url?: string;
 }
 
 interface Zone {
@@ -27,14 +28,14 @@ function Page() {
   const [selectedZoneId, setSelectedZoneId] = useState<number>(1); // default to zone 1
   const [showPopup, setShowPopup] = useState<boolean>(false);
 
-  const [selectedCamerasNineLayout, setSelectedCamerasNineLayout] = useState<number[]>([]); // สำหรับ nineLayout
-  const [selectedCamerasFourLayout, setSelectedCamerasFourLayout] = useState<number[]>([]); // สำหรับ fourLayout
-  const [selectedCamerasByZone, setSelectedCamerasByZone] = useState<Record<number, number[]>>({}); // เก็บการเลือกกล้องตามโซน
+  const [selectedCamerasNineLayout, setSelectedCamerasNineLayout] = useState<number[]>([]); 
+  const [selectedCamerasFourLayout, setSelectedCamerasFourLayout] = useState<number[]>([]);
+  const [selectedCamerasByZone, setSelectedCamerasByZone] = useState<Record<number, number[]>>({});
   const [groupedCameras, setGroupedCameras] = useState<Zone[]>([]);
 
   const [expandedZoneId, setExpandedZoneId] = useState<number | null>(null);
+  const [selectedCount, setSelectedCount] = useState<number>(0);
 
-  // Fetch camera data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -59,43 +60,41 @@ function Page() {
     fetchData();
   }, []);
 
-  // Retrieve stored camera selections and layout preferences
   useEffect(() => {
     const storedTypeLayout = localStorage.getItem("typeLayout");
-    const storedZoneId = localStorage.getItem("selectedZoneId");
     const storedNine = localStorage.getItem("selectedCamerasNineLayout");
     const storedFour = localStorage.getItem("selectedCamerasFourLayout");
 
     if (storedTypeLayout) setTypeLayout(storedTypeLayout);
-    if (storedZoneId) setSelectedZoneId(Number(storedZoneId));
     if (storedNine) setSelectedCamerasNineLayout(JSON.parse(storedNine));
     if (storedFour) setSelectedCamerasFourLayout(JSON.parse(storedFour));
   }, []);
 
-  // Store camera selections and layout preferences to localStorage
   useEffect(() => {
     localStorage.setItem("selectedCamerasNineLayout", JSON.stringify(selectedCamerasNineLayout));
     localStorage.setItem("selectedCamerasFourLayout", JSON.stringify(selectedCamerasFourLayout));
-    localStorage.setItem("selectedCamerasByZone", JSON.stringify(selectedCamerasByZone));
     localStorage.setItem("typeLayout", typeLayout);
     localStorage.setItem("selectedZoneId", String(selectedZoneId));
   }, [selectedCamerasNineLayout, selectedCamerasFourLayout, selectedCamerasByZone, typeLayout, selectedZoneId]);
 
-  // Handle camera selection change (both layouts)
   const handleCameraSelectionChange = (cameraId: number) => {
     const updateSelection = (layout: string) => {
       if (layout === "nineLayout") {
-        setSelectedCamerasNineLayout((prevSelected) =>
-          prevSelected.includes(cameraId)
+        setSelectedCamerasNineLayout((prevSelected) => {
+          const newSelected = prevSelected.includes(cameraId)
             ? prevSelected.filter((id) => id !== cameraId)
-            : [...prevSelected, cameraId]
-        );
+            : [...prevSelected, cameraId];
+          setSelectedCount(newSelected.length);
+          return newSelected;
+        });
       } else if (layout === "fourLayout") {
-        setSelectedCamerasFourLayout((prevSelected) =>
-          prevSelected.includes(cameraId)
+        setSelectedCamerasFourLayout((prevSelected) => {
+          const newSelected = prevSelected.includes(cameraId)
             ? prevSelected.filter((id) => id !== cameraId)
-            : [...prevSelected, cameraId]
-        );
+            : [...prevSelected, cameraId];
+          setSelectedCount(newSelected.length);
+          return newSelected;
+        });
       }
     };
 
@@ -104,7 +103,6 @@ function Page() {
 
   const togglePopup = () => setShowPopup(!showPopup);
 
-  // Filter cameras by selected zone and layout
   const camerasInSelectedZone = groupedCameras
     .filter((camera) => camera.zone_id === selectedZoneId)
     .filter((camera) => {
@@ -123,7 +121,6 @@ function Page() {
   const emptyCameras = new Array(remainingBoxes).fill("No Signal");
   const allCamerasToShow = [...camerasToShow, ...emptyCameras];
 
-  // Group cameras by zone
   const groupedData = groupedCameras.reduce((acc, camera) => {
     if (!acc[camera.zone_id]) {
       acc[camera.zone_id] = [];
@@ -132,12 +129,10 @@ function Page() {
     return acc;
   }, {} as Record<number, Camera[]>);
 
-  // Toggle zone expansion
   const toggleZone = (zoneId: number) => {
     setExpandedZoneId(expandedZoneId === zoneId ? null : zoneId);
   };
 
-  // Get zone name
   const getZoneName = (zoneId: string) => {
     const zoneInfo = groupedCameras.find((zone) => String(zone.zone_id) === zoneId);
     return zoneInfo ? zoneInfo.name : "Unknown Zone";
@@ -172,17 +167,18 @@ function Page() {
                         <h4 className="font-bold text-sm p-2 px-4 border-2 border-opacity-50 border-customRed">{item}</h4>
                       ) : (
                         <div className="relative w-full h-[280px] bg-black">
-                          {/* Video Background */}
-                          <video className="w-full h-full object-cover" autoPlay muted loop>
-                            <source src="your-video-url.mp4" type="video/mp4" />
-                            Your browser does not support the video tag.
-                          </video>
+                      {/* Video Background */}
+                      <video className="w-full h-full object-cover" autoPlay muted loop>
+                        <source src={item.stream_url || "default-video-url.mp4"} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
 
-                          {/* Item Name in the Bottom Right */}
-                          <div className="absolute bottom-0 left-0 text-white text-xs font-bold  px-4 py-2 rounded-md">
-                            {item.name}
-                          </div>
-                        </div>
+                      {/* Item Name in the Bottom Left */}
+                      <div className="absolute bottom-0 left-0 text-white text-xs font-bold px-4 py-2 rounded-md">
+                        {item.name}
+                      </div>
+                    </div>
+
                       )}
                     </div>
                   </div>
@@ -196,7 +192,7 @@ function Page() {
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-customBlue text-white p-5 w-[550px] rounded-2xl overflow-auto">
-            <h2 className="text-xl mb-4 w-96 ">Select Camera</h2>
+            <h2 className="text-xl mb-4 w-96 ">Select Camera ({selectedCount}/{typeLayout === "nineLayout" ? 9 : 4})</h2>
             <div className="flex justify-start">
                 <button
                   className={`flex justify-center items-center w-20 p-2 rounded-l-md text-sm bg-customButton transition-all duration-300  ${typeLayout === "nineLayout" ? "bg-customฺButtomHover" : "bg-customฺButton"}`}
@@ -244,6 +240,10 @@ function Page() {
                                   : selectedCamerasFourLayout
                               ).includes(camera.id)}
                               onChange={() => handleCameraSelectionChange(camera.id)}
+                              disabled={
+                                (typeLayout === "nineLayout" && selectedCamerasNineLayout.length >= 9) ||
+                                (typeLayout === "fourLayout" && selectedCamerasFourLayout.length >= 4)
+                              }
                             />
                           </div>
                         </div>
