@@ -55,21 +55,20 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
     {}
   );
 
-  const [showPopup, setShowPopup] = useState(false);
-  const [selectedCameras, setSelectedCameras] = useState<number[]>([]); // เพื่อเก็บกล้องที่ถูกเลือก
-  const [currentZoneId, setCurrentZoneId] = useState<number | null>(null); // เก็บ zone ที่เลือก
+  const [selectedCameras, setSelectedCameras] = useState<number[]>([]);
+  const [currentZoneId, setCurrentZoneId] = useState<number | null>(null); 
 
   const handleCameraSelectionChange = (cameraId: number) => {
     setSelectedCameras((prevSelected) =>
       prevSelected.includes(cameraId)
-        ? prevSelected.filter((id) => id !== cameraId) // ลบออกถ้าเลือกซ้ำ
-        : [...prevSelected, cameraId] // เพิ่มถ้ายังไม่ได้เลือก
+        ? prevSelected.filter((id) => id !== cameraId) 
+        : [...prevSelected, cameraId] 
     );
   };
 
   const handleZoneChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const zoneId = parseInt(event.target.value); // zoneId จะต้องเป็นตัวเลข
-    setSelectZone(zoneId); // ส่งค่าการเลือก zone ไปยัง Page
+    const zoneId = parseInt(event.target.value); 
+    setSelectZone(zoneId); 
   };
 
 
