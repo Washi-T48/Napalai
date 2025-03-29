@@ -1,13 +1,34 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import unnyFace from "../../public/imges/unnyFace.jpg";
+import unnyFace from "../../public/imges/user.png";
 import Link from "next/link";
 import Port from "../port";
 
 export default function Navber() {
-  const [showMenu, setShowMenu] = useState(false); 
+  const [showMenu, setShowMenu] = useState(false);
   const [showHamberger, setShowHamberger] = useState(false);// ใช้เพื่อควบคุมการแสดงผลเมนู
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const [userData, setUserData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("https://cloud.phraya.net/api/auth/user", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const data = await response.json();
+        setUserData(data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     // คลิกนอกเมนูจะปิดเมนู
@@ -25,7 +46,7 @@ export default function Navber() {
   const logout = async () => {
     try {
       const response = await fetch(`${Port.URL}/auth/logout`, {
-        method: "POST", 
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -52,7 +73,7 @@ export default function Navber() {
       {/* Hamburger Menu for mobile */}
       <div className="lg:hidden flex items-center">
         <button onClick={() => setShowHamberger(!showHamberger)} className="text-3xl">
-          &#9776; 
+          &#9776;
         </button>
       </div>
 
@@ -67,18 +88,32 @@ export default function Navber() {
         <Link href="/forgottenPage">
           <div className="cursor-pointer">Forgotten</div>
         </Link>
-        
+
         <div className="relative" ref={menuRef}>
-          <button
-            onClick={() => setShowMenu(!showMenu)}
-            className="w-8 h-8 focus:outline-none"
-          >
-            <Image
-              className="rounded-full object-cover w-full h-full cursor-pointer"
-              src={unnyFace}
-              alt="Profile"
-            />
-          </button>
+          <div className="flex justify-center items-center ">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="w-8 h-8 focus:outline-none"
+            >
+
+              {userData && userData.picture ? (
+                <Image
+                  src={userData.picture}
+                  alt="Profile Picture"
+                  width={50}
+                  height={50}
+                  className="rounded-full object-cover w-full h-full cursor-pointer"
+                />
+              ) : (
+                <Image
+                  className="rounded-full object-cover w-full h-full cursor-pointer"
+                  src={unnyFace}
+                  alt="Profile"
+                />
+              )}
+            </button>
+          </div>
+
 
           {showMenu && (
             <div className="absolute right-0 mt-2 w-48 bg-CustomDeepTeal text-white shadow-2xl rounded-md overflow-hidden">
