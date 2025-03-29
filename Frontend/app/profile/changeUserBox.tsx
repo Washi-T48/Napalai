@@ -27,7 +27,7 @@ const ChangeUserBox: React.FC<Props> = ({ setOpenChangeUser }) => {
         formData.append("file", image);
 
         try {
-            const response = await fetch(`${Port.URL}/profile`, {
+            const response = await fetch(`${Port.URL}/upload/profile`, {
                 method: "POST",
                 body: formData,
             });
