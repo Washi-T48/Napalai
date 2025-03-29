@@ -158,7 +158,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
 
         {view === 'addCamera' ? (
 
-          <div className="flex flex-col gap-2  h-[580px] transition-all duration-300 overflow-hidden">
+          <div className="flex flex-col gap-2  h-auto transition-all duration-300 overflow-hidden">
             <div className="text-2xl font-bold py-3">
               Add camera
             </div>

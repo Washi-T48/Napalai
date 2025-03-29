@@ -28,7 +28,7 @@ function Page() {
   const [selectedZoneId, setSelectedZoneId] = useState<number>(1); // default to zone 1
   const [showPopup, setShowPopup] = useState<boolean>(false);
 
-  const [selectedCamerasNineLayout, setSelectedCamerasNineLayout] = useState<number[]>([]); 
+  const [selectedCamerasNineLayout, setSelectedCamerasNineLayout] = useState<number[]>([]);
   const [selectedCamerasFourLayout, setSelectedCamerasFourLayout] = useState<number[]>([]);
   const [selectedCamerasByZone, setSelectedCamerasByZone] = useState<Record<number, number[]>>({});
   const [groupedCameras, setGroupedCameras] = useState<Zone[]>([]);
@@ -113,8 +113,12 @@ function Page() {
 
   const camerasToShow =
     typeLayout === "nineLayout"
-      ? camerasInSelectedZone.slice(0, 9)
-      : camerasInSelectedZone.slice(0, 4);
+      ? groupedCameras
+        .filter((camera) => selectedCamerasNineLayout.includes(camera.id))
+        .slice(0, 9)
+      : groupedCameras
+        .filter((camera) => selectedCamerasFourLayout.includes(camera.id))
+
 
   const remainingBoxes =
     typeLayout === "nineLayout" ? 9 - camerasToShow.length : 4 - camerasToShow.length;
@@ -137,7 +141,7 @@ function Page() {
     const zoneInfo = groupedCameras.find((zone) => String(zone.zone_id) === zoneId);
     return zoneInfo ? zoneInfo.name : "Unknown Zone";
   };
-  
+
 
   return (
     <>
@@ -167,17 +171,17 @@ function Page() {
                         <h4 className="font-bold text-sm p-2 px-4 border-2 border-opacity-50 border-customRed">{item}</h4>
                       ) : (
                         <div className="relative w-full h-[280px] bg-black">
-                      {/* Video Background */}
-                      <video className="w-full h-full object-cover" autoPlay muted loop>
-                        <source src={item.stream_url || "default-video-url.mp4"} type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
+                          {/* Video Background */}
+                          <video className="w-full h-full object-cover" autoPlay muted loop>
+                            <source src={item.stream_url || "default-video-url.mp4"} type="video/mp4" />
+                            Your browser does not support the video tag.
+                          </video>
 
-                      {/* Item Name in the Bottom Left */}
-                      <div className="absolute bottom-0 left-0 text-white text-xs font-bold px-4 py-2 rounded-md">
-                        {item.name}
-                      </div>
-                    </div>
+                          {/* Item Name in the Bottom Left */}
+                          <div className="absolute bottom-0 left-0 text-white text-xs font-bold px-4 py-2 rounded-md">
+                            {item.name}
+                          </div>
+                        </div>
 
                       )}
                     </div>
@@ -194,21 +198,21 @@ function Page() {
           <div className="bg-customBlue text-white p-5 w-[550px] rounded-2xl overflow-auto">
             <h2 className="text-xl mb-4 w-96 ">Select Camera ({selectedCount}/{typeLayout === "nineLayout" ? 9 : 4})</h2>
             <div className="flex justify-start">
-                <button
-                  className={`flex justify-center items-center w-20 p-2 rounded-l-md text-sm bg-customButton transition-all duration-300  ${typeLayout === "nineLayout" ? "bg-customฺButtomHover" : "bg-customฺButton"}`}
-                  onClick={() => setTypeLayout("nineLayout")}
-                >
-                  <Icon icon="material-symbols-light:grid-on" width="24" height="24" />
-                </button>
-                <button
-                  className={`flex justify-center items-center w-20 p-2 rounded-r-md text-sm bg-customButton transition-all duration-300  ${typeLayout === "fourLayout" ? "bg-customฺButtomHover" : "bg-customฺButton"}`}
-                  onClick={() => setTypeLayout("fourLayout")}
-                >
-                  <Icon icon="flowbite:grid-solid" width="24" height="24" />
-                </button>
-              </div>
+              <button
+                className={`flex justify-center items-center w-20 p-2 rounded-l-md text-sm bg-customButton transition-all duration-300  ${typeLayout === "nineLayout" ? "bg-customฺButtomHover" : "bg-customฺButton"}`}
+                onClick={() => setTypeLayout("nineLayout")}
+              >
+                <Icon icon="material-symbols-light:grid-on" width="24" height="24" />
+              </button>
+              <button
+                className={`flex justify-center items-center w-20 p-2 rounded-r-md text-sm bg-customButton transition-all duration-300  ${typeLayout === "fourLayout" ? "bg-customฺButtomHover" : "bg-customฺButton"}`}
+                onClick={() => setTypeLayout("fourLayout")}
+              >
+                <Icon icon="flowbite:grid-solid" width="24" height="24" />
+              </button>
+            </div>
             <div className="space-y-4 ">
-              
+
               {Object.entries(groupedData).map(([zoneId, cameras]) => (
                 <div key={zoneId}>
                   <div
@@ -216,7 +220,7 @@ function Page() {
                     onClick={() => toggleZone(Number(zoneId))}
                   >
                     <div className="flex justify-between p-6 shadow-md duration-300 rounded-md m-1 hover:bg-customSlateBlue hover:bg-opacity-20">
-                    <span>{getZoneName(String(zoneId))}</span>
+                      <span>{getZoneName(String(zoneId))}</span>
 
                     </div>
                   </div>
@@ -234,12 +238,12 @@ function Page() {
                               type="checkbox"
                               id={`camera-${camera.id}`}
                               value={camera.id}
-                              checked={(
+                              checked={
                                 typeLayout === "nineLayout"
-                                  ? selectedCamerasNineLayout
-                                  : selectedCamerasFourLayout
-                              ).includes(camera.id)}
-                              onChange={() => handleCameraSelectionChange(camera.id)}
+                                  ? selectedCamerasNineLayout.includes(camera.id)
+                                  : selectedCamerasFourLayout.includes(camera.id)
+                              }
+                              onChange={() => handleCameraSelectionChange(camera.id)} // เลือกกล้องที่ต้องการ
                               disabled={
                                 (typeLayout === "nineLayout" && selectedCamerasNineLayout.length >= 9) ||
                                 (typeLayout === "fourLayout" && selectedCamerasFourLayout.length >= 4)
