@@ -23,7 +23,7 @@ export const config = {
     '/viewViolencePage/:path*', 
     '/viewForgottenPage/:path*', 
     '/resetPasswordPage', 
-    '/profile', 
+    
     '/forgottenPage', 
     '/forgottenLog',
     '/login'

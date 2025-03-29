@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import profilepic from '../../public/imges/imges1.jpg';
 import { Icon } from "@iconify/react";
 import Navber from '../component/navber';
 import ChangePassBox from "./changePassBox";
 import ChangeEmailBox from './changeEmailBox';
 import ChangeUserBox from './changeUserBox';
 import Port from '../port';
+import NullProfile from '../../public/imges/user.png'
 
 function Page() {
     const [openChangePassword, setOpenChangePassword] = useState(false);
@@ -21,7 +21,7 @@ function Page() {
             try {
                 const response = await fetch(`${Port.URL}/auth/user`, {
                     method: 'GET',
-                    credentials: 'include', 
+                    credentials: 'include',
                 });
 
                 if (response.ok) {
@@ -56,11 +56,24 @@ function Page() {
                                     />
                                 </div>
                                 <div className='rounded-xl'>
-                                    <Image
-                                        className='w-52 h-52 rounded-full object-cover'
-                                        src={profilepic}
-                                        alt='profile'
-                                    />
+                                    {userData && userData.picture ? (
+                                        <Image
+
+                                            src={userData.picture}
+                                            alt="Profile Picture"
+                                            width={200}
+                                            height={200}
+                                            className="rounded-full object-cover w-full h-full cursor-pointer"
+                                        />
+                                    ) : (
+                                        <Image
+                                            className="rounded-full object-cover w-full h-full cursor-pointer"
+                                            src={NullProfile}
+                                            alt="Profile"
+                                            width={200}
+                                            height={200}
+                                        />
+                                    )}
                                 </div>
                                 <div className='flex justify-center w-full text-4xl font-bold gap-2'>
                                     <div className='flex flex-col justify-center items-center w-full pt-5'>
