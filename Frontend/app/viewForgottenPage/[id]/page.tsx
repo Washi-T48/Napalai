@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Navber from "../../component/navber";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
-import unnyFace from "../../../public/imges/unnyFace.jpg";
+import unnyFace from "../../../public/imges/nonitem.avif";
 import PopupEditNameViolenceCard from "./popupEditNameViolenceCard";
 import CalendarVideoPage from "../../component/calenderVideoPage";
 import Port from "@/app/port";
