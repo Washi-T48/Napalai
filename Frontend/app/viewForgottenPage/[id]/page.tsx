@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Navber from "../../component/navber";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
-import unnyFace from "../../../public/imges/nonitem.avif";
+import unnyFace from "../../../public/imges/nonItem.avif";
 import PopupEditNameViolenceCard from "./popupEditNameViolenceCard";
 import CalendarVideoPage from "../../component/calenderVideoPage";
 import Port from "@/app/port";
@@ -92,11 +92,11 @@ function Page() {
             const uploadResponseText = await uploadResponse.text();
             let uploadResult;
             try {
-                uploadResult = JSON.parse(uploadResponseText); 
+                uploadResult = JSON.parse(uploadResponseText);
             } catch (parseError) {
                 console.log("Falling back to plain text URL:", uploadResponseText);
                 uploadResult = {
-                    return: uploadResponseText, 
+                    return: uploadResponseText,
                     receiver_name: text,
                     receiver_description: detail,
                 };
@@ -117,17 +117,17 @@ function Page() {
             }
 
             const updatedReceiver = await updateResponse.json();
-            const updatedReceiverData = updatedReceiver.rows && updatedReceiver.rows.length > 0 
-                ? updatedReceiver.rows[0] 
-                : { receiver_name: text, receiver_description: detail }; 
+            const updatedReceiverData = updatedReceiver.rows && updatedReceiver.rows.length > 0
+                ? updatedReceiver.rows[0]
+                : { receiver_name: text, receiver_description: detail };
 
             setData((prevData) =>
                 prevData
                     ? {
-                          ...prevData,
-                          ...uploadResult,
-                          ...updatedReceiverData,
-                      }
+                        ...prevData,
+                        ...uploadResult,
+                        ...updatedReceiverData,
+                    }
                     : prevData
             );
 
@@ -235,9 +235,8 @@ function Page() {
                         <div className="flex flex-col items-start text-white">
                             <button
                                 onClick={toggleStatus}
-                                className={`px-2 py-1 w-28 rounded ${
-                                    status === "unreturned" ? "bg-red-500" : "bg-green-500"
-                                }`}
+                                className={`px-2 py-1 w-28 rounded ${status === "unreturned" ? "bg-red-500" : "bg-green-500"
+                                    }`}
                             >
                                 {status}
                             </button>
@@ -375,13 +374,11 @@ function Page() {
                                                         value={text}
                                                         onChange={(e) => setText(e.target.value)}
                                                         placeholder="Add a title that describes your video."
-                                                        className={`w-80 px-3 py-2 mt-1 pb-8 border ${
-                                                            isError ? "border" : "border-gray-600"
-                                                        } bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 ${
-                                                            isError
+                                                        className={`w-80 px-3 py-2 mt-1 pb-8 border ${isError ? "border" : "border-gray-600"
+                                                            } bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 ${isError
                                                                 ? "focus:ring-red-500 focus:border-red-500"
                                                                 : "focus:ring-blue-500 focus:border-blue-500"
-                                                        }`}
+                                                            }`}
                                                         maxLength={maxLength}
                                                     />
                                                     <div className="flex justify-end text-sm mt-1">
@@ -400,13 +397,11 @@ function Page() {
                                                         value={detail}
                                                         onChange={(e) => setDetail(e.target.value)}
                                                         placeholder="Add details that describe your video."
-                                                        className={`w-80 px-3 py-2 mt-1 pb-8 border ${
-                                                            isError ? "border" : "border-gray-600"
-                                                        } bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 ${
-                                                            isError
+                                                        className={`w-80 px-3 py-2 mt-1 pb-8 border ${isError ? "border" : "border-gray-600"
+                                                            } bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 ${isError
                                                                 ? "focus:ring-red-500 focus:border-red-500"
                                                                 : "focus:ring-blue-500 focus:border-blue-500"
-                                                        }`}
+                                                            }`}
                                                         maxLength={maxDetailLength}
                                                     />
                                                     <div className="flex justify-end text-sm mt-1">
@@ -447,11 +442,10 @@ function Page() {
                                             <button
                                                 onClick={handleSubmit}
                                                 disabled={!text || !detail || !imageFile}
-                                                className={`px-4 py-2 rounded-md ${
-                                                    text && detail && imageFile
+                                                className={`px-4 py-2 rounded-md ${text && detail && imageFile
                                                         ? "bg-customฺButton hover:bg-customฺButtomHover"
                                                         : "bg-gray-600 cursor-not-allowed"
-                                                } text-white`}
+                                                    } text-white`}
                                             >
                                                 Submit
                                             </button>
