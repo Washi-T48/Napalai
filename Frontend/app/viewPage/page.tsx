@@ -25,16 +25,16 @@ interface Zone {
 
 function Page() {
   const [typeLayout, setTypeLayout] = useState<string>("nineLayout");
-  const [selectedZoneId, setSelectedZoneId] = useState<number>(1); // default to zone 1
+  const [selectedZoneId, setSelectedZoneId] = useState<number>(1);
   const [showPopup, setShowPopup] = useState<boolean>(false);
-
+  
   const [selectedCamerasNineLayout, setSelectedCamerasNineLayout] = useState<number[]>([]);
   const [selectedCamerasFourLayout, setSelectedCamerasFourLayout] = useState<number[]>([]);
-  const [selectedCamerasByZone, setSelectedCamerasByZone] = useState<Record<number, number[]>>({});
   const [groupedCameras, setGroupedCameras] = useState<Zone[]>([]);
-
   const [expandedZoneId, setExpandedZoneId] = useState<number | null>(null);
-  const [selectedCount, setSelectedCount] = useState<number>(0);
+  
+  const [nineLayoutCount, setNineLayoutCount] = useState<number>(0);
+  const [fourLayoutCount, setFourLayoutCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,8 +48,7 @@ function Page() {
         const data = await response.json();
         console.log("Fetched Camera Data:", data);
         setGroupedCameras(data);
-        console.log(setGroupedCameras)
-
+        
         if (data.length > 0) {
           setSelectedZoneId(data[0].zone_id);
         }
@@ -66,8 +65,16 @@ function Page() {
     const storedFour = localStorage.getItem("selectedCamerasFourLayout");
 
     if (storedTypeLayout) setTypeLayout(storedTypeLayout);
-    if (storedNine) setSelectedCamerasNineLayout(JSON.parse(storedNine));
-    if (storedFour) setSelectedCamerasFourLayout(JSON.parse(storedFour));
+    if (storedNine) {
+      const nineArray = JSON.parse(storedNine);
+      setSelectedCamerasNineLayout(nineArray);
+      setNineLayoutCount(nineArray.length);
+    }
+    if (storedFour) {
+      const fourArray = JSON.parse(storedFour);
+      setSelectedCamerasFourLayout(fourArray);
+      setFourLayoutCount(fourArray.length);
+    }
   }, []);
 
   useEffect(() => {
@@ -75,53 +82,37 @@ function Page() {
     localStorage.setItem("selectedCamerasFourLayout", JSON.stringify(selectedCamerasFourLayout));
     localStorage.setItem("typeLayout", typeLayout);
     localStorage.setItem("selectedZoneId", String(selectedZoneId));
-  }, [selectedCamerasNineLayout, selectedCamerasFourLayout, selectedCamerasByZone, typeLayout, selectedZoneId]);
+  }, [selectedCamerasNineLayout, selectedCamerasFourLayout, typeLayout, selectedZoneId]);
 
   const handleCameraSelectionChange = (cameraId: number) => {
-    const updateSelection = (layout: string) => {
-      if (layout === "nineLayout") {
-        setSelectedCamerasNineLayout((prevSelected) => {
-          const newSelected = prevSelected.includes(cameraId)
-            ? prevSelected.filter((id) => id !== cameraId)
-            : [...prevSelected, cameraId];
-          setSelectedCount(newSelected.length);
-          return newSelected;
-        });
-      } else if (layout === "fourLayout") {
-        setSelectedCamerasFourLayout((prevSelected) => {
-          const newSelected = prevSelected.includes(cameraId)
-            ? prevSelected.filter((id) => id !== cameraId)
-            : [...prevSelected, cameraId];
-          setSelectedCount(newSelected.length);
-          return newSelected;
-        });
-      }
-    };
-
-    updateSelection(typeLayout);
+    if (typeLayout === "nineLayout") {
+      setSelectedCamerasNineLayout((prevSelected) => {
+        const newSelected = prevSelected.includes(cameraId)
+          ? prevSelected.filter((id) => id !== cameraId)
+          : prevSelected.length < 9 ? [...prevSelected, cameraId] : prevSelected;
+        setNineLayoutCount(newSelected.length);
+        return newSelected;
+      });
+    } else if (typeLayout === "fourLayout") {
+      setSelectedCamerasFourLayout((prevSelected) => {
+        const newSelected = prevSelected.includes(cameraId)
+          ? prevSelected.filter((id) => id !== cameraId)
+          : prevSelected.length < 4 ? [...prevSelected, cameraId] : prevSelected;
+        setFourLayoutCount(newSelected.length);
+        return newSelected;
+      });
+    }
   };
 
   const togglePopup = () => setShowPopup(!showPopup);
 
-  const camerasInSelectedZone = groupedCameras
-    .filter((camera) => camera.zone_id === selectedZoneId)
-    .filter((camera) => {
-      return typeLayout === "nineLayout"
-        ? selectedCamerasNineLayout.includes(camera.id)
-        : selectedCamerasFourLayout.includes(camera.id);
-    });
+  const camerasToShow = typeLayout === "nineLayout"
+    ? groupedCameras.filter((camera) => selectedCamerasNineLayout.includes(camera.id))
+    : groupedCameras.filter((camera) => selectedCamerasFourLayout.includes(camera.id));
 
-  const camerasToShow =
-    typeLayout === "nineLayout"
-      ? groupedCameras
-        .filter((camera) => selectedCamerasNineLayout.includes(camera.id))
-        .slice(0, 9)
-      : groupedCameras
-        .filter((camera) => selectedCamerasFourLayout.includes(camera.id))
-
-
-  const remainingBoxes =
-    typeLayout === "nineLayout" ? 9 - camerasToShow.length : 4 - camerasToShow.length;
+  const remainingBoxes = typeLayout === "nineLayout" 
+    ? 9 - camerasToShow.length 
+    : 4 - camerasToShow.length;
   const emptyCameras = new Array(remainingBoxes).fill("No Signal");
   const allCamerasToShow = [...camerasToShow, ...emptyCameras];
 
@@ -141,7 +132,6 @@ function Page() {
     const zoneInfo = groupedCameras.find((zone) => String(zone.zone_id) === zoneId);
     return zoneInfo ? zoneInfo.name : "Unknown Zone";
   };
-
 
   return (
     <>
@@ -165,24 +155,20 @@ function Page() {
                 }}
               >
                 {allCamerasToShow.map((item, index) => (
-                  <div key={index} className="bg-black  flex items-center justify-center text-white">
+                  <div key={index} className="bg-black flex items-center justify-center text-white">
                     <div className="text-center">
                       {typeof item === "string" ? (
                         <h4 className="font-bold text-sm p-2 px-4 border-2 border-opacity-50 border-customRed">{item}</h4>
                       ) : (
                         <div className="relative w-full h-[280px] bg-black">
-                          {/* Video Background */}
                           <video className="w-full h-full object-cover" autoPlay muted loop>
                             <source src={item.stream_url || "default-video-url.mp4"} type="video/mp4" />
                             Your browser does not support the video tag.
                           </video>
-
-                          {/* Item Name in the Bottom Left */}
                           <div className="absolute bottom-0 left-0 text-white text-xs font-bold px-4 py-2 rounded-md">
                             {item.name}
                           </div>
                         </div>
-
                       )}
                     </div>
                   </div>
@@ -196,32 +182,34 @@ function Page() {
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-customBlue text-white p-5 w-[550px] rounded-2xl overflow-auto">
-            <h2 className="text-xl mb-4 w-96 ">Select Camera ({selectedCount}/{typeLayout === "nineLayout" ? 9 : 4})</h2>
+            <h2 className="text-xl mb-4 w-96">
+              Select Camera (
+              {typeLayout === "nineLayout" ? nineLayoutCount : fourLayoutCount}/
+              {typeLayout === "nineLayout" ? 9 : 4})
+            </h2>
             <div className="flex justify-start">
               <button
-                className={`flex justify-center items-center w-20 p-2 rounded-l-md text-sm bg-customButton transition-all duration-300  ${typeLayout === "nineLayout" ? "bg-customฺButtomHover" : "bg-customฺButton"}`}
+                className={`flex justify-center items-center w-20 p-2 rounded-l-md text-sm bg-customButton transition-all duration-300 ${typeLayout === "nineLayout" ? "bg-customฺButtomHover" : "bg-customฺButton"}`}
                 onClick={() => setTypeLayout("nineLayout")}
               >
                 <Icon icon="material-symbols-light:grid-on" width="24" height="24" />
               </button>
               <button
-                className={`flex justify-center items-center w-20 p-2 rounded-r-md text-sm bg-customButton transition-all duration-300  ${typeLayout === "fourLayout" ? "bg-customฺButtomHover" : "bg-customฺButton"}`}
+                className={`flex justify-center items-center w-20 p-2 rounded-r-md text-sm bg-customButton transition-all duration-300 ${typeLayout === "fourLayout" ? "bg-customฺButtomHover" : "bg-customฺButton"}`}
                 onClick={() => setTypeLayout("fourLayout")}
               >
                 <Icon icon="flowbite:grid-solid" width="24" height="24" />
               </button>
             </div>
-            <div className="space-y-4 ">
-
+            <div className="space-y-4">
               {Object.entries(groupedData).map(([zoneId, cameras]) => (
                 <div key={zoneId}>
                   <div
-                    className="w-full text-xl cursor-pointer min-w-96 "
+                    className="w-full text-xl cursor-pointer min-w-96"
                     onClick={() => toggleZone(Number(zoneId))}
                   >
                     <div className="flex justify-between p-6 shadow-md duration-300 rounded-md m-1 hover:bg-customSlateBlue hover:bg-opacity-20">
                       <span>{getZoneName(String(zoneId))}</span>
-
                     </div>
                   </div>
 
@@ -229,7 +217,7 @@ function Page() {
                     <ul className="max-h-96 overflow-auto transition-all duration-300 ease-in-out">
                       {cameras.map((camera) => (
                         <div
-                          className="ml-2 mr-2 duration-300  hover:bg-customSlateBlue hover:bg-opacity-20"
+                          className="ml-2 mr-2 duration-300 hover:bg-customSlateBlue hover:bg-opacity-20"
                           key={camera.id}
                         >
                           <div className="flex justify-between items-center w-full p-4">
@@ -243,10 +231,14 @@ function Page() {
                                   ? selectedCamerasNineLayout.includes(camera.id)
                                   : selectedCamerasFourLayout.includes(camera.id)
                               }
-                              onChange={() => handleCameraSelectionChange(camera.id)} // เลือกกล้องที่ต้องการ
+                              onChange={() => handleCameraSelectionChange(camera.id)}
                               disabled={
-                                (typeLayout === "nineLayout" && selectedCamerasNineLayout.length >= 9) ||
-                                (typeLayout === "fourLayout" && selectedCamerasFourLayout.length >= 4)
+                                (typeLayout === "nineLayout" && 
+                                  selectedCamerasNineLayout.length >= 9 && 
+                                  !selectedCamerasNineLayout.includes(camera.id)) ||
+                                (typeLayout === "fourLayout" && 
+                                  selectedCamerasFourLayout.length >= 4 && 
+                                  !selectedCamerasFourLayout.includes(camera.id))
                               }
                             />
                           </div>
