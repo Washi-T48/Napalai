@@ -195,7 +195,8 @@ function Page() {
 
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-customBlue text-white p-5 w-[550px] rounded-2xl overflow-auto">
+          
+          <div className="bg-customBlue text-white p-5 w-[550px] h-[600px] rounded-2xl ">
             <h2 className="text-xl mb-4 w-96 ">Select Camera ({selectedCount}/{typeLayout === "nineLayout" ? 9 : 4})</h2>
             <div className="flex justify-start">
               <button
@@ -211,7 +212,7 @@ function Page() {
                 <Icon icon="flowbite:grid-solid" width="24" height="24" />
               </button>
             </div>
-            <div className="space-y-4 ">
+            <div className="h-[430px] overflow-auto space-y-4 ">
 
               {Object.entries(groupedData).map(([zoneId, cameras]) => (
                 <div key={zoneId}>
@@ -226,7 +227,7 @@ function Page() {
                   </div>
 
                   {expandedZoneId === Number(zoneId) && (
-                    <ul className="max-h-96 overflow-auto transition-all duration-300 ease-in-out">
+                    <ul className=" transition-all duration-300 ease-in-out">
                       {cameras.map((camera) => (
                         <div
                           className="ml-2 mr-2 duration-300  hover:bg-customSlateBlue hover:bg-opacity-20"
@@ -258,7 +259,7 @@ function Page() {
               ))}
             </div>
 
-            <div className="flex justify-end mt-4">
+            <div className="bg-customBlue  flex justify-end mt-2">
               <button onClick={() => setShowPopup(false)} className="btn btn-cancle">
                 Close
               </button>
