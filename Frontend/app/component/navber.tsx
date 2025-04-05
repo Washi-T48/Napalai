@@ -14,7 +14,7 @@ export default function Navber() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`${Port.URL}/api/auth/user`, {
+        const response = await fetch(`${Port.URL}/auth/user`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`,
