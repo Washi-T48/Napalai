@@ -15,12 +15,15 @@ services:
     expose:
       - "8554" # RTSP
       - "8322" # RTSPS
+      - "8000" # RTP
+      - "8001" # RTCP
       - "8888" # HLS
       - "8889" # WEBRTC
-      - "1935" # RTMP
+      - "9996" # PLAYBACK
       - "9997" # API
+      - "9998" # METRICS
     volumes:
-      # - ./data/mediamtx:/data
+      - ./data/recordings:/recordings
       - ./mediamtx.yml:/mediamtx.yml
       - /etc/letsencrypt/live/cloud9.phraya.net/privkey.pem:/privkey.pem
       - /etc/letsencrypt/live/cloud9.phraya.net/cert.pem:/cert.pem
