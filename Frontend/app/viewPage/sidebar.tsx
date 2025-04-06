@@ -24,7 +24,7 @@ interface Camera {
   created: string;
 }
 
-const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePopup }) => {
+const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePopup }) => {
   const [openPopup, setOpenPopup] = useState(false);
   const [layoutActive, setLayoutActive] = useState(false);
   const toggleLayout = () => setLayoutActive(!layoutActive);
@@ -35,18 +35,20 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
   } | null>(null);
 
   const getZoneName = (zoneId: string) => {
-    console.log(zoneId);
     const zoneInfo = groupedZone.find((zone) => String(zone.id) === zoneId);
     return zoneInfo ? zoneInfo.name : "Unknown Zone";
   };
+  
   const [expandedZoneId, setExpandedZoneId] = useState(null);
   const toggleZone = (zoneId: any) => {
     setExpandedZoneId((prevZoneId) => (prevZoneId === zoneId ? null : zoneId));
   };
 
-
   const [groupedCameras, setGroupedCameras] = useState<Camera[]>([]);
   const [groupedZone, setGroupedZone] = useState<Zone[]>([]);
+  
+  const [isLoading, setIsLoading] = useState(false);
+
   const groupedData = groupedZone.reduce(
     (acc: { [key: string]: Camera[] }, zone) => {
       acc[zone.id] = groupedCameras.filter((camera) => camera.zone_id === zone.id);
@@ -56,20 +58,6 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
   );
 
   const [selectedCameras, setSelectedCameras] = useState<number[]>([]);
-  const [currentZoneId, setCurrentZoneId] = useState<number | null>(null); 
-
-  const handleCameraSelectionChange = (cameraId: number) => {
-    setSelectedCameras((prevSelected) =>
-      prevSelected.includes(cameraId)
-        ? prevSelected.filter((id) => id !== cameraId) 
-        : [...prevSelected, cameraId] 
-    );
-  };
-
-  const handleZoneChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const zoneId = parseInt(event.target.value); 
-    setSelectZone(zoneId); 
-  };
 
 
 
@@ -77,17 +65,12 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
     console.log("Updated Selected Cameras:", selectedCameras);
   }, [selectedCameras]);
 
-
-
-  const camerasInSelectedZone = groupedCameras.filter(camera => camera.zone_id === currentZoneId);
-
-
   const [fatchPage, setFatchPage] = useState(true);
-
 
   useEffect(() => {
     const getCamera = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(`${Port.URL}/cameras`, {
           method: "GET",
           headers: {
@@ -117,10 +100,10 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
 
         setGroupedCameras(data);
         setGroupedZone(dataZone);
-
-        console.log(data);
       } catch (error) {
         console.error("Error fetching camera and zone data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     getCamera();
@@ -128,6 +111,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
 
   const [deletePopupData, setDeletePopupData] = useState<Camera | null>(null);
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
+  
   const confirmDeleteCamera = (camera: Camera) => {
     setDeletePopupData(camera);
     setOpenDeletePopup(true);
@@ -137,6 +121,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
     if (!deletePopupData) return;
 
     try {
+      setIsLoading(true);
       const deleteResponse = await fetch(
         `${Port.URL}/cameras/${deletePopupData.id}`,
         {
@@ -147,21 +132,26 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
 
       if (!deleteResponse.ok) throw new Error("Failed to delete camera");
 
-      // อัปเดต state หลังจากลบสำเร็จ
       setGroupedCameras((prev) =>
         prev.filter((cam) => cam.id !== deletePopupData.id)
       );
       setOpenDeletePopup(false);
     } catch (error) {
       console.error("Error deleting camera:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const [newCameraName, setNewCameraName] = useState("");
+  
   const renameCamera = async (cameraId: number, newName: string) => {
-    console.log(`Renaming camera ID: ${cameraId} to "${newName}"`);
+    if (!newName.trim()) {
+      return;
+    }
 
     try {
+      setIsLoading(true);
       const renameResponseCamera = await fetch(
         `${Port.URL}/cameras/${cameraId}/rename`,
         {
@@ -175,16 +165,22 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
         }
       );
 
-      const responseText = await renameResponseCamera.text();
-      console.log("API Response:", responseText);
       if (!renameResponseCamera.ok) {
         throw new Error("Failed to rename camera");
       }
-      setFatchPage(!fatchPage);
 
-      console.log(`Renamed camera with ID: ${cameraId} to "${newName}"`);
+      setGroupedCameras(prevCameras => 
+        prevCameras.map(camera => 
+          camera.id === cameraId ? { ...camera, name: newName } : camera
+        )
+      );
+      
+      setRenamePopup(null);
+      setNewCameraName("");
     } catch (error) {
       console.error("Error renaming camera:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -194,11 +190,13 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
   } | null>(null);
   const [newZoneName, setNewZoneName] = useState("");
 
-  // Rename Zone API call
   const renameZone = async (zoneId: number, newName: string) => {
-    console.log(`Renaming zone ID: ${zoneId} to "${newName}"`);
+    if (!newName.trim()) {
+      return;
+    }
 
     try {
+      setIsLoading(true);
       const renameResponseZone = await fetch(`${Port.URL}/zones/${zoneId}`, {
         method: "PATCH",
         headers: {
@@ -213,17 +211,26 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
         throw new Error("Failed to rename zone");
       }
 
-      console.log(`Renamed zone with ID: ${zoneId} to "${newName}"`);
+      setGroupedZone(prevZones => 
+        prevZones.map(zone => 
+          zone.id === zoneId ? { ...zone, name: newName } : zone
+        )
+      );
+      
+      setRenameZonePopup(null);
+      setNewZoneName("");
     } catch (error) {
       console.error("Error renaming zone:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const [deleteZonePopup, setDeleteZonePopup] = useState<Zone | null>(null);
 
   const deleteZone = async (zoneId: number) => {
-    console.log("this zone :", zoneId);
     try {
+      setIsLoading(true);
       const deleteResponseZone = await fetch(`${Port.URL}/zones/${zoneId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -231,53 +238,65 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
 
       if (!deleteResponseZone.ok) throw new Error("Failed to delete zone");
 
-      // ลบโซนจาก state
       setGroupedZone((prev) => prev.filter((zone) => zone.id !== zoneId));
+      setGroupedCameras((prev) => prev.filter((camera) => camera.zone_id !== zoneId));
+      
       setDeleteZonePopup(null);
     } catch (error) {
       console.error("Error deleting zone:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex h-screen bg-gray-90 ">
-      <div className="w-64 h-screen bg-customBlue  text-white flex flex-col pt-16 overflow-auto ">
+    <div className="flex h-screen bg-gray-90">
+      <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16 overflow-auto relative">
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center z-40">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+          </div>
+        )}
+        
         <div className="">
           {Object.entries(groupedData).map(([zoneId, cameras]) => (
             <div key={zoneId}>
               <div
-                className="w-full text-xl cursor-pointer "
+                className="w-full text-xl cursor-pointer"
                 onClick={() => {
                   setSelectZone(zoneId);
                   toggleZone(zoneId);
                 }}
-
               >
                 <div
                   tabIndex={1}
-                  className="flex justify-between p-6 border-b border-opacity-20 border-gray-500 duration-300  hover:bg-customSlateBlue hover:bg-opacity-20 focus:bg-customSlateBlue focus:bg-opacity-20"
+                  className="flex justify-between p-6 border-b border-opacity-20 border-gray-500 duration-300 hover:bg-customSlateBlue hover:bg-opacity-20 focus:bg-customSlateBlue focus:bg-opacity-20"
                 >
                   {getZoneName(zoneId)}
                   <div className="flex gap-2">
                     <button
-                      onClick={() =>
+                      onClick={(e) => {
+                        e.stopPropagation(); 
                         setRenameZonePopup({
                           zoneId: Number(zoneId),
                           currentName: getZoneName(zoneId),
-                        })
-                      }
+                        });
+                        setNewZoneName(getZoneName(zoneId));
+                      }}
                     >
                       <Icon icon="mdi:rename" width="20" height="20" />
                     </button>
                     <button
-                      onClick={() =>
+                      onClick={(e) => {
+                        e.stopPropagation();  
                         setDeleteZonePopup({
                           id: Number(zoneId),
                           name: getZoneName(zoneId),
                           created: "",
                           location: "",
-                        })
-                      }
+                        });
+                      }}
                       className="text-white"
                     >
                       <Icon icon="ic:baseline-delete" width="20" height="20" />
@@ -286,28 +305,28 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
                 </div>
               </div>
               <ul
-                className="max-h-96 overflow-auto "
+                className="max-h-96 overflow-auto"
                 style={{
                   display: expandedZoneId === zoneId ? "block" : "none",
                 }}
               >
                 {cameras.map((camera) => (
                   <div
-                    className=" duration-300 rounded-md m-3 bg-customBlue bg-opacity-90  border-b border-opacity-20 border-gray-500 hover:bg-customSlateBlue hover:bg-opacity-20 "
+                    className="duration-300 rounded-md m-3 bg-customBlue bg-opacity-90 border-b border-opacity-20 border-gray-500 hover:bg-customSlateBlue hover:bg-opacity-20"
                     key={camera.id}
                   >
-                    <div className="flex justify-between items-center w-full p-4  ">
+                    <div className="flex justify-between items-center w-full p-4">
                       <div>{camera.name}</div>
 
-                      <div className="flex justify-end  gap-2">
-
+                      <div className="flex justify-end gap-2">
                         <button
-                          onClick={() =>
+                          onClick={() => {
                             setRenamePopup({
                               cameraId: camera.id,
                               currentName: camera.name,
-                            })
-                          }
+                            });
+                            setNewCameraName(camera.name); 
+                          }}
                         >
                           <Icon icon="mdi:rename" width="20" height="20" />
                         </button>
@@ -315,11 +334,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
                           onClick={() => confirmDeleteCamera(camera)}
                           className="text-white"
                         >
-                          <Icon
-                            icon="ic:baseline-delete"
-                            width="20"
-                            height="20"
-                          />
+                          <Icon icon="ic:baseline-delete" width="20" height="20" />
                         </button>
                       </div>
                     </div>
@@ -329,27 +344,33 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
             </div>
           ))}
         </div>
+
         {renamePopup && (
-          <div className="fixed inset-0 flex items-center justify-center  bg-black bg-opacity-50 z-60">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-60">
             <div className="bg-customBlue w-96 p-6 rounded-lg shadow-lg">
               <h2 className="text-lg font-semibold mb-4">Rename Camera</h2>
               <input
                 type="text"
-                className="border h-8 p-2  rounded text-black w-full  focus:outline-none"
+                className="border h-8 p-2 rounded text-black w-full focus:outline-none"
                 value={newCameraName}
                 onChange={(e) => setNewCameraName(e.target.value)}
+                autoFocus
               />
               <div className="flex justify-end gap-2 mt-4">
                 <button
-                  onClick={() => setRenamePopup(null)}
+                  onClick={() => {
+                    setRenamePopup(null);
+                    setNewCameraName("");
+                  }}
                   className="w-24 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => {
-                    renameCamera(renamePopup.cameraId, newCameraName);
-                    setRenamePopup(null);
+                    if (newCameraName.trim()) {
+                      renameCamera(renamePopup.cameraId, newCameraName);
+                    }
                   }}
                   className="w-24 py-2 bg-customฺButton text-white rounded hover:bg-customฺButtomHover"
                 >
@@ -359,6 +380,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
             </div>
           </div>
         )}
+
         {openDeletePopup && deletePopupData && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-60">
             <div className="bg-customBlue p-6 rounded-lg shadow-lg">
@@ -371,7 +393,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
               <div className="flex flex-col justify-center bg-red-200 p-2 my-2 border-l-8 border-red-950">
                 <div className="text-red-800 text-lg">warning</div>
                 <div className="text-gray-500 text-sm">
-                  By Deleteing this camera,you won't be able to access the
+                  By Deleteing this camera, you won't be able to access the
                   system.
                 </div>
               </div>
@@ -402,18 +424,23 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
                 className="border h-8 p-2 rounded text-black w-full focus:outline-none"
                 value={newZoneName}
                 onChange={(e) => setNewZoneName(e.target.value)}
+                autoFocus
               />
               <div className="flex justify-end gap-2 mt-4">
                 <button
-                  onClick={() => setRenameZonePopup(null)}
+                  onClick={() => {
+                    setRenameZonePopup(null);
+                    setNewZoneName("");
+                  }}
                   className="w-24 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => {
-                    renameZone(renameZonePopup.zoneId, newZoneName);
-                    setRenameZonePopup(null);
+                    if (newZoneName.trim()) {
+                      renameZone(renameZonePopup.zoneId, newZoneName);
+                    }
                   }}
                   className="w-24 py-2 bg-customฺButton text-white rounded hover:bg-customฺButtomHover"
                 >
@@ -423,6 +450,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
             </div>
           </div>
         )}
+
         {deleteZonePopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-60">
             <div className="bg-customBlue p-6 rounded-lg shadow-lg">
@@ -477,14 +505,14 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
               </div>
             )}
           </div>
-          
-
 
           <div className="flex justify-end p-2 w-full">
             {/* Add Camera Button */}
             <div className="flex">
-              <button onClick={() => togglePopup(true)}
-                className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl">
+              <button 
+                onClick={() => togglePopup(true)}
+                className="flex justify-center items-center w-12 h-12 hover:bg-customSlateBlue hover:bg-opacity-30 text-white rounded-3xl"
+              >
                 <Icon icon="carbon:select-window" width="24" height="24" />
               </button>
               <button
