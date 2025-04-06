@@ -16,6 +16,7 @@
     "express": "^4.21.2",
     "framer-motion": "^12.4.10",
     "fs": "^0.0.1-security",
+    "hls.js": "^1.6.1",
     "next": "15.1.2",
     "react": "^19.0.0",
     "react-calendar": "^5.1.0",

@@ -216,7 +216,7 @@ function Page() {
                     
 
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl2:grid-cols-5 gap-4 px-10">
                         {paginatedData.length > 0 ? (
                             paginatedData.map((item, index) => (
                                 <Link

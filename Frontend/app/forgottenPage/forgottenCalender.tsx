@@ -27,11 +27,22 @@ interface CalendarProps {
 const ForgottenCalendar: React.FC<CalendarProps> = ({ forgottenResponse = [] }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
 
+    const getTotalItemCountForMonth = () => {
+        const monthStart = startOfMonth(currentMonth);
+        const monthEnd = endOfMonth(currentMonth);
+        const itemsInMonth = forgottenResponse.filter(item => {
+            const itemDate = new Date(item.created);
+            return itemDate >= monthStart && itemDate <= monthEnd;
+        });
+
+        return itemsInMonth.reduce((total, item) => total + (item.itemCount || 1), 0);
+    };
+
     const renderHeader = () => {
         const dateFormat = 'MMMM yyyy';
 
         return (
-            <div className="flex justify-between items-center p-2 rounded-t-md text-white bg-customSlateBlue">
+            <div className="flex justify-between items-center p-2 px-6 rounded-t-md  text-white bg-customSlateBlue">
                 <div className="text-2xl font-bold">{format(currentMonth, dateFormat)}</div>
                 <div className='flex'>
                     <button onClick={() => setCurrentMonth(addMonths(currentMonth, -1))} className="text-white px-4 py-2 rounded-full transform transition-transform hover:scale-105">
@@ -47,6 +58,7 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ forgottenResponse = [] }) 
             </div>
         );
     };
+    
 
     const renderDays = () => {
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -119,14 +131,18 @@ const ForgottenCalendar: React.FC<CalendarProps> = ({ forgottenResponse = [] }) 
 
         return <div>{rows}</div>;
     };
-
+    const totalItemsInMonth = getTotalItemCountForMonth();
     return (
         <div className="w-full max-w-7xl mx-auto mt-4">
             {renderHeader()}
             {renderDays()}
             {renderCells()}
+            <div className="flex justify-end  mt-4 gap-2 text-white ">
+                <div className="text-md ">Total Items in This Month {totalItemsInMonth} item </div>
+            </div>
         </div>
     );
+    
 };
 
 export default ForgottenCalendar;

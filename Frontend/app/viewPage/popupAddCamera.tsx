@@ -119,6 +119,28 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
       console.error("Error posting camera data:", error);
     }
   };
+  const isFormValid = () => {
+    return (
+      cameraName !== "" &&
+      location !== "" &&
+      ip !== "" &&
+      port !== "" &&
+      path !== "" &&
+      onvifUsername !== "" &&
+      onvifPassword !== "" &&
+      rtspUrl !== "" &&
+      rtspUsername !== "" &&
+      rtspPassword !== "" 
+     
+    );
+  };
+
+  const isFormValidZones = () => {
+    return (
+      createZone !== "" &&
+      location !== "" 
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -144,21 +166,14 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
           </div>
 
 
-          <div>
-            <Icon
-              onClick={() => setOpenPopup(false)}
-              icon="icon-park-solid:close-one"
-              width="30"
-              height="30"
-            />
-          </div>
+        
         </div>
 
 
 
         {view === 'addCamera' ? (
 
-          <div className="flex flex-col gap-2  h-auto transition-all duration-300 overflow-hidden">
+          <div className="flex flex-col gap-2 h-auto ">
             <div className="text-2xl font-bold py-3">
               Add camera
             </div>
@@ -172,7 +187,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                   setShowCreateZone(e.target.value === "Create Name");
                 }}
                 value={zoneName}
-                className="custom-input px-0 py-2"
+                className="custom-input px-3 h-8 text-sm"
               >
                 <option
                 className="px-2 mt-4"
@@ -196,7 +211,8 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                     onChange={(e) => { setCreateZones(e.target.value) }}
                     value={createZone}
                     type="text"
-                    className="custom-input px-3"
+                    placeholder="Enter your create zone name"
+                    className="custom-input px-3 h-8 text-sm"
                   />
                 </div>
                 <div className="flex justify-between items-center">
@@ -205,7 +221,8 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                     onChange={(e) => { setLocationZone(e.target.value) }}
                     value={locationZone}
                     type="text"
-                    className="custom-input px-3"
+                    placeholder="Enter your location"
+                    className="custom-input px-3 h-8 text-sm"
                   />
                 </div>
                 <div className="flex justify-end">
@@ -230,7 +247,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your camera name..."
                 value={cameraName}
                 type="text"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -239,7 +256,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 onChange={(e) => { setLocation(e.target.value) }}
                 placeholder="Enter your Location..."
                 value={location}
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
 
@@ -250,7 +267,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your IP..."
                 value={ip}
                 type="text"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -259,8 +276,8 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 onChange={(e) => { setPort(e.target.value) }}
                 placeholder="Enter your Port..."
                 value={port}
-                type="text"
-                className="custom-input px-3"
+                type="url"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -269,8 +286,8 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 onChange={(e) => { setPath(e.target.value) }}
                 placeholder="Enter your Path..."
                 value={path}
-                type="text"
-                className="custom-input px-3"
+                type="url"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
 
@@ -281,7 +298,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your Username..."
                 value={onvifUsername}
                 type="text"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -290,8 +307,8 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 onChange={(e) => { setOnvifPassword(e.target.value) }}
                 placeholder="Enter your Password..."
                 value={onvifPassword}
-                type="text"
-                className="custom-input px-3"
+                type="password"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
 
@@ -302,7 +319,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your URL..."
                 value={rtspUrl}
                 type="text"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -312,7 +329,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your RTSP Username..."
                 value={rtspUsername}
                 type="text"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -321,21 +338,29 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 onChange={(e) => { setRtspPassword(e.target.value) }}
                 placeholder="Enter your RTSP Password..."
                 value={rtspPassword}
-                type="text"
-                className="custom-input px-3"
+                type="password"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
-            <div className="flex justify-end ">
+            <div className="flex justify-end gap-2 mt-4">
+              <button 
+              onClick={() => setOpenPopup(false)}
+              className="btn btn-cancle">
+                close
+              </button>
               <button
                 onClick={postCamera}
-                className="btn btn-outline px-3"
+                className={`btn btn-outline px-3 ${
+                  !isFormValid() ? "cursor-not-allowed" : "bg-customButton hover-none"
+                }`}
+                disabled={!isFormValid()}
               >
                 Submit
               </button>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col h-72 gap-2 transition-all duration-300 ">
+          <div className="flex flex-col h-auto gap-2 transition-all duration-300 ">
             <div className="text-2xl font-bold py-3">
               Create Zone
             </div>
@@ -347,7 +372,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                   placeholder="Enter your Zone Name..."
                   value={createZone}
                   type="text"
-                  className="custom-input px-3"
+                  className="custom-input px-3 h-8 text-sm"
                 />
               </div>
               <div className="flex justify-between items-center">
@@ -357,19 +382,28 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                   placeholder="Enter your Location Zone..."
                   value={locationZone}
                   type="text"
-                  className="custom-input px-3"
+                  className="custom-input px-3 h-8 text-sm"
                 />
               </div>
-              <div className="flex justify-end pt-3 ">
+              <div className="flex justify-end pt-3 gap-2">
+              <button 
+              onClick={() => setOpenPopup(false)}
+              className="btn btn-cancle">
+                close
+              </button>
                 <button
                   onClick={() => {
                     postCreateZone();
                     setShowCreateZone(false);
                   }}
-                  className="btn btn-outline"
+                  className={`btn btn-outline px-3 ${!isFormValidZones() ? "cursor-not-allowed" : "bg-customButton"}`}
+
+                 
+                  disabled={!isFormValidZones()}
                 >
                   Create
                 </button>
+                
               </div>
             </div>
           </div>

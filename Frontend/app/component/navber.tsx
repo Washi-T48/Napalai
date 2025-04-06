@@ -3,10 +3,11 @@ import Image from "next/image";
 import unnyFace from "../../public/imges/user.png";
 import Link from "next/link";
 import Port from "../port";
+import { Icon } from '@iconify/react';
 
 export default function Navber() {
   const [showMenu, setShowMenu] = useState(false);
-  const [showHamberger, setShowHamberger] = useState(false);// ใช้เพื่อควบคุมการแสดงผลเมนู
+  const [showHamberger, setShowHamberger] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const [userData, setUserData] = useState<any>(null);
@@ -14,7 +15,7 @@ export default function Navber() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`${Port.URL}/auth/user/`, {
+        const response = await fetch(`${Port.URL}/auth/user`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -73,7 +74,7 @@ export default function Navber() {
       {/* Hamburger Menu for mobile */}
       <div className="lg:hidden flex items-center">
         <button onClick={() => setShowHamberger(!showHamberger)} className="text-3xl">
-          &#9776;
+        <Icon icon="charm:menu-hamburger" width="28" height="28" />
         </button>
       </div>
 

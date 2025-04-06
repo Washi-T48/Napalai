@@ -58,6 +58,12 @@ module.exports = {
       images: {
         domains: ["cloud.phraya.net"],
       },
+      zIndex: {
+        '60': '60',
+      },
+      screens: {
+        'xl2': '1700px', // เพิ่มขนาดหน้าจอที่ 1770px
+      },
     },
   },
   plugins: [
