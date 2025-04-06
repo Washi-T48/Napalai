@@ -144,14 +144,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
           </div>
 
 
-          <div>
-            <Icon
-              onClick={() => setOpenPopup(false)}
-              icon="icon-park-solid:close-one"
-              width="30"
-              height="30"
-            />
-          </div>
+        
         </div>
 
 
@@ -259,7 +252,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 onChange={(e) => { setPort(e.target.value) }}
                 placeholder="Enter your Port..."
                 value={port}
-                type="text"
+                type="url"
                 className="custom-input px-3"
               />
             </div>
@@ -269,7 +262,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 onChange={(e) => { setPath(e.target.value) }}
                 placeholder="Enter your Path..."
                 value={path}
-                type="text"
+                type="url"
                 className="custom-input px-3"
               />
             </div>
@@ -290,7 +283,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 onChange={(e) => { setOnvifPassword(e.target.value) }}
                 placeholder="Enter your Password..."
                 value={onvifPassword}
-                type="text"
+                type="password"
                 className="custom-input px-3"
               />
             </div>
@@ -321,11 +314,16 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 onChange={(e) => { setRtspPassword(e.target.value) }}
                 placeholder="Enter your RTSP Password..."
                 value={rtspPassword}
-                type="text"
+                type="password"
                 className="custom-input px-3"
               />
             </div>
-            <div className="flex justify-end ">
+            <div className="flex justify-end gap-2 mt-4">
+              <button 
+              onClick={() => setOpenPopup(false)}
+              className="btn btn-cancle">
+                close
+              </button>
               <button
                 onClick={postCamera}
                 className="btn btn-outline px-3"
@@ -335,7 +333,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col h-72 gap-2 transition-all duration-300 ">
+          <div className="flex flex-col h-auto gap-2 transition-all duration-300 ">
             <div className="text-2xl font-bold py-3">
               Create Zone
             </div>
@@ -361,6 +359,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 />
               </div>
               <div className="flex justify-end pt-3 ">
+                
                 <button
                   onClick={() => {
                     postCreateZone();
@@ -370,6 +369,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 >
                   Create
                 </button>
+                
               </div>
             </div>
           </div>

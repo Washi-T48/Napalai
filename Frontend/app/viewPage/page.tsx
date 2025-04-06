@@ -77,29 +77,72 @@ function Page() {
     localStorage.setItem("selectedZoneId", String(selectedZoneId));
   }, [selectedCamerasNineLayout, selectedCamerasFourLayout, selectedCamerasByZone, typeLayout, selectedZoneId]);
 
-  const handleCameraSelectionChange = (cameraId: number) => {
-    const updateSelection = (layout: string) => {
-      if (layout === "nineLayout") {
-        setSelectedCamerasNineLayout((prevSelected) => {
-          const newSelected = prevSelected.includes(cameraId)
-            ? prevSelected.filter((id) => id !== cameraId)
-            : [...prevSelected, cameraId];
-          setSelectedCount(newSelected.length);
-          return newSelected;
-        });
-      } else if (layout === "fourLayout") {
-        setSelectedCamerasFourLayout((prevSelected) => {
-          const newSelected = prevSelected.includes(cameraId)
-            ? prevSelected.filter((id) => id !== cameraId)
-            : [...prevSelected, cameraId];
-          setSelectedCount(newSelected.length);
-          return newSelected;
-        });
-      }
-    };
 
-    updateSelection(typeLayout);
+  const [selectedZoneNineLayout, setSelectedZoneNineLayout] = useState<Record<number, number[]>>({});
+  const [selectedZoneFourLayout, setSelectedZoneFourLayout] = useState<Record<number, number[]>>({});
+
+
+  const handleCameraSelectionChange = (cameraId: number, zoneId: number) => {
+    const updateSelection = (
+      layout: "nineLayout" | "fourLayout",
+      selectedState: number[],
+      setSelectedState: React.Dispatch<React.SetStateAction<number[]>>,
+      zoneMap: Record<number, number[]>,
+      setZoneMap: React.Dispatch<React.SetStateAction<Record<number, number[]>>>
+    ) => {
+      const alreadySelected = selectedState.includes(cameraId);
+      let updatedSelected;
+  
+      if (alreadySelected) {
+        updatedSelected = selectedState.filter((id) => id !== cameraId); // Remove camera from selection
+      } else {
+        updatedSelected = [...selectedState, cameraId]; // Add camera to selection
+      }
+  
+      const updatedZone = {
+        ...zoneMap,
+        [zoneId]: alreadySelected
+          ? (zoneMap[zoneId] || []).filter((id) => id !== cameraId)
+          : [...(zoneMap[zoneId] || []), cameraId],
+      };
+  
+      setSelectedState(updatedSelected);
+      setZoneMap(updatedZone);
+      setSelectedCount(updatedSelected.length);
+    };
+  
+    if (typeLayout === "nineLayout") {
+      updateSelection(
+        "nineLayout",
+        selectedCamerasNineLayout,
+        setSelectedCamerasNineLayout,
+        selectedZoneNineLayout,
+        setSelectedZoneNineLayout
+      );
+    } else if (typeLayout === "fourLayout") {
+      updateSelection(
+        "fourLayout",
+        selectedCamerasFourLayout,
+        setSelectedCamerasFourLayout,
+        selectedZoneFourLayout,
+        setSelectedZoneFourLayout
+      );
+    }
   };
+
+  const clearSelection = () => {
+    if (typeLayout === "nineLayout") {
+      setSelectedCamerasNineLayout([]);
+      setSelectedZoneNineLayout({});
+      setSelectedCount(0);
+    } else {
+      setSelectedCamerasFourLayout([]);
+      setSelectedZoneFourLayout({});
+      setSelectedCount(0);
+    }
+  };
+
+
 
   const togglePopup = () => setShowPopup(!showPopup);
 
@@ -195,9 +238,17 @@ function Page() {
 
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          
+
           <div className="bg-customBlue text-white p-5 w-[550px] h-[600px] rounded-2xl ">
-            <h2 className="text-xl mb-4 w-96 ">Select Camera ({selectedCount}/{typeLayout === "nineLayout" ? 9 : 4})</h2>
+            <h2 className="text-xl mb-4 w-96">
+              Select Camera (
+              {
+                typeLayout === "nineLayout"
+                  ? `${selectedCamerasNineLayout.length}/${9}`
+                  : `${selectedCamerasFourLayout.length}/${4}`
+              })
+            </h2>
+
             <div className="flex justify-start">
               <button
                 className={`flex justify-center items-center w-20 p-2 rounded-l-md text-sm bg-customButton transition-all duration-300  ${typeLayout === "nineLayout" ? "bg-customฺButtomHover" : "bg-customฺButton"}`}
@@ -236,20 +287,20 @@ function Page() {
                           <div className="flex justify-between items-center w-full p-4">
                             <div>{camera.name}</div>
                             <input
-                              type="checkbox"
-                              id={`camera-${camera.id}`}
-                              value={camera.id}
-                              checked={
-                                typeLayout === "nineLayout"
-                                  ? selectedCamerasNineLayout.includes(camera.id)
-                                  : selectedCamerasFourLayout.includes(camera.id)
-                              }
-                              onChange={() => handleCameraSelectionChange(camera.id)} // เลือกกล้องที่ต้องการ
-                              disabled={
-                                (typeLayout === "nineLayout" && selectedCamerasNineLayout.length >= 9) ||
-                                (typeLayout === "fourLayout" && selectedCamerasFourLayout.length >= 4)
-                              }
-                            />
+        type="checkbox"
+        id={`camera-${camera.id}`}
+        value={camera.id}
+        checked={
+          typeLayout === "nineLayout"
+            ? selectedCamerasNineLayout.includes(camera.id)
+            : selectedCamerasFourLayout.includes(camera.id)
+        }
+        onChange={() => handleCameraSelectionChange(camera.id, camera.zone_id)}
+        disabled={
+          (typeLayout === "nineLayout" && selectedCamerasNineLayout.length >= 9 && !selectedCamerasNineLayout.includes(camera.id)) ||
+          (typeLayout === "fourLayout" && selectedCamerasFourLayout.length >= 4 && !selectedCamerasFourLayout.includes(camera.id))
+        }
+      />
                           </div>
                         </div>
                       ))}
@@ -263,6 +314,7 @@ function Page() {
               <button onClick={() => setShowPopup(false)} className="btn btn-cancle">
                 Close
               </button>
+      
             </div>
           </div>
         </div>
