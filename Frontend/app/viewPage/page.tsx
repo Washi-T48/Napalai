@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import HLSVideoPlayer from "../component/HLSVideoPlayer";
 import Navber from "../component/navber";
 import Sidebar from "./sidebar";
 import Port from "../port";
@@ -27,6 +28,8 @@ function Page() {
   const [typeLayout, setTypeLayout] = useState<string>("nineLayout");
   const [selectedZoneId, setSelectedZoneId] = useState<number>(1); // default to zone 1
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [zones, setZones] = useState<Zone[]>([]);
+
 
   const [selectedCamerasNineLayout, setSelectedCamerasNineLayout] = useState<number[]>([]);
   const [selectedCamerasFourLayout, setSelectedCamerasFourLayout] = useState<number[]>([]);
@@ -60,6 +63,19 @@ function Page() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchZones = async () => {
+      try {
+        const res = await fetch(`${Port.URL}/zones`);
+        const data = await res.json();
+        setZones(data);
+      } catch (error) {
+        console.error("Error fetching zones:", error);
+      }
+    };
+    fetchZones();
+  }, []);
+  
   useEffect(() => {
     const storedTypeLayout = localStorage.getItem("typeLayout");
     const storedNine = localStorage.getItem("selectedCamerasNineLayout");
@@ -169,21 +185,26 @@ function Page() {
   const allCamerasToShow = [...camerasToShow, ...emptyCameras];
 
   const groupedData = groupedCameras.reduce((acc, camera) => {
-    if (!acc[camera.zone_id]) {
-      acc[camera.zone_id] = [];
+    const zoneId = camera.zone_id || 0; // ใส่ 0 แทนกรณีที่ไม่มี zone
+    if (!acc[zoneId]) {
+      acc[zoneId] = [];
     }
-    acc[camera.zone_id].push(camera as any);
+    acc[zoneId].push(camera as any);
     return acc;
   }, {} as Record<number, Camera[]>);
+  
 
   const toggleZone = (zoneId: number) => {
     setExpandedZoneId(expandedZoneId === zoneId ? null : zoneId);
   };
 
-  const getZoneName = (zoneId: string) => {
-    const zoneInfo = groupedCameras.find((zone) => String(zone.zone_id) === zoneId);
+  const getZoneName = (zoneId: string | number) => {
+    if (Number(zoneId) === 0) return "Unassigned";
+    const zoneInfo = zones.find((zone) => String(zone.id) === String(zoneId));
     return zoneInfo ? zoneInfo.name : "Unknown Zone";
   };
+  
+  
 
 
   return (
@@ -215,10 +236,17 @@ function Page() {
                       ) : (
                         <div className="relative w-full h-[280px] bg-black z-10">
                           {/* Video Background */}
-                          <video className="w-full h-full object-cover" autoPlay muted loop>
-                            <source src={item.stream_url || "default-video-url.mp4"} type="video/mp4" />
-                            Your browser does not support the video tag.
-                          </video>
+                          {typeof item === "string" ? (
+                            <h4 className="font-bold text-sm p-2 px-4 border-2 border-opacity-50  border-customRed">{item}</h4>
+                          ) : (
+                            <HLSVideoPlayer
+                            src={`${item.stream_url}/index.m3u8`}
+                            name={item.name}
+                        
+                          />
+
+                          )}
+
 
                           {/* Item Name in the Bottom Left */}
                           <div className="absolute bottom-0 left-0 text-white text-xs font-bold px-4 py-2 rounded-md">
