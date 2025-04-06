@@ -61,6 +61,9 @@ module.exports = {
       zIndex: {
         '60': '60',
       },
+      screens: {
+        'xl2': '1700px', // เพิ่มขนาดหน้าจอที่ 1770px
+      },
     },
   },
   plugins: [

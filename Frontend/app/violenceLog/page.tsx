@@ -159,53 +159,51 @@ function Page() {
 
                 <div className="pt-5">
                     <div className="flex justify-between">
-                    <div className="flex justify-start gap-2 p-4">
-                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center  items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
-                        <Icon icon="ooui:previous-ltr" width="15" height="15" />
-                        </button>
-                        {Array.from({ length: totalPages }, (_, index) => (
-                            <button 
-                                key={index} 
-                                onClick={() => setSwitchPage(index)}
-                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 text-xs bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
-                                {index + 1}
+                        <div className="flex justify-start gap-2 p-4">
+                            <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center  items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                                <Icon icon="ooui:previous-ltr" width="15" height="15" />
                             </button>
-                        ))}
-                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center text-xs w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
-                        <Icon icon="ooui:previous-rtl" width="15" height="15" />
-                        </button>
-                    </div>
-                    <div className="relative w-full flex justify-end p-4">
-                        <button onClick={() => SetFilterButton(!FilterButton)} className="p-2 w-20 text-xs lg:w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white">
-                            Filter
-                        </button>
-                        {FilterButton && (
-                            <div className="absolute top-16 z-10 bg-white rounded-md shadow-lg p-4">
-                                <div className="flex">
-                                    <MyCalendar 
-                                    handleClearFilters={handleClearFilters}
-                                    onDateSelect={handleDateSelect} />
-                                    <DropdownViolence
-                                        onSelect={(type, value) => {
-                                            if (type === "zone") setSelectedZone(value);
-                                            if (type === "camera") setSelectedCamera(value);
-                                        }}
-                                        zone={getZones.map(z => z.name)}
-                                        camera={getCameras.map(c => c.name)}
-                                        status={["returned", "unreturned"]}
-                                    />
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setSwitchPage(index)}
+                                    className={`p-2 rounded ${switchPage === index ? "w-10 h-10 text-xs bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
+                                    {index + 1}
+                                </button>
+                            ))}
+                            <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center text-xs w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                                <Icon icon="ooui:previous-rtl" width="15" height="15" />
+                            </button>
+                        </div>
+                        <div className="relative w-full flex justify-end p-4">
+                            <button onClick={() => SetFilterButton(!FilterButton)} className="p-2 w-20 text-xs lg:w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white">
+                                Filter
+                            </button>
+                            {FilterButton && (
+                                <div className="absolute top-16 z-10 bg-white rounded-md shadow-lg p-4">
+                                    <div className="flex">
+                                        <MyCalendar
+                                            handleClearFilters={handleClearFilters}
+                                            onDateSelect={handleDateSelect} />
+                                        <DropdownViolence
+                                            onSelect={(type, value) => {
+                                                if (type === "zone") setSelectedZone(value);
+                                                if (type === "camera") setSelectedCamera(value);
+                                            }}
+                                            zone={getZones.map(z => z.name)}
+                                            camera={getCameras.map(c => c.name)}
+                                            status={["returned", "unreturned"]}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
 
-                    </div>
-                    
 
-                   
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 px-10">
-                        
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl2:grid-cols-5 gap-4 px-10">
                         {paginatedData.length > 0 ? (
                             paginatedData.map((item, index) => (
                                 <Link href={`/viewViolencePage/${item.violenceid}`} key={`${item.violenceid}-${index}`}>

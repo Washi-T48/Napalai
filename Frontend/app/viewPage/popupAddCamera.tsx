@@ -187,7 +187,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                   setShowCreateZone(e.target.value === "Create Name");
                 }}
                 value={zoneName}
-                className="custom-input px-0 py-2"
+                className="custom-input px-3 h-8 text-sm"
               >
                 <option
                 className="px-2 mt-4"
@@ -211,7 +211,8 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                     onChange={(e) => { setCreateZones(e.target.value) }}
                     value={createZone}
                     type="text"
-                    className="custom-input px-3"
+                    placeholder="Enter your create zone name"
+                    className="custom-input px-3 h-8 text-sm"
                   />
                 </div>
                 <div className="flex justify-between items-center">
@@ -220,7 +221,8 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                     onChange={(e) => { setLocationZone(e.target.value) }}
                     value={locationZone}
                     type="text"
-                    className="custom-input px-3"
+                    placeholder="Enter your location"
+                    className="custom-input px-3 h-8 text-sm"
                   />
                 </div>
                 <div className="flex justify-end">
@@ -245,7 +247,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your camera name..."
                 value={cameraName}
                 type="text"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -254,7 +256,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 onChange={(e) => { setLocation(e.target.value) }}
                 placeholder="Enter your Location..."
                 value={location}
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
 
@@ -265,7 +267,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your IP..."
                 value={ip}
                 type="text"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -275,7 +277,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your Port..."
                 value={port}
                 type="url"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -285,7 +287,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your Path..."
                 value={path}
                 type="url"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
 
@@ -296,7 +298,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your Username..."
                 value={onvifUsername}
                 type="text"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -306,7 +308,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your Password..."
                 value={onvifPassword}
                 type="password"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
 
@@ -317,7 +319,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your URL..."
                 value={rtspUrl}
                 type="text"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -327,7 +329,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your RTSP Username..."
                 value={rtspUsername}
                 type="text"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
@@ -337,7 +339,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 placeholder="Enter your RTSP Password..."
                 value={rtspPassword}
                 type="password"
-                className="custom-input px-3"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-end gap-2 mt-4">
@@ -370,7 +372,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                   placeholder="Enter your Zone Name..."
                   value={createZone}
                   type="text"
-                  className="custom-input px-3"
+                  className="custom-input px-3 h-8 text-sm"
                 />
               </div>
               <div className="flex justify-between items-center">
@@ -380,7 +382,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                   placeholder="Enter your Location Zone..."
                   value={locationZone}
                   type="text"
-                  className="custom-input px-3"
+                  className="custom-input px-3 h-8 text-sm"
                 />
               </div>
               <div className="flex justify-end pt-3 gap-2">
