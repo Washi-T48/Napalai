@@ -468,17 +468,17 @@ pathDefaults:
   recordPath: ./recordings/%path/%Y-%m-%d_%H-%M-%S-%f
   # Format of recorded segments.
   # Available formats are "fmp4" (fragmented MP4) and "mpegts" (MPEG-TS).
-  recordFormat: mpegts
+  recordFormat: fmp4
   # fMP4 segments are concatenation of small MP4 files (parts), each with this duration.
   # MPEG-TS segments are concatenation of 188-bytes packets, flushed to disk with this period.
   # When a system failure occurs, the last part gets lost.
   # Therefore, the part duration is equal to the RPO (recovery point objective).
-  recordPartDuration: 1s
+  recordPartDuration: 10s
   # Minimum duration of each segment.
-  recordSegmentDuration: 30m
+  recordSegmentDuration: 5m
   # Delete segments after this timespan.
   # Set to 0s to disable automatic deletion.
-  recordDeleteAfter: 1d
+  recordDeleteAfter: 1h
 
   ###############################################
   # Default path settings -> Publisher source (when source is "publisher")
