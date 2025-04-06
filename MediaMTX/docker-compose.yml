@@ -19,11 +19,11 @@ services:
       - "8889" # WEBRTC
       - "1935" # RTMP
       - "9997" # API
-    # volumes:
-    #   - ./data/mediamtx:/data
-    #   - ./mediamtx:/mediamtx.yml
-    #   - ./server.key:/server.key
-    #   - ./server.crt:/server.crt
+    volumes:
+      # - ./data/mediamtx:/data
+      - ./mediamtx.yml:/mediamtx.yml
+      - /etc/letsencrypt/live/cloud9.phraya.net/privkey.pem:/privkey.pem
+      - /etc/letsencrypt/live/cloud9.phraya.net/cert.pem:/cert.pem
 
 networks:
   napalai:
