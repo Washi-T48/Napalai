@@ -92,25 +92,25 @@ function Page() {
     ) => {
       const alreadySelected = selectedState.includes(cameraId);
       let updatedSelected;
-  
+
       if (alreadySelected) {
         updatedSelected = selectedState.filter((id) => id !== cameraId); // Remove camera from selection
       } else {
         updatedSelected = [...selectedState, cameraId]; // Add camera to selection
       }
-  
+
       const updatedZone = {
         ...zoneMap,
         [zoneId]: alreadySelected
           ? (zoneMap[zoneId] || []).filter((id) => id !== cameraId)
           : [...(zoneMap[zoneId] || []), cameraId],
       };
-  
+
       setSelectedState(updatedSelected);
       setZoneMap(updatedZone);
       setSelectedCount(updatedSelected.length);
     };
-  
+
     if (typeLayout === "nineLayout") {
       updateSelection(
         "nineLayout",
@@ -213,7 +213,7 @@ function Page() {
                       {typeof item === "string" ? (
                         <h4 className="font-bold text-sm p-2 px-4 border-2 border-opacity-50 border-customRed">{item}</h4>
                       ) : (
-                        <div className="relative w-full h-[280px] bg-black">
+                        <div className="relative w-full h-[280px] bg-black z-10">
                           {/* Video Background */}
                           <video className="w-full h-full object-cover" autoPlay muted loop>
                             <source src={item.stream_url || "default-video-url.mp4"} type="video/mp4" />
@@ -287,20 +287,20 @@ function Page() {
                           <div className="flex justify-between items-center w-full p-4">
                             <div>{camera.name}</div>
                             <input
-        type="checkbox"
-        id={`camera-${camera.id}`}
-        value={camera.id}
-        checked={
-          typeLayout === "nineLayout"
-            ? selectedCamerasNineLayout.includes(camera.id)
-            : selectedCamerasFourLayout.includes(camera.id)
-        }
-        onChange={() => handleCameraSelectionChange(camera.id, camera.zone_id)}
-        disabled={
-          (typeLayout === "nineLayout" && selectedCamerasNineLayout.length >= 9 && !selectedCamerasNineLayout.includes(camera.id)) ||
-          (typeLayout === "fourLayout" && selectedCamerasFourLayout.length >= 4 && !selectedCamerasFourLayout.includes(camera.id))
-        }
-      />
+                              type="checkbox"
+                              id={`camera-${camera.id}`}
+                              value={camera.id}
+                              checked={
+                                typeLayout === "nineLayout"
+                                  ? selectedCamerasNineLayout.includes(camera.id)
+                                  : selectedCamerasFourLayout.includes(camera.id)
+                              }
+                              onChange={() => handleCameraSelectionChange(camera.id, camera.zone_id)}
+                              disabled={
+                                (typeLayout === "nineLayout" && selectedCamerasNineLayout.length >= 9 && !selectedCamerasNineLayout.includes(camera.id)) ||
+                                (typeLayout === "fourLayout" && selectedCamerasFourLayout.length >= 4 && !selectedCamerasFourLayout.includes(camera.id))
+                              }
+                            />
                           </div>
                         </div>
                       ))}
@@ -314,7 +314,7 @@ function Page() {
               <button onClick={() => setShowPopup(false)} className="btn btn-cancle">
                 Close
               </button>
-      
+
             </div>
           </div>
         </div>

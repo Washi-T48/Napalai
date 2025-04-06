@@ -119,6 +119,28 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
       console.error("Error posting camera data:", error);
     }
   };
+  const isFormValid = () => {
+    return (
+      cameraName !== "" &&
+      location !== "" &&
+      ip !== "" &&
+      port !== "" &&
+      path !== "" &&
+      onvifUsername !== "" &&
+      onvifPassword !== "" &&
+      rtspUrl !== "" &&
+      rtspUsername !== "" &&
+      rtspPassword !== "" 
+     
+    );
+  };
+
+  const isFormValidZones = () => {
+    return (
+      createZone !== "" &&
+      location !== "" 
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -151,7 +173,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
 
         {view === 'addCamera' ? (
 
-          <div className="flex flex-col gap-2  h-auto transition-all duration-300 overflow-hidden">
+          <div className="flex flex-col gap-2 h-auto ">
             <div className="text-2xl font-bold py-3">
               Add camera
             </div>
@@ -326,7 +348,10 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
               </button>
               <button
                 onClick={postCamera}
-                className="btn btn-outline px-3"
+                className={`btn btn-outline px-3 ${
+                  !isFormValid() ? "cursor-not-allowed" : "bg-customButton hover-none"
+                }`}
+                disabled={!isFormValid()}
               >
                 Submit
               </button>
@@ -358,14 +383,21 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                   className="custom-input px-3"
                 />
               </div>
-              <div className="flex justify-end pt-3 ">
-                
+              <div className="flex justify-end pt-3 gap-2">
+              <button 
+              onClick={() => setOpenPopup(false)}
+              className="btn btn-cancle">
+                close
+              </button>
                 <button
                   onClick={() => {
                     postCreateZone();
                     setShowCreateZone(false);
                   }}
-                  className="btn btn-outline"
+                  className={`btn btn-outline px-3 ${!isFormValidZones() ? "cursor-not-allowed" : "bg-customButton"}`}
+
+                 
+                  disabled={!isFormValidZones()}
                 >
                   Create
                 </button>

@@ -330,7 +330,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
           ))}
         </div>
         {renamePopup && (
-          <div className="fixed inset-0 flex items-center justify-center  bg-black bg-opacity-50">
+          <div className="fixed inset-0 flex items-center justify-center  bg-black bg-opacity-50 z-60">
             <div className="bg-customBlue w-96 p-6 rounded-lg shadow-lg">
               <h2 className="text-lg font-semibold mb-4">Rename Camera</h2>
               <input
@@ -360,7 +360,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
           </div>
         )}
         {openDeletePopup && deletePopupData && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-60">
             <div className="bg-customBlue p-6 rounded-lg shadow-lg">
               <h2 className="flex justify-start text-xl font-bold mb-4 text-center">
                 Delete Camera
@@ -394,7 +394,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
         )}
 
         {renameZonePopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-60">
             <div className="bg-customBlue w-96 p-6 rounded-lg shadow-lg">
               <h2 className="text-lg font-semibold mb-4">Rename Zone</h2>
               <input
@@ -424,7 +424,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone ,togglePo
           </div>
         )}
         {deleteZonePopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-60">
             <div className="bg-customBlue p-6 rounded-lg shadow-lg">
               <h2 className="text-xl font-bold mb-4 text-center">
                 Delete Zone

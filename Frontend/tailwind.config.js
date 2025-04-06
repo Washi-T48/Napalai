@@ -58,6 +58,9 @@ module.exports = {
       images: {
         domains: ["cloud.phraya.net"],
       },
+      zIndex: {
+        '60': '60',
+      },
     },
   },
   plugins: [
