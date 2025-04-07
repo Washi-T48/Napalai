@@ -75,7 +75,7 @@ function Page() {
     };
     fetchZones();
   }, []);
-  
+
   useEffect(() => {
     const storedTypeLayout = localStorage.getItem("typeLayout");
     const storedNine = localStorage.getItem("selectedCamerasNineLayout");
@@ -192,7 +192,7 @@ function Page() {
     acc[zoneId].push(camera as any);
     return acc;
   }, {} as Record<number, Camera[]>);
-  
+
 
   const toggleZone = (zoneId: number) => {
     setExpandedZoneId(expandedZoneId === zoneId ? null : zoneId);
@@ -203,8 +203,8 @@ function Page() {
     const zoneInfo = zones.find((zone) => String(zone.id) === String(zoneId));
     return zoneInfo ? zoneInfo.name : "Unknown Zone";
   };
-  
-  
+
+
 
 
   return (
@@ -229,34 +229,22 @@ function Page() {
                 }}
               >
                 {allCamerasToShow.map((item, index) => (
-                  <div key={index} className="bg-black  flex items-center justify-center text-white">
+                  <div key={index} className="bg-black flex items-center justify-center text-white">
                     <div className="text-center">
                       {typeof item === "string" ? (
                         <h4 className="font-bold text-sm p-2 px-4 border-2 border-opacity-50 border-customRed">{item}</h4>
                       ) : (
-                        <div className="relative w-full h-[280px] bg-black z-10">
-                          {/* Video Background */}
-                          {typeof item === "string" ? (
-                            <h4 className="font-bold text-sm p-2 px-4 border-2 border-opacity-50  border-customRed">{item}</h4>
-                          ) : (
-                            <HLSVideoPlayer
+                        <div className=" w-full h-full bg-black z-10">
+                          <HLSVideoPlayer
                             src={`${item.stream_url}/index.m3u8`}
                             name={item.name}
-                        
+                            
                           />
-
-                          )}
-
-
-                          {/* Item Name in the Bottom Left */}
-                          <div className="absolute bottom-0 left-0 text-white text-xs font-bold px-4 py-2 rounded-md">
-                            {item.name}
-                          </div>
                         </div>
-
                       )}
                     </div>
                   </div>
+
                 ))}
               </div>
             </div>

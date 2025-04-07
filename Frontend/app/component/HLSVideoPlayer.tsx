@@ -30,17 +30,17 @@ const HLSVideoPlayer: React.FC<Props> = ({ src, name }) => {
   }, [src]);
 
   return (
-    <div className="relative w-full h-[280px] bg-black z-10">
+    <div className="relative w-full h-full bg-black z-10">
       <video
         ref={videoRef}
-        className="w-full object-cover"
+        className="w-full h-full object-fill"
         autoPlay
         muted
         loop
         playsInline
         controls={false}
       />
-      <div className="bottom-0 left-0 text-white text-xs font-bold px-4 py-2 rounded-md">
+      <div className=" absolute flex justify-start bottom-0 left-0 text-white text-xs font-bold px-4 py-2 rounded-md">
         {name}
       </div>
     </div>
