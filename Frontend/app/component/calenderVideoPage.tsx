@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 
+
+
 function CalendarVideoPage({ highlightDates = [] }: { highlightDates: Date[] }) {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(
+    highlightDates.length > 0 ? new Date(highlightDates[0]) : new Date()
+  );
 
   const monthName = currentDate.toLocaleString("en-US", { month: "long" });
   const year = currentDate.getFullYear();
@@ -21,11 +25,11 @@ function CalendarVideoPage({ highlightDates = [] }: { highlightDates: Date[] }) 
 
   const isHighlighted = (date: Date) =>
     highlightDates.some((highlightDate) =>
-      date.toDateString() === highlightDate.toDateString()
+      date.toDateString() === new Date(highlightDate).toDateString()
     );
 
   return (
-    <div className="flex items-center justify-center bg-customSlateBlue p-2 rounded-md text-white ">
+    <div className="flex items-center justify-center bg-customSlateBlue p-2 rounded-md text-white w-full">
       <div className="p-2 w-full">
         <div className=" pt-2 pb-4 border-b border-gray-400 flex items-center justify-between ">
           <span className="focus:outline-none text-base text-white font-bold dark:text-white ">
@@ -39,7 +43,7 @@ function CalendarVideoPage({ highlightDates = [] }: { highlightDates: Date[] }) 
                 {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => (
                   <th
                     key={day}
-                    className="text-center w-8 h-8 p-3 pt-4 text-xs "
+                    className="text-start w-8 h-8 p-3 pt-4 text-xs "
                   >
                     {day}
                   </th>
@@ -58,9 +62,9 @@ function CalendarVideoPage({ highlightDates = [] }: { highlightDates: Date[] }) 
                         <div className="px-1 py-1 w-8 h-8 cursor-pointer flex justify-center items-center">
                           {date ? (
                             <p
-                              className={`text-xs font-medium text-center w-4 h-4 ${
+                              className={`text-xs font-medium text-center p-1 ${
                                 isHighlighted(date)
-                                  ? "text-red-700 rounded-full font-bold bg-white "
+                                  ? "text-white rounded-full font-bold bg-customRed "
                                   : ""
                               }`}
                             >

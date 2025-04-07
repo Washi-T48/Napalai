@@ -142,9 +142,6 @@ CREATE TABLE "event" (
 	camera_id varchar NOT NULL,
 	"type" varchar NULL,
 	"position" jsonb NULL, -- Position of an Event on Video Frame
-	first_detected timestamptz NULL,
-	last_seen timestamptz NULL,
-	warning_triggered timestamptz NULL,
 	CONSTRAINT event_pk PRIMARY KEY (id),
 	CONSTRAINT event_camera_fk FOREIGN KEY (camera_id) REFERENCES camera(id) ON DELETE SET NULL
 );

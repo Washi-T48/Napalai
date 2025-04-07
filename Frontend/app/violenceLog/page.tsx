@@ -1,164 +1,220 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Icon } from "@iconify/react";
-import Navber from "../component/navber";
-import CardVideo from "../component/cardVideo";
-import MyCalendar from "../component/calender";
-import Dropdown from "../component/dropdown";
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import Port from "../port";
+import Navber from "../component/navber";
+import CardViolenceVideo from "../component/cardViolenceVideo";
+import DropdownViolence from "./dropdownViolence";
+import Port from "@/app/port";
+import Link from "next/link";
+import MyCalendar from "../component/calender";
+import { Icon } from "@iconify/react";
 
-interface violenceItem {
+interface ViolenceItem {
     id: number;
-    video: any;
+    violenceid: number;
+    video: string;
     name: string;
-    camera: string;
+    camera: string | null;
     status: string;
     created: string;
-    zone: string;
+    createdtime: string;
+    zone: string | null;
+    description: string | null;
+    cameraname: string;
+    zonename: string;
+    violence_type: string;
+    image: string;
+}
+
+
+interface Camera {
+    id: string;
+    created: string;
+    zone_id: string | null;
+    name: string;
+    location: string;
+}
+
+interface Zone {
+    id: string;
+    created: string;
+    name: string;
+    location: string;
 }
 
 function Page() {
-    // const { id } = useParams();
+    const params = useParams();
     const [FilterButton, SetFilterButton] = useState(false);
     const toggleFilterButton = () => SetFilterButton(!FilterButton);
-
     const [selectedZone, setSelectedZone] = useState<string | null>(null);
     const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-
-    const [getViolence, setGetViolence] = useState<violenceItem[]>([]);
-    const [showData, setShowData] = useState<violenceItem[]>([]);  // ประกาศ state ใหม่เพื่อเก็บข้อมูลที่จะแสดงผล
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [getViolence, setGetViolence] = useState<ViolenceItem[]>([]);
+    const [getCameras, setGetCameras] = useState<Camera[]>([]);
+    const [getZones, setGetZones] = useState<Zone[]>([]);
+    const [switchPage, setSwitchPage] = useState(0);
+    const itemsPerPage = 10;
 
     useEffect(() => {
-        const getViolenceData = async () => {
+        const getUnifiedForgottenData = async () => {
             try {
-                const getResponseViolence = await fetch(`${Port.URL}/violence`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
+                const response = await fetch(`${Port.URL}/utils/violence`);
+                if (!response.ok) throw new Error("Failed to fetch forgotten items");
+                const data: ViolenceItem[] = await response.json();
+                const updatedData = data.map((item) => ({
+                    ...item,
+                    zone: item.zonename || "Unknown Zone",
+                    camera: item.cameraname || "Unknown Camera",
+                }));
+                setGetViolence(updatedData);
+            } catch (error) {
+                console.error("Error fetching unified forgotten items:", error);
+            }
+        };
+        getUnifiedForgottenData();
+    }, []);
 
-                if (!getResponseViolence.ok) {
-                    const errorData = await getResponseViolence.json();
-                    throw new Error(errorData.message || "Network response was not ok");
-                }
-
-                const getDataViolence = await getResponseViolence.json();
-                setGetViolence(getDataViolence);  // set ข้อมูลเพียงครั้งเดียว
+    useEffect(() => {
+        const fetchCameras = async () => {
+            try {
+                const response = await fetch(`${Port.URL}/cameras`);
+                if (!response.ok) throw new Error("Failed to fetch cameras");
+                const camerasData: Camera[] = await response.json();
+                setGetCameras(camerasData);
             } catch (error) {
                 console.error("Error fetching cameras:", error);
             }
         };
 
-        getViolenceData();
-    }, []);  // การใช้ [] ทำให้ดึงข้อมูลเพียงครั้งเดียวตอนเริ่มต้น
+        const fetchZones = async () => {
+            try {
+                const response = await fetch(`${Port.URL}/zones`);
+                if (!response.ok) throw new Error("Failed to fetch zones");
+                const zonesData: Zone[] = await response.json();
+                setGetZones(zonesData);
+            } catch (error) {
+                console.error("Error fetching zones:", error);
+            }
+        };
+        fetchCameras();
+        fetchZones();
+    }, []);
 
-    const [switchPage, setSwitchPage] = useState(0);
-    const itemsPerPage = 10;
-    const totalPages: number = Math.ceil(getViolence.length / itemsPerPage);
+    const mapCamerasToZones = () => {
+        return getCameras.map(camera => {
+            const matchedZone = getZones.find(zone => zone.id === camera.zone_id);
+            return {
+                ...camera,
+                zone: matchedZone ? matchedZone.name : "Unknown Zone"
+            };
+        });
+    };
 
-    useEffect(() => {
-        const startIndex = switchPage * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
 
-        const dataToShow = getViolence.slice(startIndex, endIndex);
-        setShowData(dataToShow);
-    }, [switchPage, getViolence]);  // เพิ่ม getViolence เป็น dependency
 
-    const filteredData = showData.filter((item) => {
+    const camerasWithZones = mapCamerasToZones();
+
+    const [startDate, setStartDate] = useState<string | null>(null);
+    const [endDate, setEndDate] = useState<string | null>(null);
+
+
+    const handleDateSelect = (start: string, end: string) => {
+        setStartDate(start);
+        setEndDate(end);
+    };
+
+    const filteredData = getViolence.filter((item) => {
+        const itemDate = new Date(item.created).toISOString().split("T")[0];
         return (
             (!selectedZone || item.zone === selectedZone) &&
             (!selectedCamera || item.camera === selectedCamera) &&
-            (!selectedStatus || item.status === selectedStatus)
+            (!selectedStatus || item.status === selectedStatus) &&
+            (!startDate || !endDate || (itemDate >= startDate && itemDate <= endDate))
         );
     });
 
-    const uniqueZones = [...new Set(getViolence.map((item) => item.zone))];
-    const uniqueCameras = [...new Set(getViolence.map((item) => item.camera))];
-    const uniqueStatuses = [...new Set(getViolence.map((item) => item.status))];
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const paginatedData = filteredData.slice(switchPage * itemsPerPage, (switchPage + 1) * itemsPerPage);
+
+    const handleClearFilters = () => {
+        setSelectedZone(null);
+        setSelectedCamera(null);
+        setSelectedStatus(null);
+        setStartDate(null);
+        setEndDate(null);
+    };
+
+
+
 
     return (
         <>
             <Navber />
-            <div className="bg-customBlue min-h-screen pt-20">
-                <div className="flex justify-center items-center text-2xl font-bold text-white p-6">
-                    Detection Violence
+            <div className="bg-customLinear min-h-screen pt-20">
+                <div className="flex justify-center items-center text-2xl font-bold text-white p-14 mt-2 ">
+                    Violence
                 </div>
-                <div className="pt-5">
-                    <div className="relative w-full flex justify-end pr-10 p-5">
-                        <button
-                            onClick={toggleFilterButton}
-                            className="flex justify-center items-center p-2 w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto"
-                        >
-                            Filter
-                        </button>
 
-                        {FilterButton && (
-                            <div className="absolute top-16 z-10">
-                                <div className="flex justify-center bg-customwhite w-full h-full rounded-md overflow-hidden">
-                                    <div className="">
-                                        <MyCalendar />
-                                    </div>
-                                    <div className="">
-                                        <Dropdown
+                <div className="pt-5">
+                    <div className="flex justify-between">
+                        <div className="flex justify-start gap-2 p-4">
+                            <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center  items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                                <Icon icon="ooui:previous-ltr" width="15" height="15" />
+                            </button>
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setSwitchPage(index)}
+                                    className={`p-2 rounded ${switchPage === index ? "w-10 h-10 text-xs bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
+                                    {index + 1}
+                                </button>
+                            ))}
+                            <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center text-xs w-10 h-10 bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                                <Icon icon="ooui:previous-rtl" width="15" height="15" />
+                            </button>
+                        </div>
+                        <div className="relative w-full flex justify-end p-4">
+                            <button onClick={() => SetFilterButton(!FilterButton)} className="p-2 w-20 text-xs lg:w-28 rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white">
+                                Filter
+                            </button>
+                            {FilterButton && (
+                                <div className="absolute top-16 z-10 bg-white rounded-md shadow-lg p-4">
+                                    <div className="flex">
+                                        <MyCalendar
+                                            handleClearFilters={handleClearFilters}
+                                            onDateSelect={handleDateSelect} />
+                                        <DropdownViolence
                                             onSelect={(type, value) => {
                                                 if (type === "zone") setSelectedZone(value);
                                                 if (type === "camera") setSelectedCamera(value);
-                                                if (type === "status") setSelectedStatus(value);
                                             }}
-                                            zone={uniqueZones}
-                                            camera={uniqueCameras}
-                                            status={uniqueStatuses}
+                                            zone={getZones.map(z => z.name)}
+                                            camera={getCameras.map(c => c.name)}
+                                            status={["returned", "unreturned"]}
                                         />
                                     </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
 
-                    <div className="grid-rows-2 px-10 base:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                        {filteredData.length > 0 ? (
-                            filteredData.map((item) => (
-                                <Link href={`/viewViolencePage/${item.id}`} key={item.id}>
-                                    <CardVideo item={item} />
-                                </Link>
 
+
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl2:grid-cols-5 gap-4 px-10">
+                        {paginatedData.length > 0 ? (
+                            paginatedData.map((item, index) => (
+                                <Link href={`/viewViolencePage/${item.violenceid}`} key={`${item.violenceid}-${index}`}>
+                                    <CardViolenceVideo item={item} />
+                                </Link>
                             ))
                         ) : (
-                            <div>No items available</div>
+                            <div></div>
                         )}
                     </div>
 
-                    <div className="flex justify-end items-center mt-4 px-10">
-                        <button
-                            onClick={() => switchPage > 0 && setSwitchPage((prev) => prev - 1)}
-                            className="flex justify-center items-center px-3 py-2 mx-1 w-10 rounded-sm bg-customฺButton text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]"
-                        >
-                            <Icon icon="mingcute:left-fill" width="24" height="24" />
-                        </button>
-
-                        {[...Array(totalPages)].map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setSwitchPage(index)}
-                                className={`flex justify-center items-center px-3 py-2 mx-1 w-10 rounded-sm text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] ${switchPage === index ? "bg-customฺButtomHover" : "bg-customฺButton"
-                                    }`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-
-                        <button
-                            onClick={() => switchPage < totalPages - 1 && setSwitchPage((prev) => prev + 1)}
-                            className="flex justify-center items-center px-3 py-2 mx-1 w-10 rounded-sm bg-customฺButton text-white shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]"
-                        >
-                            <Icon icon="mingcute:right-fill" width="24" height="24" />
-                        </button>
-                    </div>
                 </div>
             </div>
         </>

@@ -119,6 +119,28 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
       console.error("Error posting camera data:", error);
     }
   };
+  const isFormValid = () => {
+    return (
+      cameraName !== "" &&
+      location !== "" &&
+      ip !== "" &&
+      port !== "" &&
+      path !== "" &&
+      onvifUsername !== "" &&
+      onvifPassword !== "" &&
+      rtspUrl !== "" &&
+      rtspUsername !== "" &&
+      rtspPassword !== "" 
+     
+    );
+  };
+
+  const isFormValidZones = () => {
+    return (
+      createZone !== "" &&
+      location !== "" 
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -144,21 +166,14 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
           </div>
 
 
-          <div>
-            <Icon
-              onClick={() => setOpenPopup(false)}
-              icon="icon-park-solid:close-one"
-              width="30"
-              height="30"
-            />
-          </div>
+        
         </div>
 
 
 
         {view === 'addCamera' ? (
 
-          <div className="flex flex-col gap-2  h-[580px] transition-all duration-300 overflow-hidden">
+          <div className="flex flex-col gap-2 h-auto ">
             <div className="text-2xl font-bold py-3">
               Add camera
             </div>
@@ -172,15 +187,19 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                   setShowCreateZone(e.target.value === "Create Name");
                 }}
                 value={zoneName}
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                className="custom-input px-3 h-8 text-sm"
               >
-                <option value="">Select a zone</option>
+                <option
+                className="px-2 mt-4"
+                value="">Select a zone</option>
                 {zones.map((zone) => (
                   <option key={zone.id} value={zone.name}>
                     {zone.name}
                   </option>
                 ))}
-                <option value="Create Name">Create Zone</option>
+                <option 
+                className="my-2"
+                value="Create Name">Create Zone</option>
               </select>
             </div>
 
@@ -192,7 +211,8 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                     onChange={(e) => { setCreateZones(e.target.value) }}
                     value={createZone}
                     type="text"
-                    className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                    placeholder="Enter your create zone name"
+                    className="custom-input px-3 h-8 text-sm"
                   />
                 </div>
                 <div className="flex justify-between items-center">
@@ -201,7 +221,8 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                     onChange={(e) => { setLocationZone(e.target.value) }}
                     value={locationZone}
                     type="text"
-                    className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                    placeholder="Enter your location"
+                    className="custom-input px-3 h-8 text-sm"
                   />
                 </div>
                 <div className="flex justify-end">
@@ -210,7 +231,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                       postCreateZone();
                       setShowCreateZone(false);
                     }}
-                    className="w-20 p-2 bg-customฺButton text-xxs rounded-xl hover:bg-customฺButtomHover"
+                    className="btn btn-outline"
                   >
                     Create
                   </button>
@@ -219,21 +240,23 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
             )}
 
             {/* Camera input fields */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center ">
               <div>Camera Name</div>
               <input
                 onChange={(e) => { setCameraName(e.target.value) }}
+                placeholder="Enter your camera name..."
                 value={cameraName}
                 type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
               <div>Location</div>
               <input
                 onChange={(e) => { setLocation(e.target.value) }}
+                placeholder="Enter your Location..."
                 value={location}
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
 
@@ -241,27 +264,30 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
               <div>IP</div>
               <input
                 onChange={(e) => { setIp(e.target.value) }}
+                placeholder="Enter your IP..."
                 value={ip}
                 type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
               <div>Port</div>
               <input
                 onChange={(e) => { setPort(e.target.value) }}
+                placeholder="Enter your Port..."
                 value={port}
-                type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                type="url"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
               <div>Path</div>
               <input
                 onChange={(e) => { setPath(e.target.value) }}
+                placeholder="Enter your Path..."
                 value={path}
-                type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                type="url"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
 
@@ -269,18 +295,20 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
               <div>ONVIF Username</div>
               <input
                 onChange={(e) => { setOnvifUsername(e.target.value) }}
+                placeholder="Enter your Username..."
                 value={onvifUsername}
                 type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
               <div>ONVIF Password</div>
               <input
                 onChange={(e) => { setOnvifPassword(e.target.value) }}
+                placeholder="Enter your Password..."
                 value={onvifPassword}
-                type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                type="password"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
 
@@ -288,41 +316,51 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
               <div>RTSP URL</div>
               <input
                 onChange={(e) => { setRtspUrl(e.target.value) }}
+                placeholder="Enter your URL..."
                 value={rtspUrl}
                 type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
               <div>RTSP Username</div>
               <input
                 onChange={(e) => { setRtspUsername(e.target.value) }}
+                placeholder="Enter your RTSP Username..."
                 value={rtspUsername}
                 type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
             <div className="flex justify-between items-center">
               <div>RTSP Password</div>
               <input
                 onChange={(e) => { setRtspPassword(e.target.value) }}
+                placeholder="Enter your RTSP Password..."
                 value={rtspPassword}
-                type="text"
-                className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                type="password"
+                className="custom-input px-3 h-8 text-sm"
               />
             </div>
-
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end gap-2 mt-4">
+              <button 
+              onClick={() => setOpenPopup(false)}
+              className="btn btn-cancle">
+                close
+              </button>
               <button
                 onClick={postCamera}
-                className="flex justify-center items-center w-28 bg-customฺButton p-2 rounded-md hover:bg-customฺButtomHover"
+                className={`btn btn-outline px-3 ${
+                  !isFormValid() ? "cursor-not-allowed" : "bg-customButton hover-none"
+                }`}
+                disabled={!isFormValid()}
               >
                 Submit
               </button>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col h-72 gap-2 transition-all duration-300 ">
+          <div className="flex flex-col h-auto gap-2 transition-all duration-300 ">
             <div className="text-2xl font-bold py-3">
               Create Zone
             </div>
@@ -331,30 +369,41 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 <div>Zone Name</div>
                 <input
                   onChange={(e) => { setCreateZones(e.target.value) }}
+                  placeholder="Enter your Zone Name..."
                   value={createZone}
                   type="text"
-                  className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                  className="custom-input px-3 h-8 text-sm"
                 />
               </div>
               <div className="flex justify-between items-center">
                 <div>Location Zone</div>
                 <input
                   onChange={(e) => { setLocationZone(e.target.value) }}
+                  placeholder="Enter your Location Zone..."
                   value={locationZone}
                   type="text"
-                  className="flex justify-center items-center bg-customwhite w-[230px] h-8 text-black text-sm rounded-sm p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                  className="custom-input px-3 h-8 text-sm"
                 />
               </div>
-              <div className="flex justify-end pt-3 ">
+              <div className="flex justify-end pt-3 gap-2">
+              <button 
+              onClick={() => setOpenPopup(false)}
+              className="btn btn-cancle">
+                close
+              </button>
                 <button
                   onClick={() => {
                     postCreateZone();
                     setShowCreateZone(false);
                   }}
-                  className="flex justify-center items-center w-28 bg-customฺButton p-2 rounded-md hover:bg-customฺButtomHover"
+                  className={`btn btn-outline px-3 ${!isFormValidZones() ? "cursor-not-allowed" : "bg-customButton"}`}
+
+                 
+                  disabled={!isFormValidZones()}
                 >
                   Create
                 </button>
+                
               </div>
             </div>
           </div>
