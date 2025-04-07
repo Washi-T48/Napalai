@@ -59,55 +59,54 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
 
   const [selectedCameras, setSelectedCameras] = useState<number[]>([]);
 
-
-
   useEffect(() => {
     console.log("Updated Selected Cameras:", selectedCameras);
   }, [selectedCameras]);
 
-  const [fatchPage, setFatchPage] = useState(true);
+  const [fetchPage, setFetchPage] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${Port.URL}/cameras`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const responseZone = await fetch(`${Port.URL}/zones`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Network response was not ok");
+      }
+
+      if (!responseZone.ok) {
+        const errorData = await responseZone.json();
+        throw new Error(errorData.message || "Network response was not ok");
+      }
+
+      const data = await response.json();
+      const dataZone = await responseZone.json();
+
+      setGroupedCameras(data);
+      setGroupedZone(dataZone);
+    } catch (error) {
+      console.error("Error fetching camera and zone data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const getCamera = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch(`${Port.URL}/cameras`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        const responseZone = await fetch(`${Port.URL}/zones`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Network response was not ok");
-        }
-
-        if (!responseZone.ok) {
-          const errorData = await responseZone.json();
-          throw new Error(errorData.message || "Network response was not ok");
-        }
-
-        const data = await response.json();
-        const dataZone = await responseZone.json();
-
-        setGroupedCameras(data);
-        setGroupedZone(dataZone);
-      } catch (error) {
-        console.error("Error fetching camera and zone data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getCamera();
-  }, [fatchPage]);
+    fetchData();
+  }, [fetchPage]);
 
   const [deletePopupData, setDeletePopupData] = useState<Camera | null>(null);
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
@@ -166,19 +165,29 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
       );
 
       if (!renameResponseCamera.ok) {
-        throw new Error("Failed to rename camera");
+        const errorData = await renameResponseCamera.json().catch(() => ({}));
+        console.error("Server response:", errorData);
+        
+        setGroupedCameras(prevCameras => 
+          prevCameras.map(camera => 
+            camera.id === cameraId ? { ...camera, name: newName } : camera
+          )
+        );
+        
+        fetchData();
+      } else {
+        setGroupedCameras(prevCameras => 
+          prevCameras.map(camera => 
+            camera.id === cameraId ? { ...camera, name: newName } : camera
+          )
+        );
       }
-
-      setGroupedCameras(prevCameras => 
-        prevCameras.map(camera => 
-          camera.id === cameraId ? { ...camera, name: newName } : camera
-        )
-      );
       
       setRenamePopup(null);
       setNewCameraName("");
     } catch (error) {
       console.error("Error renaming camera:", error);
+      fetchData();
     } finally {
       setIsLoading(false);
     }
@@ -208,19 +217,22 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
       });
 
       if (!renameResponseZone.ok) {
-        throw new Error("Failed to rename zone");
+        const errorData = await renameResponseZone.json().catch(() => ({}));
+        console.error("Server response for zone rename:", errorData);
+        fetchData();
+      } else {
+        setGroupedZone(prevZones => 
+          prevZones.map(zone => 
+            zone.id === zoneId ? { ...zone, name: newName } : zone
+          )
+        );
       }
-
-      setGroupedZone(prevZones => 
-        prevZones.map(zone => 
-          zone.id === zoneId ? { ...zone, name: newName } : zone
-        )
-      );
       
       setRenameZonePopup(null);
       setNewZoneName("");
     } catch (error) {
       console.error("Error renaming zone:", error);
+      fetchData();
     } finally {
       setIsLoading(false);
     }
@@ -244,9 +256,14 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
       setDeleteZonePopup(null);
     } catch (error) {
       console.error("Error deleting zone:", error);
+      fetchData();
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleStopPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
   };
 
   return (
@@ -277,7 +294,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
                   <div className="flex gap-2">
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); 
+                        handleStopPropagation(e);
                         setRenameZonePopup({
                           zoneId: Number(zoneId),
                           currentName: getZoneName(zoneId),
@@ -289,7 +306,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
                     </button>
                     <button
                       onClick={(e) => {
-                        e.stopPropagation();  
+                        handleStopPropagation(e);
                         setDeleteZonePopup({
                           id: Number(zoneId),
                           name: getZoneName(zoneId),
@@ -320,7 +337,8 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
 
                       <div className="flex justify-end gap-2">
                         <button
-                          onClick={() => {
+                          onClick={(e) => {
+                            handleStopPropagation(e);
                             setRenamePopup({
                               cameraId: camera.id,
                               currentName: camera.name,
@@ -331,7 +349,10 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
                           <Icon icon="mdi:rename" width="20" height="20" />
                         </button>
                         <button
-                          onClick={() => confirmDeleteCamera(camera)}
+                          onClick={(e) => {
+                            handleStopPropagation(e);
+                            confirmDeleteCamera(camera);
+                          }}
                           className="text-white"
                         >
                           <Icon icon="ic:baseline-delete" width="20" height="20" />
