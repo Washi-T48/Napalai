@@ -38,7 +38,7 @@ const runAIScripts = (cameraId, streamUrl) => {
         const fullStreamUrl = `${streamUrl}/index.m3u8`;
         console.log(`Starting ${cameraId} : ${fullStreamUrl}`);
 
-        const violenceDetection = spawn('python', [
+        const violenceDetection = spawn('python3.12', [
             '../../Scripts/violence_detection.py',
             '--camera_id', cameraId.toString(),
             '--stream_url', fullStreamUrl
@@ -52,7 +52,7 @@ const runAIScripts = (cameraId, streamUrl) => {
             console.error(`Violence [${cameraId}] Err : ${data}`);
         });
 
-        const forgottenItems = spawn('python', [
+        const forgottenItems = spawn('python3.12', [
             '../../Scripts/forgotten_items.py',
             '--camera_id', cameraId.toString(),
             '--stream_url', fullStreamUrl
