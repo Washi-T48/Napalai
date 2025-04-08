@@ -19,8 +19,7 @@ print(f"Starting {camera_id} with stream: {video_path}")
 API_URL = "https://cloud9.phraya.net/api/ai/violence"
 
 try:
-    model = load_model("violence_detection_model.h5")
-    print("Model loaded successfully")
+    model = load_model(os.path.join(os.path.dirname(os.path.abspath(__file__)), "./violence_detection_model.h5"))    print("Model loaded successfully")
 except Exception as e:
     print(f"Error {str(e)}")
     sys.exit(1)
