@@ -202,7 +202,6 @@ function Page() {
       : 4 - camerasToShow.length;
   const emptyCameras = new Array(remainingBoxes).fill(null).map((_, idx) => ({
     id: -1 * (idx + 1),
-    name: "No Signal",
     stream_url: null,
   }));
 
