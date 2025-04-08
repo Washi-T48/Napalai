@@ -20,7 +20,7 @@ const ChangePassBox:React.FC<Props> = ({ setOpenChangePassword }) => {
     
         setLoading(true);
         try {
-            const res = await fetch(`${Port.URL}/changePassword`, {
+            const res = await fetch(`${Port.URL}/auth/changePassword`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
