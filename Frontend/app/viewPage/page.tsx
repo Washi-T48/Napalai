@@ -327,6 +327,12 @@ function Page() {
             </div>
 
             <div className="bg-customBlue  flex justify-end mt-2">
+              <button 
+                onClick={clearSelection} 
+                className="btn btn-cancle mr-2"
+              >
+                Clear
+              </button>
               <button onClick={() => setShowPopup(false)} className="btn btn-cancle">
                 Close
               </button>
