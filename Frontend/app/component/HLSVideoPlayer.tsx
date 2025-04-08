@@ -40,7 +40,7 @@ const HLSVideoPlayer: React.FC<Props> = ({ src, name }) => {
         controls={false}
       />
 
-      <div className=" absolute flex justify-start bottom-0 left-0 text-white text-xs font-bold px-4 py-2 rounded-md">
+      <div className=" absolute flex justify-start bottom-0 left-0 text-white  bg-black bg-opacity-30 text-xs font-bold px-4 py-2">
         {name}
       </div>
     </div>
