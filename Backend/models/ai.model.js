@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import { spawn } from 'child_process';
 
 const newForgotten = async (forgotten) => {
     const { camera_id, position, image, video, item_type } = forgotten;
@@ -27,7 +28,7 @@ const runAIScripts = (cameraId, streamUrl) => {
     console.log(`Starting ${cameraId} : ${fullStreamUrl}`);
 
     const violenceDetection = spawn('python', [
-        'scripts/violence_detection.py',
+        '../../Scripts/violence_detection.py',
         '--camera_id', cameraId.toString(),
         '--stream_url', fullStreamUrl
     ]);
@@ -41,7 +42,7 @@ const runAIScripts = (cameraId, streamUrl) => {
     });
 
     const forgottenItems = spawn('python', [
-        'scripts/forgotten_items.py',
+        '../../Scripts/forgotten_items.py',
         '--camera_id', cameraId.toString(),
         '--stream_url', fullStreamUrl
     ]);
