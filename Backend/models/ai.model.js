@@ -40,8 +40,8 @@ const runAIScripts = (cameraId, streamUrl) => {
 
         const violenceDetection = spawn('python3.12', [
             '../Script/violence.py',
-            '--camera_id', cameraId.toString(),
-            '--stream_url', fullStreamUrl
+            fullStreamUrl,
+            cameraId.toString(),
         ]);
 
         violenceDetection.stdout.on('data', (data) => {
@@ -54,8 +54,8 @@ const runAIScripts = (cameraId, streamUrl) => {
 
         const forgottenItems = spawn('python3.12', [
             '../Script/forgotten.py',
-            '--camera_id', cameraId.toString(),
-            '--stream_url', fullStreamUrl
+            fullStreamUrl,
+            cameraId.toString(),
         ]);
 
         forgottenItems.stdout.on('data', (data) => {
