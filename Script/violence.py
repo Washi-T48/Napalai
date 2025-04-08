@@ -19,7 +19,12 @@ print(f"Starting {camera_id} with stream: {video_path}")
 API_URL = "https://cloud9.phraya.net/api/ai/violence"
 
 try:
-    model = load_model(os.path.join(os.path.dirname(os.path.abspath(__file__)), "./violence_detection_model.h5"))    print("Model loaded successfully")
+    model = load_model(
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "./violence_detection_model.h5"
+        )
+    )
+    print("Model loaded successfully")
 except Exception as e:
     print(f"Error {str(e)}")
     sys.exit(1)
@@ -33,7 +38,6 @@ class OpticalFlowExtractor:
         self.flow_queue = deque(maxlen=max_frames)
 
     def process_frame(self, frame):
-
         gray = cv2.cvtColor(cv2.resize(frame, self.frame_size), cv2.COLOR_BGR2GRAY)
         if self.prev_frame is None:
             self.prev_frame = gray
@@ -51,18 +55,20 @@ class OpticalFlowExtractor:
         return np.expand_dims(np.array(self.flow_queue), axis=0)
 
 
-def upload_violent_frame(frame):
+def upload_frame(frame, is_violent=False):
     temp_dir = "temp_frames"
     os.makedirs(temp_dir, exist_ok=True)
 
+    prefix = "violence" if is_violent else "normal"
     temp_filename = (
-        f"violence_{camera_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
+        f"{prefix}_{camera_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
     )
     temp_path = os.path.join(temp_dir, temp_filename)
 
     cv2.imwrite(temp_path, frame)
 
-    data = {"camera_id": camera_id, "position": None, "violence_type": "physical"}
+    violence_type = "physical" if is_violent else "normal"
+    data = {"camera_id": camera_id, "position": None, "violence_type": violence_type}
 
     try:
         with open(temp_path, "rb") as file:
@@ -108,7 +114,9 @@ def main():
     frame_skip = 2
     frame_count = 0
     last_upload_time = 0
+    last_normal_upload_time = 0
     upload_cooldown = 10
+    normal_upload_interval = 30
     is_violent = False
 
     try:
@@ -126,6 +134,12 @@ def main():
                 continue
 
             frame = cv2.resize(frame, (320, 180))
+            current_time = time.time()
+
+            if current_time - last_normal_upload_time > normal_upload_interval:
+                print("Uploading normal frame...")
+                upload_frame(frame, is_violent=False)
+                last_normal_upload_time = current_time
 
             fgmask = fgbg.apply(frame)
             non_zero_count = cv2.countNonZero(fgmask)
@@ -143,18 +157,19 @@ def main():
 
             was_violent = is_violent
             is_violent = avg_prediction > 0.70
-            current_time = time.time()
 
             if is_violent and (
                 not was_violent or (current_time - last_upload_time) > upload_cooldown
             ):
                 print(f"Violence detected {avg_prediction:.2f}")
-                upload_violent_frame(frame)
+                upload_frame(frame, is_violent=True)
                 last_upload_time = current_time
 
-            # if frame_count % 100 == 0:
-            #     status = "VIOLENT" if is_violent else "Normal"
-            #     print(f"Processing frame {frame_count}: {status} ({avg_prediction:.2f})")
+            if frame_count % 100 == 0:
+                status = "VIOLENT" if is_violent else "Normal"
+                print(
+                    f"Processing frame {frame_count}: {status} ({avg_prediction:.2f})"
+                )
 
     except KeyboardInterrupt:
         print("Detection stopped by user")
