@@ -1,5 +1,6 @@
 import pool from "../config/db.js";
 import { spawn } from 'child_process';
+import { StringDecoder } from 'string_decoder';
 
 const newForgotten = async (forgotten) => {
     try {
@@ -44,8 +45,9 @@ const runAIScripts = (cameraId, streamUrl) => {
             cameraId.toString(),
         ]);
 
+        const decoder = new StringDecoder('utf8');
         violenceDetection.stdout.on('data', (data) => {
-            console.log(`Violence [${cameraId}]: ${data.toString()}`);
+            console.log(`Violence [${cameraId}]: ${decoder.write(data)}`);
         });
 
         violenceDetection.stderr.on('data', (data) => {
