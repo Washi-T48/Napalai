@@ -52,19 +52,19 @@ const runAIScripts = (cameraId, streamUrl) => {
             console.error(`Violence [${cameraId}] Err : ${data}`);
         });
 
-        const forgottenItems = spawn('python3.12', [
-            '../Script/forgotten.py',
-            fullStreamUrl,
-            cameraId.toString(),
-        ]);
+        // const forgottenItems = spawn('python3.12', [
+        //     '../Script/forgotten.py',
+        //     fullStreamUrl,
+        //     cameraId.toString(),
+        // ]);
 
-        forgottenItems.stdout.on('data', (data) => {
-            console.log(`Forgotten [${cameraId}]: ${data}`);
-        });
+        // forgottenItems.stdout.on('data', (data) => {
+        //     console.log(`Forgotten [${cameraId}]: ${data}`);
+        // });
 
-        forgottenItems.stderr.on('data', (data) => {
-            console.error(`Forgotten [${cameraId}]: ${data}`);
-        });
+        // forgottenItems.stderr.on('data', (data) => {
+        //     console.error(`Forgotten [${cameraId}]: ${data}`);
+        // });
     } catch (error) {
         console.error("Error in runAIScripts:", error);
     }
