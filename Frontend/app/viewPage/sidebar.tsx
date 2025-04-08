@@ -20,7 +20,7 @@ interface Camera {
   id: number;
   name: string;
   location: string;
-  zone_id: number;
+  zone_id: number | null;
   created: string;
 }
 
@@ -49,6 +49,8 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
   
   const [isLoading, setIsLoading] = useState(false);
 
+  const UNASSIGNED_ID = "unassigned";
+  
   const groupedData = groupedZone.reduce(
     (acc: { [key: string]: Camera[] }, zone) => {
       acc[zone.id] = groupedCameras.filter((camera) => camera.zone_id === zone.id);
@@ -56,6 +58,14 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
     },
     {}
   );
+  
+  const unassignedCameras = groupedCameras.filter(
+    (camera) => !camera.zone_id || camera.zone_id === 0
+  );
+  
+  if (unassignedCameras.length > 0) {
+    groupedData[UNASSIGNED_ID] = unassignedCameras;
+  }
 
   const [selectedCameras, setSelectedCameras] = useState<number[]>([]);
 
@@ -266,6 +276,43 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
     e.stopPropagation();
   };
 
+  const renderCamerasList = (cameras: Camera[]) => {
+    return cameras.map((camera) => (
+      <div
+        className="duration-300 rounded-md m-3 bg-customBlue bg-opacity-90 border-b border-opacity-20 border-gray-500 hover:bg-customSlateBlue hover:bg-opacity-20"
+        key={camera.id}
+      >
+        <div className="flex justify-between items-center w-full p-4">
+          <div>{camera.name}</div>
+
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={(e) => {
+                handleStopPropagation(e);
+                setRenamePopup({
+                  cameraId: camera.id,
+                  currentName: camera.name,
+                });
+                setNewCameraName(camera.name); 
+              }}
+            >
+              <Icon icon="mdi:rename" width="20" height="20" />
+            </button>
+            <button
+              onClick={(e) => {
+                handleStopPropagation(e);
+                confirmDeleteCamera(camera);
+              }}
+              className="text-white"
+            >
+              <Icon icon="ic:baseline-delete" width="20" height="20" />
+            </button>
+          </div>
+        </div>
+      </div>
+    ));
+  };
+
   return (
     <div className="flex h-screen bg-gray-90">
       <div className="w-64 h-screen bg-customBlue text-white flex flex-col pt-16 overflow-auto relative">
@@ -277,93 +324,94 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
         )}
         
         <div className="">
-          {Object.entries(groupedData).map(([zoneId, cameras]) => (
-            <div key={zoneId}>
+          {/* Unassigned cameras section first */}
+          {unassignedCameras.length > 0 && (
+            <div key={UNASSIGNED_ID}>
               <div
                 className="w-full text-xl cursor-pointer"
                 onClick={() => {
-                  setSelectZone(zoneId);
-                  toggleZone(zoneId);
+                  setSelectZone(UNASSIGNED_ID);
+                  toggleZone(UNASSIGNED_ID);
                 }}
               >
                 <div
                   tabIndex={1}
                   className="flex justify-between p-6 border-b border-opacity-20 border-gray-500 duration-300 hover:bg-customSlateBlue hover:bg-opacity-20 focus:bg-customSlateBlue focus:bg-opacity-20"
                 >
-                  {getZoneName(zoneId)}
+                  Unassigned
                   <div className="flex gap-2">
-                    <button
-                      onClick={(e) => {
-                        handleStopPropagation(e);
-                        setRenameZonePopup({
-                          zoneId: Number(zoneId),
-                          currentName: getZoneName(zoneId),
-                        });
-                        setNewZoneName(getZoneName(zoneId));
-                      }}
-                    >
-                      <Icon icon="mdi:rename" width="20" height="20" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        handleStopPropagation(e);
-                        setDeleteZonePopup({
-                          id: Number(zoneId),
-                          name: getZoneName(zoneId),
-                          created: "",
-                          location: "",
-                        });
-                      }}
-                      className="text-white"
-                    >
-                      <Icon icon="ic:baseline-delete" width="20" height="20" />
-                    </button>
+                    {/* No rename or delete options for Unassigned section */}
                   </div>
                 </div>
               </div>
               <ul
                 className="max-h-96 overflow-auto"
                 style={{
-                  display: expandedZoneId === zoneId ? "block" : "none",
+                  display: expandedZoneId === UNASSIGNED_ID ? "block" : "none",
                 }}
               >
-                {cameras.map((camera) => (
-                  <div
-                    className="duration-300 rounded-md m-3 bg-customBlue bg-opacity-90 border-b border-opacity-20 border-gray-500 hover:bg-customSlateBlue hover:bg-opacity-20"
-                    key={camera.id}
-                  >
-                    <div className="flex justify-between items-center w-full p-4">
-                      <div>{camera.name}</div>
-
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={(e) => {
-                            handleStopPropagation(e);
-                            setRenamePopup({
-                              cameraId: camera.id,
-                              currentName: camera.name,
-                            });
-                            setNewCameraName(camera.name); 
-                          }}
-                        >
-                          <Icon icon="mdi:rename" width="20" height="20" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            handleStopPropagation(e);
-                            confirmDeleteCamera(camera);
-                          }}
-                          className="text-white"
-                        >
-                          <Icon icon="ic:baseline-delete" width="20" height="20" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                {renderCamerasList(unassignedCameras)}
               </ul>
             </div>
-          ))}
+          )}
+
+          {/* Regular zones */}
+          {Object.entries(groupedData)
+            .filter(([zoneId]) => zoneId !== UNASSIGNED_ID)
+            .map(([zoneId, cameras]) => (
+              <div key={zoneId}>
+                <div
+                  className="w-full text-xl cursor-pointer"
+                  onClick={() => {
+                    setSelectZone(zoneId);
+                    toggleZone(zoneId);
+                  }}
+                >
+                  <div
+                    tabIndex={1}
+                    className="flex justify-between p-6 border-b border-opacity-20 border-gray-500 duration-300 hover:bg-customSlateBlue hover:bg-opacity-20 focus:bg-customSlateBlue focus:bg-opacity-20"
+                  >
+                    {getZoneName(zoneId)}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          handleStopPropagation(e);
+                          setRenameZonePopup({
+                            zoneId: Number(zoneId),
+                            currentName: getZoneName(zoneId),
+                          });
+                          setNewZoneName(getZoneName(zoneId));
+                        }}
+                      >
+                        <Icon icon="mdi:rename" width="20" height="20" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          handleStopPropagation(e);
+                          setDeleteZonePopup({
+                            id: Number(zoneId),
+                            name: getZoneName(zoneId),
+                            created: "",
+                            location: "",
+                          });
+                        }}
+                        className="text-white"
+                      >
+                        <Icon icon="ic:baseline-delete" width="20" height="20" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <ul
+                  className="max-h-96 overflow-auto"
+                  style={{
+                    display: expandedZoneId === zoneId ? "block" : "none",
+                  }}
+                >
+                  {renderCamerasList(cameras)}
+                </ul>
+              </div>
+            ))}
         </div>
 
         {renamePopup && (
