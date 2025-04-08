@@ -59,7 +59,7 @@ def upload_frame(frame, is_violent=False):
     temp_dir = "temp_frames"
     os.makedirs(temp_dir, exist_ok=True)
 
-    prefix = "violence" if is_violent else "normal"
+    prefix = "violence"
     temp_filename = (
         f"{prefix}_{camera_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
     )
@@ -67,7 +67,7 @@ def upload_frame(frame, is_violent=False):
 
     cv2.imwrite(temp_path, frame)
 
-    violence_type = "physical" if is_violent else "normal"
+    violence_type = "violence"
     data = {"camera_id": camera_id, "position": None, "violence_type": violence_type}
 
     try:
@@ -174,4 +174,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print(video_path, camera_id)
     main()

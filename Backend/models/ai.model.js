@@ -45,7 +45,7 @@ const runAIScripts = (cameraId, streamUrl) => {
         ]);
 
         violenceDetection.stdout.on('data', (data) => {
-            console.log(`Violence [${cameraId}]: ${data}`);
+            console.log(`Violence [${cameraId}]: ${data.toString()}`);
         });
 
         violenceDetection.stderr.on('data', (data) => {
