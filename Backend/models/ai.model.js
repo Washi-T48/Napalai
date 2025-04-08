@@ -22,7 +22,41 @@ const newViolence = async (violence) => {
     return result.rows[0];
 }
 
+const runAIScripts = (cameraId, streamUrl) => {
+    const fullStreamUrl = `${streamUrl}/index.m3u8`;
+    console.log(`Starting ${cameraId} : ${fullStreamUrl}`);
+
+    const violenceDetection = spawn('python', [
+        'scripts/violence_detection.py',
+        '--camera_id', cameraId.toString(),
+        '--stream_url', fullStreamUrl
+    ]);
+
+    violenceDetection.stdout.on('data', (data) => {
+        console.log(`Violence [${cameraId}]: ${data}`);
+    });
+
+    violenceDetection.stderr.on('data', (data) => {
+        console.error(`Violence [${cameraId}] Err : ${data}`);
+    });
+
+    const forgottenItems = spawn('python', [
+        'scripts/forgotten_items.py',
+        '--camera_id', cameraId.toString(),
+        '--stream_url', fullStreamUrl
+    ]);
+
+    forgottenItems.stdout.on('data', (data) => {
+        console.log(`Forgotten [${cameraId}]: ${data}`);
+    });
+
+    forgottenItems.stderr.on('data', (data) => {
+        console.error(`Forgotten [${cameraId}]: ${data}`);
+    });
+};
+
 export {
     newForgotten,
-    newViolence
+    newViolence,
+    runAIScripts,
 }
