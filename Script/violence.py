@@ -55,7 +55,7 @@ class OpticalFlowExtractor:
         return np.expand_dims(np.array(self.flow_queue), axis=0)
 
 
-def upload_frame(frame, is_violent=False):
+def upload_frame(frame):
     temp_dir = "temp_frames"
     os.makedirs(temp_dir, exist_ok=True)
 
@@ -67,19 +67,15 @@ def upload_frame(frame, is_violent=False):
 
     cv2.imwrite(temp_path, frame)
 
-    violence_type = "violence"
-    data = {"camera_id": camera_id, "position": None, "violence_type": violence_type}
-
     try:
         with open(temp_path, "rb") as file:
             files = {"image": file}
+            data = {"camera_id": camera_id}
             response = requests.post(API_URL, files=files, data=data)
             if response.status_code == 201:
                 print(f"Uploaded successfully: {response.json()}")
             else:
-                print(
-                    f"Upload failed: {response.status_code}, Message: {response.text}"
-                )
+                print(f"Upload failed: {response.status_code}, Message: {response.text}")
     except Exception as e:
         print(f"Error during upload {str(e)}")
     finally:
