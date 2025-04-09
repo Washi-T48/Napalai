@@ -131,14 +131,13 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
       rtspUrl !== "" &&
       rtspUsername !== "" &&
       rtspPassword !== "" 
-     
+    
     );
   };
 
   const isFormValidZones = () => {
     return (
-      createZone !== "" &&
-      location !== "" 
+      createZone !== ""
     );
   };
 
@@ -397,8 +396,6 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                     setShowCreateZone(false);
                   }}
                   className={`btn btn-outline px-3 ${!isFormValidZones() ? "cursor-not-allowed" : "bg-customButton"}`}
-
-                 
                   disabled={!isFormValidZones()}
                 >
                   Create
