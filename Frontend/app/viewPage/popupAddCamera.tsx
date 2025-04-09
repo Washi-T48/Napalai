@@ -348,7 +348,10 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 close
               </button>
               <button
-                onClick={postCamera}
+                 onClick={() => {
+                  postCamera();        
+                  setOpenPopup(false);
+                }}
                 className={`btn btn-outline px-3 ${
                   !isFormValid() ? "cursor-not-allowed" : "bg-customButton hover-none"
                 }`}
