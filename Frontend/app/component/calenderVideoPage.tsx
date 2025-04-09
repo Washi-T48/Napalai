@@ -62,7 +62,7 @@ function CalendarVideoPage({ highlightDates = [] }: { highlightDates: Date[] }) 
                         <div className="px-1 py-1 w-8 h-8 cursor-pointer flex justify-center items-center">
                           {date ? (
                             <p
-                              className={`text-xs font-medium text-center p-1 ${
+                              className={`text-xs font-medium text-center p-1 w-full h-full ${
                                 isHighlighted(date)
                                   ? "text-white rounded-full font-bold bg-customRed "
                                   : ""
