@@ -112,8 +112,8 @@ module.exports = {
         '.custom-input': {
           width: '18rem',
           padding: '4px',
-          border: '1px solid #4A5568',
-          backgroundColor: '#1A202C',
+          border: '1px solid #354656',
+          backgroundColor: '#354656',
           color: '#fff',
           fontSize:'16px',
           borderRadius: '0.375rem',
