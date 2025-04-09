@@ -15,7 +15,6 @@ if len(sys.argv) < 3:
 video_path = sys.argv[1]
 camera_id = int(sys.argv[2])
 
-# ✅ Append /index.m3u8 if needed
 if not video_path.endswith(".m3u8"):
     video_path = video_path.rstrip("/") + "/index.m3u8"
 
@@ -31,9 +30,9 @@ try:
     model = load_model(
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "./violence_detection_model.h5")
     )
-    print("✅ Model loaded successfully")
+    print("Model loaded successfully")
 except Exception as e:
-    print(f"❌ Error loading model: {str(e)}")
+    print(f"Error loading model: {str(e)}")
     sys.exit(1)
 
 
@@ -112,7 +111,6 @@ def upload_frame(frame):
                 if upload_response.status_code in [200, 201]:
                     upload_url = upload_response.text.strip()
 
-                    # ✅ Set as thumbnail
                     patch_url = f"{API_URL}/{event_id}"
                     patch_data = {"thumbnail_url": upload_url}
                     patch_response = requests.patch(patch_url, json=patch_data)
@@ -133,21 +131,21 @@ def upload_frame(frame):
 
 
 def connect_to_stream(path):
-    print(f"🔗 Connecting to video stream: {path}")
+    print(f"Connecting to video stream: {path}")
     cap = cv2.VideoCapture(path)
     retry = 0
 
     while not cap.isOpened() and retry < 5:
-        print(f"❌ Could not open stream. Retrying ({retry + 1}/5)...")
+        print(f"Could not open stream. Retrying ({retry + 1}/5)...")
         time.sleep(5)
         cap = cv2.VideoCapture(path)
         retry += 1
 
     if not cap.isOpened():
-        print("❌ Failed to connect to stream after retries.")
+        print("Failed to connect to stream after retries.")
         return None
 
-    print("✅ Connected to stream.")
+    print("Connected to stream.")
     return cap
 
 
@@ -156,7 +154,7 @@ def main():
 
     cap = connect_to_stream(video_path)
     if cap is None:
-        print("🛑 Exiting. Stream is unavailable.")
+        print("Exiting. Stream is unavailable.")
         return
 
     optical_flow_extractor = OpticalFlowExtractor()
@@ -210,12 +208,12 @@ def main():
                     consecutive_violent_frames = 0
 
     except KeyboardInterrupt:
-        print("🛑 Detection stopped by user")
+        print("Detection stopped by user")
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"Error: {str(e)}")
     finally:
         cap.release()
-        print("📴 Stream closed")
+        print("Stream closed")
 
 
 if __name__ == "__main__":
