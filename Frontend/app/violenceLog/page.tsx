@@ -57,24 +57,28 @@ function Page() {
     const [switchPage, setSwitchPage] = useState(0);
     const itemsPerPage = 10;
 
-    useEffect(() => {
-        const getUnifiedForgottenData = async () => {
-            try {
-                const response = await fetch(`${Port.URL}/utils/violence`);
-                if (!response.ok) throw new Error("Failed to fetch forgotten items");
-                const data: ViolenceItem[] = await response.json();
-                const updatedData = data.map((item) => ({
+useEffect(() => {
+    const getUnifiedForgottenData = async () => {
+        try {
+            const response = await fetch(`${Port.URL}/utils/violence`);
+            if (!response.ok) throw new Error("Failed to fetch forgotten items");
+            const data: ViolenceItem[] = await response.json();
+
+            const updatedData = data.map((item) => ({
                     ...item,
                     zone: item.zonename || "Unknown Zone",
                     camera: item.cameraname || "Unknown Camera",
-                }));
-                setGetViolence(updatedData);
-            } catch (error) {
-                console.error("Error fetching unified forgotten items:", error);
-            }
-        };
-        getUnifiedForgottenData();
-    }, []);
+                }))
+                .sort((a, b) => new Date(b.createdtime).getTime() - new Date(a.createdtime).getTime()); // 🔥 sort ตรงนี้
+
+            setGetViolence(updatedData);
+        } catch (error) {
+            console.error("Error fetching unified forgotten items:", error);
+        }
+    };
+    getUnifiedForgottenData();
+}, []);
+
 
     useEffect(() => {
         const fetchCameras = async () => {
