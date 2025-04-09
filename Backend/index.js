@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
+import path from 'path';
 
 import { testConnection } from './config/db.js';
 testConnection();
