@@ -19,7 +19,6 @@ const getViolenceById = async (id) => {
     const rows = await pool.query('SELECT *, camera.name AS cameraName, zone.name AS zoneName, violence.id as violenceID, violence.created as createdTime FROM violence LEFT JOIN event ON violence.event_id = event.id LEFT JOIN camera ON event.camera_id = camera.id LEFT JOIN zone ON camera.zone_id = zone.id WHERE violence.id = $1 ORDER BY event.created DESC', [id]);
     return rows;
 };
-};
 
 export {
     getForgottenList,
