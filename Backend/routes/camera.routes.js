@@ -27,6 +27,7 @@ cameraRouter.post('/', async (req, res) => {
     try {
         const camera = req.body;
         const newCamera = await createCamera(camera);
+        await addAllCameraFromDatabase();
         updateAllCameraDBPath(cameras.rows);
         res.status(201).json(newCamera.rows[0]);
     } catch (err) {
@@ -50,6 +51,7 @@ cameraRouter.put('/:id', async (req, res) => {
         const id = req.params.id;
         const camera = req.body;
         const updatedCamera = await updateCamera(id, camera);
+        await addAllCameraFromDatabase();
         updateAllCameraDBPath(cameras.rows);
         res.status(200).json(updatedCamera.rows[0]);
     } catch (err) {
