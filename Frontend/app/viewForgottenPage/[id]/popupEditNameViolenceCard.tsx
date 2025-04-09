@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import Port from "@/app/port";
+
 interface ForgottenItem {
   id: string;
   created: string; // *
@@ -28,7 +28,7 @@ interface ForgottenItem {
 }
 
 interface Props {
-  setOpenPopup: (open: boolean) => void;
+  setOpenPopup: (open: boolean, updated?: boolean) => void;
   selectedId: string | undefined | string[];
 }
 
@@ -36,8 +36,8 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }
   const [text, setText] = useState("");
   const maxLength = 50;
   const isError = text.length === 0;
-  const [getData, setGetData] = useState<ForgottenItem[]>([]);
-  const [changeDetail, setChangDetail] = useState({
+  const [getData, setGetData] = useState<ForgottenItem | null>(null);
+  const [changeDetail, setChangeDetail] = useState({
     created: "",
     event_id: "",
     description: "",
@@ -59,7 +59,7 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }
     cameraname: "",
     zonename: "",
     createdtime: "",
-  })
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,7 +80,7 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }
 
         const data = await response.json();
         setGetData(data);
-        setChangDetail({
+        setChangeDetail({
           created: data.created,
           event_id: data.event_id,
           description: data.description,
@@ -102,23 +102,20 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }
           cameraname: data.cameraname,
           zonename: data.zonename,
           createdtime: data.createdtime,
-        })
-        console.log("showdata", data)
+        });
       } catch (error) {
-        console.error("Error fetching camera and zone data:", error);
+        console.error("Error fetching item data:", error);
       }
     };
 
     fetchData();
-
   }, [selectedId]);
-  console.log("show changeDetail", changeDetail)
 
   const changeData = async () => {
     if (selectedId === null) return;
 
     try {
-      const putResponceEditDetail = await fetch(`${Port.URL}/forgotten/${selectedId}`, {
+      const putResponseEditDetail = await fetch(`${Port.URL}/forgotten/${selectedId}`, {
         method: 'PUT',
         headers: {
           "Content-Type": "application/json",
@@ -145,32 +142,28 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }
           cameraname: changeDetail.cameraname,
           zonename: changeDetail.zonename,
           createdtime: changeDetail.createdtime,
-
-
         })
       });
 
-      if (!putResponceEditDetail.ok) {
-        const errorData = await putResponceEditDetail.json();
+      if (!putResponseEditDetail.ok) {
+        const errorData = await putResponseEditDetail.json();
         throw new Error(errorData.message || "Network response was not ok");
       }
 
-      const putData = await putResponceEditDetail.json();
-      setGetData(putData);
-
+      await putResponseEditDetail.json();
+      
+      setOpenPopup(false, true);
     } catch (error) {
-      console.error("Error fetching camera and zone data:", error);
+      console.error("Error updating item data:", error);
     }
   };
-  console.log("get data", getData)
-
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-customBlue rounded-md">
         <div className="flex justify-end p-4 text-white text-xl">
           <Icon
-            onClick={() => setOpenPopup(false)}
+            onClick={() => setOpenPopup(false, false)}
             icon="icon-park-solid:close-one"
             width="30"
             height="30"
@@ -184,10 +177,10 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }
               </label>
               <input
                 type="text"
-                onChange={(e) => { setChangDetail({ ...changeDetail, item_name: e.target.value }) }}
+                onChange={(e) => { setChangeDetail({ ...changeDetail, item_name: e.target.value }) }}
                 value={changeDetail.item_name || ""}
                 placeholder="Add a title that describes your video."
-                className={`w-96  px-3 py-2 mt-1 pb-8  border ${isError ? "border" : "border-gray-600"
+                className={`w-96 px-3 py-2 mt-1 pb-8 border ${isError ? "border" : "border-gray-600"
                   } bg-gray-900 text-white rounded-md focus:outline-none focus:ring-1 ${isError ? "focus:ring-red-500 focus:border-red-500 " : "focus:ring-blue-500 focus:border-blue-500"
                   }`}
               />
@@ -197,7 +190,7 @@ const PopupEditNameViolenceCard: React.FC<Props> = ({ setOpenPopup, selectedId }
             <button
               onClick={changeData}
               className="btn btn-outline">
-              submit
+              Submit
             </button>
           </div>
         </div>

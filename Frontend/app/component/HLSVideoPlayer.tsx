@@ -29,7 +29,7 @@ const HLSVideoPlayer: React.FC<Props> = ({ src, name }) => {
   }, [src]);
 
   return (
-    <div className="relative w-full h-full bg-black z-10">
+    <div className="relative w-full h-full bg-black border border-gray-700  z-10">
       <video
         ref={videoRef}
         className="w-full h-full object-contain"

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Image from "next/image";
 import Logo from "../../public/imges/Logo.png";
 import Port from "../port";
+import { Icon } from '@iconify/react';
 
 function LoginBox() {
     const [stateForgetPassword, setStateForgetPassword] = useState(false);
@@ -89,7 +90,7 @@ function LoginBox() {
                                     id="username"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
-                                    className="w-full p-1 rounded-sm text-sm h-8 text-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                                    className="w-full p-1 rounded-sm text-xs px-2 h-8 text-white  focus:outline-none bg-customSlateBlue  focus:ring-2 focus:ring-customSlateBlue  focus:bg-bg-customSlateBlue"
                                 />
                             </div>
 
@@ -100,10 +101,10 @@ function LoginBox() {
                                     id="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full p-1 rounded-sm text-sm h-8 text-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                                    className=" w-full p-1 rounded-sm text-xs px-2 h-8 text-white focus:outline-none bg-customSlateBlue focus:ring-2 focus:ring-customSlateBlue  focus:bg-bg-customSlateBlue"
                                 />
-                                <div className="mt-1 text-xs text-gray-400">
-                                    <div onClick={() => setStateForgetPassword(true)} className="cursor-pointer">Forget password?</div>
+                                <div className="mt-2 text-xs text-gray-400">
+                                    <div onClick={() => setStateForgetPassword(true)} className="mt-2 cursor-pointer">Forget password?</div>
                                 </div>
                             </div>
 
@@ -113,7 +114,7 @@ function LoginBox() {
                                 <button
                                     type="submit"
                                     disabled={!username || !password}
-                                    className="w-full h-8 p-1 rounded-sm text-sm bg-customฺButton hover:bg-customฺButtomHover disabled:bg-gray-400"
+                                    className="w-full h-8 p-1 rounded-sm  text-sm bg-customฺButton hover:bg-customฺButtomHover  disabled:bg-gray-400"
                                 >
                                     Submit
                                 </button>
@@ -123,40 +124,40 @@ function LoginBox() {
                 ) : (
                     <form onSubmit={handleResetSubmit} className="flex flex-col items-center w-full">
                         <div className="text-white gap-10 h-auto w-full">
+                        <div onClick={() => setStateForgetPassword(false)} className="text-gray-400 cursor-pointer">
+                        <Icon icon="famicons:arrow-back" width="20" height="20" />
+                                </div>
                             <h1 className="text-lg font-medium text-center">Reset password</h1>
 
                             <div className="space-y-1">
-                                <label htmlFor="username" className="text-xs">Username</label>
+                                <label htmlFor="username" className="text-xs ">Username</label>
                                 <input
                                     type="text"
                                     id="username"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
-                                    className="w-full p-1 rounded-sm text-sm h-8 text-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                                    className=" w-full p-1 bg-customSlateBlue rounded-sm text-xs px-2 h-8 text-white focus:outline-none focus:ring-2 focus:ring-customSlateBlue  focus:bg-bg-customSlateBlue"
                                 />
                             </div>
 
-                            <div className="space-y-1">
-                                <label htmlFor="email" className="text-xs">Email</label>
+                            <div className="space-y-1 mt-3">
+                                <label htmlFor="email" className="text-xs ">Email</label>
                                 <input
                                     type="email"
                                     id="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full p-1 rounded-sm text-sm h-8 text-black focus:outline-none focus:ring-2 focus:ring-gray-500 focus:bg-gray-100"
+                                    className="w-full  p-1 rounded-sm bg-customSlateBlue text-xs px-2 h-8 text-white focus:outline-none focus:ring-2 focus:ring-customSlateBlue focus:bg-bg-customSlateBlue"
                                 />
                             </div>
 
-                            <div className="mt-1 text-xs text-white space-y-2">
-                                <div onClick={() => setStateForgetPassword(false)} className="text-gray-400 cursor-pointer">
-                                    Login?
-                                </div>
-
+                            <div className="mt-2 text-xs text-white space-y-2">
+                                
                                 <div>
                                     <button
                                         type="submit"
                                         disabled={!username || !email}
-                                        className="w-full h-8 p-1 rounded-sm text-sm bg-customฺButton hover:bg-customฺButtomHover disabled:bg-gray-400"
+                                        className="w-full h-8 p-1 mt-6 rounded-sm text-sm bg-customฺButton hover:bg-customฺButtomHover disabled:bg-gray-400"
                                     >
                                         Submit
                                     </button>

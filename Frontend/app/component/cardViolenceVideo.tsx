@@ -54,36 +54,22 @@ const CardViolenceVideo: React.FC<CardVideoProps> = ({ item }) => {
                 )}
             </div> */}
 
-
             <div className="max-w-full h-auto rounded-md bg-customSlateBlue text-white">
                 <div
-                    className="w-full aspect-video bg-cover bg-center rounded-t-md"
+                    className="w-full aspect-video bg-cover bg-center rounded-t-md bg-black"
                     style={{ backgroundImage: `url(${item.image})` }}
                 >
-                    {/* <div className="w-full h-full flex justify-center items-center bg-black bg-opacity-50">
-                        <span className="text-white text-3xl"></span> 
-                    </div> */}
                 </div>
             </div>
             <div className="flex flex-wrap justify-between p-2 px-3">
                 <div className="flex gap-2 flex-col w-full">
-                    <div className="text-md  md:text-base lg:text-x">{item.violence_type ?? "Unknown"}</div>
+                    <div className="text-md  md:text-base lg:text-x">{item.violence_type ?? ""}</div>
                     <div className="flex justify-between gap-10">
-                        <div className="text-tiny text-gray-400">{item.created}</div>
+                        <div className="text-tiny text-gray-400">{item.created ?? "unknow time"}</div>
                         <div className="flex text-tiny text-gray-400">
-                            {item.zonename}<span className="mx-4">|</span> {item.cameraname}
+                            {item.zonename ?? "no zone"}<span className="mx-4">|</span> {item.cameraname ?? "no camera"}
                         </div>
                     </div>
-                </div>
-                <div className="flex flex-col items-end">
-                    {item.status && (
-                        <div
-                            className={`text-tiny px-2 py-1 rounded-sm shadow-[inset_-12px_-8px_40px_#46464620] ${item.status === 'Unreturned' ? 'bg-red-500' : 'bg-green-500'
-                                } text-white`}
-                        >
-                            {item.status}
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

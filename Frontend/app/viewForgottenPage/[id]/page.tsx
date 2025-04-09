@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Navber from "../../component/navber";
 import { Icon } from "@iconify/react";
@@ -35,7 +35,7 @@ interface ForgottenItem {
     createdtime: string;
     receiver_name: string;
     receiver_description: string;
-    return: string; // Updated to use 'return' instead of 'url' for the image path
+    return: string;
 }
 
 function Page() {
@@ -50,6 +50,38 @@ function Page() {
     const maxLength = 50;
     const isError = text.length === 0;
     const maxDetailLength = 200;
+    const [status, setStatus] = useState<string>("Unknown");
+
+    const refreshData = useCallback(async () => {
+        try {
+            console.log("Refreshing data for ID:", id);
+            const response = await fetch(`${Port.URL}/utils/forgotten/${id}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch data");
+            }
+            const result = await response.json();
+            console.log("Refreshed data:", result);
+            setData(result);
+            
+            if (result?.status) {
+                setStatus(result.status);
+            }
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }, [id]);
+
+    useEffect(() => {
+        if (data?.status) {
+            setStatus(data.status);
+        }
+    }, [data]);
+
+    useEffect(() => {
+        if (id) {
+            refreshData();
+        }
+    }, [id, refreshData]);
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -60,6 +92,13 @@ function Page() {
 
     const handleRemoveImage = () => {
         setImageFile(null);
+    };
+
+    const handlePopupToggle = (isOpen: boolean, wasUpdated = false) => {
+        setOpenPopup(isOpen);
+        if (!isOpen && wasUpdated) {
+            refreshData();
+        }
     };
 
     const handleSubmit = async () => {
@@ -115,48 +154,27 @@ function Page() {
             if (!updateResponse.ok) {
                 throw new Error("Failed to update receiver information");
             }
-
-            const updatedReceiver = await updateResponse.json();
-            const updatedReceiverData = updatedReceiver.rows && updatedReceiver.rows.length > 0
-                ? updatedReceiver.rows[0]
-                : { receiver_name: text, receiver_description: detail };
-
-            setData((prevData) =>
-                prevData
-                    ? {
-                        ...prevData,
-                        ...uploadResult,
-                        ...updatedReceiverData,
-                    }
-                    : prevData
-            );
-
-            const refetchResponse = await fetch(`${Port.URL}/utils/forgotten/${id}`);
-            if (refetchResponse.ok) {
-                const refetchedData = await refetchResponse.json();
-                setData(refetchedData);
-            }
-
+            
+            console.log("Form submitted successfully");
             setOpenPopupCreate(false);
             setText("");
             setDetail("");
             setImageFile(null);
+            
+            await refreshData();
+            
         } catch (error) {
             console.error("Error updating receiver:", error);
         }
     };
 
-    const [status, setStatus] = useState<string>("Unknown");
-
-    useEffect(() => {
-        if (data?.status) {
-            setStatus(data.status);
-        }
-    }, [data]);
-
     const toggleStatus = async () => {
+        if (!data) return;
+        
         const newStatus = status === "returned" ? "unreturned" : "returned";
+        
         setStatus(newStatus);
+        
         try {
             const response = await fetch(`${Port.URL}/forgotten/${id}`, {
                 method: "PUT",
@@ -170,30 +188,13 @@ function Page() {
             if (!response.ok) {
                 throw new Error("Failed to update status");
             }
+            
+            refreshData();
         } catch (error) {
             console.error("Failed to update status:", error);
             setStatus(status);
         }
     };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`${Port.URL}/utils/forgotten/${id}`);
-                if (!response.ok) {
-                    throw new Error("Failed to fetch data");
-                }
-                const result = await response.json();
-                setData(result);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-
-        if (id) {
-            fetchData();
-        }
-    }, [id]);
 
     if (!data) {
         return (
@@ -246,8 +247,8 @@ function Page() {
                             <div>
                                 <Icon
                                     onClick={() => {
-                                        setOpenPopup(true);
                                         setSelectedId(id);
+                                        setOpenPopup(true);
                                     }}
                                     icon="material-symbols:edit-outline"
                                     width="24"
@@ -257,7 +258,7 @@ function Page() {
                             {openPopup && (
                                 <PopupEditNameViolenceCard
                                     selectedId={selectedId}
-                                    setOpenPopup={setOpenPopup}
+                                    setOpenPopup={handlePopupToggle}
                                 />
                             )}
                         </div>
