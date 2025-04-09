@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import http from 'http';
 import https from 'https';
 import fs from 'fs';
+import path from 'path';
 
 import { testConnection } from './config/db.js';
 testConnection();
@@ -21,6 +22,7 @@ import authRouter from './routes/auth.routes.js';
 import aiRouter from './routes/ai.routes.js';
 import uploadRouter from './routes/upload.routes.js';
 import { addAllCameraFromDatabase, updateAllCameraDBPath } from './models/mtx.model.js';
+import { runAIScripts } from './models/ai.model.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 443;
@@ -56,12 +58,13 @@ app.use('/auth', authRouter);
 app.use('/ai', aiRouter);
 app.use('/upload', uploadRouter);
 
-app.use('/public', express.static('public'));
-app.use('/protected', protectedFileMiddleware, express.static('protected'));
+app.use('/public', express.static(path.resolve('public')));
+app.use('/protected', protectedFileMiddleware, express.static(path.resolve('protected')));
 
 try {
     await addAllCameraFromDatabase();
     await updateAllCameraDBPath();
+    await runAIScripts(140, "https://cloud9.phraya.net:8888/140");
 } catch (err) {
     console.log("error ")
 }

@@ -17,10 +17,10 @@ const ChangePassBox:React.FC<Props> = ({ setOpenChangePassword }) => {
         if (newPassword !== confirmPassword) {
             return alert("New password and confirm password do not match.");
         }
-
+    
         setLoading(true);
         try {
-            const res = await fetch(`${Port.URL}/changePassword`, {
+            const res = await fetch(`${Port.URL}/auth/changePassword`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -28,12 +28,25 @@ const ChangePassBox:React.FC<Props> = ({ setOpenChangePassword }) => {
                 credentials: "include",
                 body: JSON.stringify({ oldpassword: oldPassword, newpassword: newPassword }),
             });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Something went wrong");
-
-            alert("Password changed successfully!");
-            setOpenChangePassword(false); 
+    
+            const contentType = res.headers.get("content-type");
+            if (!res.ok) {
+                if (contentType && contentType.includes("application/json")) {
+                    const data = await res.json();
+                    throw new Error(data.error || "Something went wrong");
+                } else {
+                    const text = await res.text();
+                    throw new Error(`Unexpected response: ${text}`);
+                }
+            }
+    
+            if (contentType && contentType.includes("application/json")) {
+                const data = await res.json();
+                alert("Password changed successfully!");
+                setOpenChangePassword(false);
+            } else {
+                throw new Error("Response is not JSON");
+            }
         } catch (error) {
             if (error instanceof Error) {
                 alert(error.message);

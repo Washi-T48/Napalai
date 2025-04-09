@@ -69,7 +69,9 @@ export default function Navber() {
 
   return (
     <div className="flex justify-between fixed bg-customBlue text-white p-4 lg:px-14 w-full h-16 z-50">
+      <Link href="/viewPage">
       <div className="text-3xl font-bold">NAPALAI</div>
+      </Link>
 
       {/* Hamburger Menu for mobile */}
       <div className="lg:hidden flex items-center">

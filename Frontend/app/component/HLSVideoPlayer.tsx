@@ -1,6 +1,6 @@
-"use client"
-import Hls from 'hls.js';
-import React, { useEffect, useRef } from 'react';
+"use client";
+import Hls from "hls.js";
+import React, { useEffect, useRef } from "react";
 
 interface Props {
   src: string;
@@ -13,7 +13,7 @@ const HLSVideoPlayer: React.FC<Props> = ({ src, name }) => {
   useEffect(() => {
     if (!videoRef.current) return;
 
-    if (src.endsWith('.m3u8') && Hls.isSupported()) {
+    if (src.endsWith(".m3u8") && Hls.isSupported()) {
       const hls = new Hls();
       hls.loadSource(src);
       hls.attachMedia(videoRef.current);
@@ -21,8 +21,7 @@ const HLSVideoPlayer: React.FC<Props> = ({ src, name }) => {
       return () => {
         hls.destroy();
       };
-    } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-      // For Safari
+    } else if (videoRef.current.canPlayType("application/vnd.apple.mpegurl")) {
       videoRef.current.src = src;
     } else {
       videoRef.current.src = src;
@@ -30,10 +29,10 @@ const HLSVideoPlayer: React.FC<Props> = ({ src, name }) => {
   }, [src]);
 
   return (
-    <div className="relative w-full h-full bg-black z-10">
+    <div className="relative w-full h-full bg-black border border-gray-700  z-10">
       <video
         ref={videoRef}
-        className=" h-full object-cover"
+        className="w-full h-full object-contain"
         autoPlay
         muted
         loop

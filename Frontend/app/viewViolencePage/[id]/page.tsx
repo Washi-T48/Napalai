@@ -127,15 +127,6 @@ function Page() {
                   </div>
                 </div>
 
-                <div className="bg-customSlateBlue text-white p-1 rounded-md">
-                  <div className="px-1 text-tiny">Detail</div>
-                  <div className="flex justify-center items-center pb-4">{violenceData.violence_type}</div>
-                </div>
-                {/* <div>
-                  <div className="flex justify-center bg-customSlateBlue text-white p-2 w-[70px] text-tiny rounded-md">
-                    <Icon icon="material-symbols:download" width="24" height="24" />
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>
