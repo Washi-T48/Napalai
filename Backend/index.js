@@ -60,8 +60,7 @@ app.use('/upload', uploadRouter);
 
 app.use('/public', express.static(path.resolve('public')));
 app.use('/protected', protectedFileMiddleware, express.static(path.resolve('protected')));
-app.use('/recordings', protectedFileMiddleware, express.static(path.resolve('../recordings/MediaMTX/data/recordings')));
-console.log(path.resolve('../recordings/MediaMTX/data/recordings'));
+app.use('/recordings', protectedFileMiddleware, express.static(path.resolve('../MediaMTX/data/recordings')));
 
 try {
     // await addAllCameraFromDatabase();
