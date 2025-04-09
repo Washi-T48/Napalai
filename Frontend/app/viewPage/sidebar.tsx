@@ -240,6 +240,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
       
       setRenameZonePopup(null);
       setNewZoneName("");
+      setFetchPage(!fetchPage)
     } catch (error) {
       console.error("Error renaming zone:", error);
       fetchData();
@@ -264,6 +265,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
       setGroupedCameras((prev) => prev.filter((camera) => camera.zone_id !== zoneId));
       
       setDeleteZonePopup(null);
+      setFetchPage(!fetchPage)
     } catch (error) {
       console.error("Error deleting zone:", error);
       fetchData();
