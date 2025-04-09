@@ -200,10 +200,11 @@ function Page() {
     typeLayout === "nineLayout"
       ? 9 - camerasToShow.length
       : 4 - camerasToShow.length;
-  const emptyCameras = new Array(remainingBoxes).fill(null).map((_, idx) => ({
-    id: -1 * (idx + 1),
-    stream_url: null,
-  }));
+      const emptyCameras = new Array(remainingBoxes).fill(null).map((_, idx) => ({
+        id: -1 * (idx + 1),
+        stream_url: null,
+        name: "", 
+      }));
 
   const allCamerasToShow = [...camerasToShow, ...emptyCameras];
 
