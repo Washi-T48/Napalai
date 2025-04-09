@@ -164,7 +164,7 @@ def main():
                 not was_violent or (current_time - last_upload_time) > upload_cooldown
             ):
                 print(f"Violence detected {avg_prediction:.2f}")
-                upload_frame(frame, is_violent=True)
+                upload_frame(frame)
                 last_upload_time = current_time
 
             if frame_count % 100 == 0:
