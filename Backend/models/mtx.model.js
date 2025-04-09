@@ -112,6 +112,35 @@ const updateAllCameraDBPath = async () => {
     }
 };
 
+const getCameraRecordings = async (cameraId) => {
+    const url = `${MTX_API}/recordings/get/${cameraId}`;
+    const result = await axios.get(url, { auth: AUTH });
+    return result.data.segments.reverse();
+};
+
+const convertTimetoFileName = (timestamp) => {
+    if (!timestamp || typeof timestamp !== 'string') {
+        throw new Error('Invalid timestamp provided');
+    }
+    const [date, time] = timestamp.replace('Z', '').split('T');
+    const formattedTime = time.replace(/:/g, '-').replace('.', '-');
+    const filename = `${date}_${formattedTime}.mp4`;
+    return filename;
+};
+
+const get2LatestRecording = (cameraId) => {
+    getCameraRecordings(cameraId).then((recordings) => {
+        const latestRecordings = recordings.slice(0, 2);
+        const formattedRecordings = latestRecordings.map(recording => {
+            return {
+                filename: convertTimetoFileName(recording.start),
+            };
+        });
+        console.log(formattedRecordings);
+        return formattedRecordings;
+    });
+};
+
 export {
     getGlobalConfig,
     getAllPaths,
@@ -124,4 +153,7 @@ export {
     addAllCameraPath,
     addAllCameraFromDatabase,
     updateAllCameraDBPath,
+    getCameraRecordings,
+    convertTimetoFileName,
+    get2LatestRecording,
 };

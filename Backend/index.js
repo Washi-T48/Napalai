@@ -21,7 +21,7 @@ import utilsRouter from './routes/utils.routes.js';
 import authRouter from './routes/auth.routes.js';
 import aiRouter from './routes/ai.routes.js';
 import uploadRouter from './routes/upload.routes.js';
-import { addAllCameraFromDatabase, updateAllCameraDBPath } from './models/mtx.model.js';
+import { addAllCameraFromDatabase, updateAllCameraDBPath, getCameraRecordings, get2LatestRecording } from './models/mtx.model.js';
 import { runAIScripts } from './models/ai.model.js';
 
 dotenv.config();
@@ -60,6 +60,7 @@ app.use('/upload', uploadRouter);
 
 app.use('/public', express.static(path.resolve('public')));
 app.use('/protected', protectedFileMiddleware, express.static(path.resolve('protected')));
+app.use('/recordings', protectedFileMiddleware, express.static(path.resolve('../recordings/MediaMTX/data/recordings')));
 
 try {
     await addAllCameraFromDatabase();
