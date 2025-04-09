@@ -25,7 +25,7 @@ if not stream_url.endswith(".m3u8"):
 print(f" Starting camera {camera_id} with stream: {stream_url}")
 
 MODEL_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "./violence_detection_model.h5"
+    os.path.dirname(os.path.abspath(__file__)), "./forgotten_detection_model.pt"
 )
 
 model = YOLO(MODEL_PATH)
