@@ -71,7 +71,7 @@ max_aspect_ratios = {"Phone": 0.7}
 # State trackers
 previous_objects = set()
 last_capture_time = 0
-capture_interval = 5
+capture_interval = 60
 
 while cap.isOpened():
     ret, frame = cap.read()
