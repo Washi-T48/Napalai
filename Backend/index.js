@@ -58,8 +58,8 @@ app.use('/auth', authRouter);
 app.use('/ai', aiRouter);
 app.use('/upload', uploadRouter);
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use('/protected', protectedFileMiddleware, express.static(path.join(__dirname, 'protected')));
+app.use('/public', express.static(path.resolve('public')));
+app.use('/protected', protectedFileMiddleware, express.static(path.resolve('protected')));
 
 try {
     await addAllCameraFromDatabase();
