@@ -17,6 +17,7 @@ camera_id = int(sys.argv[2])
 print(f"Starting {camera_id} with stream: {video_path}")
 
 API_URL = "https://cloud9.phraya.net/api/ai/violence"
+UPLOAD_URL = "https://cloud9.phraya.net/api/upload/violence/image"
 
 try:
     model = load_model(
@@ -68,14 +69,26 @@ def upload_frame(frame):
     cv2.imwrite(temp_path, frame)
 
     try:
+        response = requests.post(API_URL, data=data)
+        if response.status_code == 201:
+            print(f"Upadted successfully: {response.json()}")
+            print(f"Event ID: {response.json().get('event_id')}")
+        else:
+            print(f"Update failed: {response.status_code}, Message: {response.text}")
+    except Exception as e:
+        print(f"Error during update {str(e)}")
+
+    try:
         with open(temp_path, "rb") as file:
-            files = {"image": file}
+            files = {"file": file}
             data = {"camera_id": camera_id}
-            response = requests.post(API_URL, files=files, data=data)
-            if response.status_code == 201:
+            response = requests.post(UPLOAD_URL, files=files, data=data)
+            if response.status_code == 200:
                 print(f"Uploaded successfully: {response.json()}")
             else:
-                print(f"Upload failed: {response.status_code}, Message: {response.text}")
+                print(
+                    f"Upload failed: {response.status_code}, Message: {response.text}"
+                )
     except Exception as e:
         print(f"Error during upload {str(e)}")
     finally:
