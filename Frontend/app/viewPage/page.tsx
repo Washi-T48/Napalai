@@ -259,7 +259,7 @@ function Page() {
                         name={item.name}
                       />
                     ) : (
-                      <div className="w-full h-full bg-black  flex items-center justify-center">
+                      <div className="w-full h-full bg-black border border-gray-700 flex items-center justify-center">
                         <h4 className="font-bold text-sm text-white border-2 py-2 px-2 border-opacity-50 border-customRed">
                           No Signal
                         </h4>
