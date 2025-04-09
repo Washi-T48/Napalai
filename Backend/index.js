@@ -61,11 +61,12 @@ app.use('/upload', uploadRouter);
 app.use('/public', express.static(path.resolve('public')));
 app.use('/protected', protectedFileMiddleware, express.static(path.resolve('protected')));
 app.use('/recordings', protectedFileMiddleware, express.static(path.resolve('../recordings/MediaMTX/data/recordings')));
+console.log(path.resolve('../recordings/MediaMTX/data/recordings'));
 
 try {
-    await addAllCameraFromDatabase();
-    await updateAllCameraDBPath();
-    await runAIScripts(140, "https://cloud9.phraya.net:8888/140");
+    // await addAllCameraFromDatabase();
+    // await updateAllCameraDBPath();
+    // await runAIScripts(199, "https://cloud9.phraya.net:8888/199");
 } catch (err) {
     console.log("error ")
 }
