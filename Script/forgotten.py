@@ -24,11 +24,12 @@ if not stream_url.endswith(".m3u8"):
 
 print(f" Starting camera {camera_id} with stream: {stream_url}")
 
-# YOLO model path
-MODEL_PATH = "./forgotten_detection_model.pt"
+MODEL_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "./violence_detection_model.h5"
+)
 
-# Load YOLO model
 model = YOLO(MODEL_PATH)
+
 
 #  Connect to camera stream
 def connect_to_stream(path):
@@ -46,6 +47,7 @@ def connect_to_stream(path):
     print(" Connected to stream.")
     return cap
 
+
 cap = connect_to_stream(stream_url)
 if cap is None:
     sys.exit(1)
@@ -57,7 +59,7 @@ frame_skip = max(1, fps // 15)
 frame_count = 0
 
 #  Output writer
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 
 # Class labels
 class_labels = {0: "Bag", 3: "Laptop", 2: "Person", 1: "Phone"}
@@ -117,10 +119,14 @@ while cap.isOpened():
                 if class_id == 2:
                     person_positions.append(True)
                 elif class_id in class_labels:
-                    if obj_name not in highest_confidence_objects or confidence > highest_confidence_objects[obj_name]["confidence"]:
+                    if (
+                        obj_name not in highest_confidence_objects
+                        or confidence
+                        > highest_confidence_objects[obj_name]["confidence"]
+                    ):
                         highest_confidence_objects[obj_name] = {
                             "position": [x1, y1, x2, y2],
-                            "confidence": confidence
+                            "confidence": confidence,
                         }
 
         # Draw bounding boxes
@@ -129,7 +135,15 @@ while cap.isOpened():
             confidence = obj_data["confidence"]
             label = f"{obj_name}: {confidence:.2f}"
             cv2.rectangle(annotated_frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.putText(annotated_frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            cv2.putText(
+                annotated_frame,
+                label,
+                (x1, y1 - 10),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                (0, 255, 0),
+                2,
+            )
 
         #  ALERT if item is left behind
         if previous_objects and not person_positions and highest_confidence_objects:
@@ -144,7 +158,7 @@ while cap.isOpened():
                         "position": json_position,
                         "image": None,
                         "video": None,
-                        "item_type": obj_name
+                        "item_type": obj_name,
                     }
 
                     try:
@@ -157,19 +171,25 @@ while cap.isOpened():
                             image_path = f"captured_frame_{int(time.time())}.jpg"
                             cv2.imwrite(image_path, annotated_frame)
 
-                            with open(image_path, 'rb') as f:
-                                files = {'file': f}
-                                upload_data = {'id': event_id}
-                                upload_response = requests.post(UPLOAD_URL, files=files, data=upload_data)
+                            with open(image_path, "rb") as f:
+                                files = {"file": f}
+                                upload_data = {"id": event_id}
+                                upload_response = requests.post(
+                                    UPLOAD_URL, files=files, data=upload_data
+                                )
 
                                 if upload_response.status_code in [200, 201]:
                                     print("✅ Image uploaded and linked.")
                                 else:
-                                    print(f"❌ Upload failed: {upload_response.status_code}, {upload_response.text}")
+                                    print(
+                                        f"❌ Upload failed: {upload_response.status_code}, {upload_response.text}"
+                                    )
                             os.remove(image_path)
 
                         else:
-                            print(f"❌ Server response: {response.status_code}, {response.text}")
+                            print(
+                                f"❌ Server response: {response.status_code}, {response.text}"
+                            )
 
                     except requests.exceptions.RequestException as e:
                         print(f"❌ Request error: {e}")
@@ -179,7 +199,7 @@ while cap.isOpened():
 
         previous_objects = set(highest_confidence_objects.keys())
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(1) & 0xFF == ord("q"):
             break
 
 cap.release()
