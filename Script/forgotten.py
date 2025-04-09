@@ -84,7 +84,7 @@ while cap.isOpened():
     frame_count += 1
 
     if frame_count % frame_skip == 0:
-        results = model(frame)
+        results = model(frame, verbose=False)
         annotated_frame = frame.copy()
 
         detected_classes = []
