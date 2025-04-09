@@ -46,7 +46,6 @@ function Page() {
     const params = useParams();
     const dateParam = Array.isArray(params.assingForgotten) ? params.assingForgotten[0] : params.assingForgotten;
 
-
     const convertToBangkokTime = (isoString: string) => {
         const date = new Date(isoString);
         return date.toLocaleDateString("en-CA", { timeZone: "Asia/Bangkok" });
@@ -81,7 +80,14 @@ function Page() {
                     camera: item.cameraname || "Unknown Camera",
                 }));
 
-                setGetViolence(updatedData);
+                // Sort by createdtime (most recent to oldest)
+                const sortedData = updatedData.sort((a, b) => {
+                    const dateA = new Date(a.createdtime);
+                    const dateB = new Date(b.createdtime);
+                    return dateB.getTime() - dateA.getTime();
+                });
+
+                setGetViolence(sortedData);
             } catch (error) {
                 console.error("Error fetching unified forgotten items:", error);
             }
@@ -153,7 +159,6 @@ function Page() {
         setSelectedCamera(null);
         setSelectedStatus(null);
     };
-    
 
     return (
         <>
@@ -165,74 +170,69 @@ function Page() {
 
                 <div className="pt-5">
                     <div className="flex justify-between">
-                        
-                    <div className="flex justify-start gap-2 p-4 pl-10">
-                        <button onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))} className="flex justify-center items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
-                            <Icon icon="ooui:previous-ltr" width="15" height="15" />
-                        </button>
-                        {Array.from({ length: totalPages }, (_, index) => (
+                        <div className="flex justify-start gap-2 p-4 pl-10">
                             <button
-                                key={index}
-                                onClick={() => setSwitchPage(index)}
-                                className={`p-2 rounded ${switchPage === index ? "w-10 h-10 text-xs bg-customฺButtomHover text-white shadow-xl rounded-sm " : "w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
-                                {index + 1}
+                                onClick={() => setSwitchPage((prev) => Math.max(prev - 1, 0))}
+                                className="flex justify-center items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"
+                            >
+                                <Icon icon="ooui:previous-ltr" width="15" height="15" />
                             </button>
-                        ))}
-                        <button onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))} className="flex justify-center items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
-                            <Icon icon="ooui:previous-rtl" width="15" height="15" />
-                        </button>
-                    </div>
-                    <div className="relative w-full flex justify-end pr-10 p-4">
-                        <button
-                            onClick={toggleFilterButton}
-                            className="flex justify-center items-center p-2 w-20 lg:w-28 text-xs rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto"
-                        >
-                            Filter
-                        </button>
-                        {FilterButton && (
-                            <div className="absolute top-16 z-10  bg-white p-4 rounded-md shadow-lg">
-                                <div className="flex flex-col space-y-2 h-72 overflow-y-auto">
-                                    <Dropdown
-                                        onSelect={(type, value) => {
-                                            if (type === "zone") setSelectedZone(value);
-                                            if (type === "camera") setSelectedCamera(value);
-                                            if (type === "status") setSelectedStatus(value);
-                                        }}
-                                        zone={uniqueZones }
-                                        camera={uniqueCameras}
-                                        status={uniqueStatuses}
-                                        
-                                    />
-                                </div>
-                                <div className="flex justify-end">
-                                <button onClick={handleClearFilters} className="btn btn-outline">
-                                    Clear
+                            {Array.from({ length: totalPages }, (_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setSwitchPage(index)}
+                                    className={`p-2 rounded ${
+                                        switchPage === index
+                                            ? "w-10 h-10 text-xs bg-customฺButtomHover text-white shadow-xl rounded-sm"
+                                            : "w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover"}`}>
+                                    {index + 1}
                                 </button>
+                            ))}
+                            <button
+                                onClick={() => setSwitchPage((prev) => Math.min(prev + 1, totalPages - 1))}
+                                className="flex justify-center items-center w-10 h-10 text-xs bg-customฺButton text-white shadow-xl rounded-sm hover:bg-customฺButtomHover">
+                                <Icon icon="ooui:previous-rtl" width="15" height="15" />
+                            </button>
+                        </div>
+                        <div className="relative w-full flex justify-end pr-10 p-4">
+                            <button
+                                onClick={toggleFilterButton}
+                                className="flex justify-center items-center p-2 w-20 lg:w-28 text-xs rounded-sm bg-customฺButton hover:bg-customฺButtomHover text-white font-roboto">Filter
+                            </button>
+                            {FilterButton && (
+                                <div className="absolute top-16 z-10 bg-white p-4 rounded-md shadow-lg">
+                                    <div className="flex flex-col space-y-2 h-72 overflow-y-auto">
+                                        <Dropdown
+                                            onSelect={(type, value) => {
+                                                if (type === "zone") setSelectedZone(value);
+                                                if (type === "camera") setSelectedCamera(value);
+                                                if (type === "status") setSelectedStatus(value);
+                                            }}
+                                            zone={uniqueZones}
+                                            camera={uniqueCameras}
+                                            status={uniqueStatuses}
+                                        />
+                                    </div>
+                                    <div className="flex justify-end">
+                                        <button onClick={handleClearFilters} className="btn btn-outline">
+                                            Clear
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
-                    </div>
-                    
-
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl2:grid-cols-5 gap-4 px-10">
                         {paginatedData.length > 0 ? (
                             paginatedData.map((item, index) => (
                                 <Link
                                     href={`/viewForgottenPage/${item.forgottenid}`}
-                                    key={`${item.forgottenid}-${index}`}
-                                >
-                                    <CardVideo
-                                        item={item}
-                                        className={`${item.status === "unreturned" ? "bg-red-500" : ""}`}
-                                    />
-
-                                </Link>
-                            ))
+                                    key={`${item.forgottenid}-${index}`}>
+                                    <CardVideo item={item}className={`${item.status === "unreturned" ? "bg-red-500" : ""}`}/>
+                                </Link>))
                         ) : (
-                            <div className="gird grid-cols-1 grid-rows-1 w-full h-full text-center text-white">No items available</div>
-                        )}
+                            <div className="gird grid-cols-1 grid-rows-1 w-full h-full text-center text-white">No items available</div>)}
                     </div>
                 </div>
             </div>
