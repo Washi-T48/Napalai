@@ -30,8 +30,11 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
   const [rtspPassword, setRtspPassword] = useState("");
   const [showCreateZone, setShowCreateZone] = useState(false);
   const [view, setView] = useState<'addCamera' | 'createZones'>('addCamera');
+  const [fatch,setFatch] = useState(false)
+  const [loading, setLoading] = useState(false);
+  
 
-  useEffect(() => {
+
     const getZones = async () => {
       try {
         const getZone = await fetch(`${Port.URL}/zones`, {
@@ -54,10 +57,15 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
       }
     };
 
-    getZones();
-  }, []);
+
+ 
+  
+    useEffect(() => {
+      getZones();
+    }, [fatch]);
 
   const postCreateZone = async () => {
+    setLoading(true);
     try {
       const postZone = await fetch(`${Port.URL}/zones`, {
         method: "POST",
@@ -81,12 +89,17 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
 
 
       console.log("Created zone:", postDataZone);
+      setFatch(prev => !prev); // รีเฟรชข้อมูล
+      setOpenPopup(false);
+  
+      
     } catch (error) {
       console.error("Error posting zone:", error);
     }
   };
 
   const postCamera = async () => {
+    setLoading(true);
     try {
       const postCamera = await fetch(`${Port.URL}/cameras`, {
         method: "POST",
@@ -115,6 +128,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
 
       const postDataCamera = await postCamera.json();
       console.log("Fetched camera data:", postDataCamera);
+      setFatch(prev => !prev);
     } catch (error) {
       console.error("Error posting camera data:", error);
     }
@@ -137,7 +151,8 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
 
   const isFormValidZones = () => {
     return (
-      createZone !== ""
+      createZone !== "" &&
+      location !== ""
     );
   };
 
@@ -348,7 +363,7 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
                 close
               </button>
               <button
-                 onClick={() => {
+                onClick={() => {
                   postCamera();        
                   setOpenPopup(false);
                 }}
@@ -393,16 +408,17 @@ const AddCamera: React.FC<setPopup> = ({ setOpenPopup }) => {
               className="btn btn-cancle">
                 close
               </button>
-                <button
-                  onClick={() => {
-                    postCreateZone();
-                    setShowCreateZone(false);
-                  }}
-                  className={`btn btn-outline px-3 ${!isFormValidZones() ? "cursor-not-allowed" : "bg-customButton"}`}
-                  disabled={!isFormValidZones()}
-                >
-                  Create
-                </button>
+              <button
+                    onClick={() => {
+                      postCreateZone();
+                      
+                    
+                    }}
+                    className="btn btn-outline"
+                  
+                  >
+                    Create
+                  </button>
                 
               </div>
             </div>

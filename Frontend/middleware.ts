@@ -19,7 +19,7 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    '/viewPage',
+    // '/viewPage',
     '/viewViolencePage/:path*', 
     '/viewForgottenPage/:path*', 
     '/resetPasswordPage', 
