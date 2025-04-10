@@ -149,6 +149,7 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
 
       setGroupedCameras((prev) => prev.filter((cam) => cam.id !== deletePopupData.id));
       setOpenDeletePopup(false);
+      fetchData();
     } catch (error) {
       console.error("Error deleting camera:", error);
     } finally {
@@ -247,9 +248,11 @@ const Sidebar: React.FC<SidebarProp> = ({ setTypeLayout, setSelectZone, togglePo
       setGroupedCameras((prev) => prev.filter((camera) => camera.zone_id !== zoneId));
       setDeleteZonePopup(null);
       setFetchPage(!fetchPage);
+      fetchData();
     } catch (error) {
       console.error("Error deleting zone:", error);
       fetchData();
+      
     } finally {
       setIsLoading(false);
     }
