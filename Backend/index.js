@@ -21,8 +21,10 @@ import utilsRouter from './routes/utils.routes.js';
 import authRouter from './routes/auth.routes.js';
 import aiRouter from './routes/ai.routes.js';
 import uploadRouter from './routes/upload.routes.js';
-import { addAllCameraFromDatabase, updateAllCameraDBPath, getCameraRecordings, get2LatestRecording } from './models/mtx.model.js';
+import { addAllCameraFromDatabase, updateAllCameraDBPath, getLatestRecording } from './models/mtx.model.js';
 import { runAIScripts } from './models/ai.model.js';
+import { updateForgottenVideo } from './models/forgotten.model.js';
+import { getEventById } from './models/event.model.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 443;
@@ -66,6 +68,7 @@ try {
     // await addAllCameraFromDatabase();
     // await updateAllCameraDBPath();
     // await runAIScripts(199, "https://cloud9.phraya.net:8888/199");
+    // console.log((await getLatestRecording(204)));
 } catch (err) {
     console.log("error ")
 }

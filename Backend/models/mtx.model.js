@@ -5,6 +5,7 @@ dotenv.config();
 
 const MTX_API = process.env.MTX_API
 const MTX_STREAM_PATH = process.env.MTX_STREAM_PATH
+const MTX_RECORDING_PATH = process.env.MTX_RECORDING_PATH
 const AUTH = { username: process.env.MTX_USER, password: process.env.MTX_PASS }
 
 const getGlobalConfig = async () => {
@@ -128,17 +129,16 @@ const convertTimetoFileName = (timestamp) => {
     return filename;
 };
 
-const get2LatestRecording = (cameraId) => {
-    getCameraRecordings(cameraId).then((recordings) => {
-        const latestRecordings = recordings.slice(0, 2);
-        const formattedRecordings = latestRecordings.map(recording => {
-            return {
-                filename: convertTimetoFileName(recording.start),
-            };
-        });
-        console.log(formattedRecordings);
-        return formattedRecordings;
-    });
+const getRecordingURL = (cameraId, fileName) => {
+    const url = `${MTX_RECORDING_PATH}/${cameraId}/${fileName}`;
+    return url;
+};
+
+const getLatestRecording = async (cameraId) => {
+    const recordings = await getCameraRecordings(cameraId);
+    if (recordings.length === 0) return null;
+    const latestRecording = recordings[0];
+    return getRecordingURL(cameraId, convertTimetoFileName(latestRecording.start))
 };
 
 export {
@@ -155,5 +155,5 @@ export {
     updateAllCameraDBPath,
     getCameraRecordings,
     convertTimetoFileName,
-    get2LatestRecording,
+    getLatestRecording,
 };
