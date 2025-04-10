@@ -67,7 +67,7 @@ app.use('/recordings', protectedFileMiddleware, express.static(path.resolve('../
 try {
     // await addAllCameraFromDatabase();
     // await updateAllCameraDBPath();
-    // await runAIScripts(199, "https://cloud9.phraya.net:8888/199");
+    await runAIScripts(199, "https://cloud9.phraya.net:8888/199");
     // console.log((await getLatestRecording(204)));
 } catch (err) {
     console.log("error ")
